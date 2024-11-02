@@ -19,7 +19,9 @@ find_package(OpenCV REQUIRED)
 find_package(cv_bridge REQUIRED)
 
 
+add_executable(stream_node src/stream_node.cpp)
 add_executable(gray_node src/gray_node.cpp)
+
 
 ament_target_dependencies(
   gray_node
@@ -29,8 +31,17 @@ ament_target_dependencies(
   "cv_bridge"
 )
 
+ament_target_dependencies(
+  stream_node
+  "rclcpp"
+  "sensor_msgs"
+  "OpenCV"
+  "cv_bridge"
+)
+
 install(TARGETS 
   gray_node
+  stream_node
   DESTINATION lib/${PROJECT_NAME})
 
 if(BUILD_TESTING)
