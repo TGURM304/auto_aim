@@ -2,20 +2,18 @@
 #include "opencv2/core/core.hpp"
 #include "opencv2/highgui/highgui.hpp"
 #include <stdio.h>
+#include <opencv2/highgui.hpp>
 
 using namespace cv;
 
 unsigned char *g_pRgbBuffer; // 处理后数据缓存区
 
-int main() {
+int mindvisionInit(int channel = 3) {
 	int iCameraCounts = 1;
 	int iStatus = -1;
 	tSdkCameraDevInfo tCameraEnumList;
 	int hCamera;
 	tSdkCameraCapbility tCapability; // 设备描述信息
-	tSdkFrameHead sFrameInfo;
-	BYTE *pbyBuffer;
-	int channel = 3;
 
 	CameraSdkInit(1);
 
@@ -52,47 +50,59 @@ int main() {
 	CameraPlay(hCamera);
 
 	// 配置相机输出格式
-	if(tCapability.sIspCapacity.bMonoSensor) {
-		channel = 1;
+	if(channel == 1) {
 		CameraSetIspOutFormat(hCamera,
 		                      CAMERA_MEDIA_TYPE_MONO8);
 	} else {
-		channel = 3;
 		CameraSetIspOutFormat(hCamera,
 		                      CAMERA_MEDIA_TYPE_BGR8);
 	}
+	return hCamera;
+}
 
-	// 循环显示10000帧图像
+
+cv::Mat getMindvision(int hCamera) {
+	tSdkFrameHead sFrameInfo;
+	BYTE *pbyBuffer;
+
+	CameraGetImageBuffer(hCamera, &sFrameInfo, &pbyBuffer,
+	                     1000);
+	CameraImageProcess(hCamera, pbyBuffer, g_pRgbBuffer,
+	                   &sFrameInfo);
+
+	// 使用 cv::Mat 替代 IplImage
+	cv::Mat matImage(
+	    sFrameInfo.iHeight, // 高度
+	    sFrameInfo.iWidth,  // 宽度
+	    sFrameInfo.uiMediaType == CAMERA_MEDIA_TYPE_MONO8
+	        ? CV_8UC1
+	        : CV_8UC3, // 类型：单通道或者三通道
+	    g_pRgbBuffer   // 数据缓冲区
+	);
+
+	// 在成功调用CameraGetImageBuffer后，必须调用CameraReleaseImageBuffer来释放获得的buffer。
+	CameraReleaseImageBuffer(hCamera, pbyBuffer);
+
+	return matImage;
+}
+
+
+int main() {
+    // channel参数1为MONO8 ,其他为BGR8
+	int hCamera = mindvisionInit(2);
 	while(1) {
-		if(CameraGetImageBuffer(hCamera, &sFrameInfo,
-		                        &pbyBuffer, 0)
-		   == CAMERA_STATUS_SUCCESS) {
-			CameraImageProcess(hCamera, pbyBuffer,
-			                   g_pRgbBuffer, &sFrameInfo);
-
-			// 使用 cv::Mat 替代 IplImage
-			cv::Mat matImage(
-			    sFrameInfo.iHeight, // 高度
-			    sFrameInfo.iWidth,  // 宽度
-			    sFrameInfo.uiMediaType
-			            == CAMERA_MEDIA_TYPE_MONO8
-			        ? CV_8UC1
-			        : CV_8UC3, // 类型：单通道或者三通道
-			    g_pRgbBuffer // 数据缓冲区
-			);
-
+		cv::Mat frame = getMindvision(hCamera);
+		if(!frame.empty()) {
 			// 显示图像
-			imshow("Opencv Demo", matImage);
-			waitKey(5);
-
-			// 在成功调用CameraGetImageBuffer后，必须调用CameraReleaseImageBuffer来释放获得的buffer。
-			CameraReleaseImageBuffer(hCamera, pbyBuffer);
+			cv::imshow("Camera Frame", frame);
+			cv::waitKey(1);
+		} else {
+			printf("Failed to capture image.\n");
+			break;
 		}
 	}
-
 	// 反初始化相机
 	CameraUnInit(hCamera);
-
 	// 释放分配的内存
 	free(g_pRgbBuffer);
 
