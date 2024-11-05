@@ -5,11 +5,9 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_STANDARD 17)
 
-
 if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
   add_compile_options(-Wall -Wextra -Wpedantic)
 endif()
-
 
 # find dependencies
 find_package(ament_cmake REQUIRED)
@@ -18,10 +16,15 @@ find_package(sensor_msgs REQUIRED)
 find_package(OpenCV REQUIRED)
 find_package(cv_bridge REQUIRED)
 
-
 add_executable(stream_node src/stream_node.cpp)
 add_executable(gray_node src/gray_node.cpp)
+add_executable(test_node src/test_node.cpp)
 
+
+
+target_link_libraries(test_node
+    libMVSDK.so  # 链接 MindVision SDK 库
+)
 
 ament_target_dependencies(
   gray_node
@@ -38,10 +41,20 @@ ament_target_dependencies(
   "OpenCV"
   "cv_bridge"
 )
+
+ament_target_dependencies(
+  test_node
+  "rclcpp"
+  "OpenCV"
+)
+
+
+
 
 install(TARGETS 
   gray_node
   stream_node
+  test_node
   DESTINATION lib/${PROJECT_NAME})
 
 if(BUILD_TESTING)
