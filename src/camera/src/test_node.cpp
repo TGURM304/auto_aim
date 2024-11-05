@@ -17,7 +17,6 @@ int main() {
 	BYTE *pbyBuffer;
 	int channel = 3;
 
-
 	CameraSdkInit(1);
 
 	// 枚举设备，并建立设备列表
