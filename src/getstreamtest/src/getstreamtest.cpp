@@ -9,7 +9,7 @@ public:
 	ImageSubscriber(): Node("image_subscriber") {
 		subscription_ = this->create_subscription<
 		    sensor_msgs::msg::Image>(
-		    "camera/gray_stream", 10,
+		    "camera/stream", 10,
 		    std::bind(&ImageSubscriber::image_callback,
 		              this, std::placeholders::_1));
 	}
