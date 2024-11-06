@@ -19,8 +19,8 @@ public:
 
 private:
 	void publish() {
-		int hCamera = camera.Init(2);
-		cv::Mat frame = camera.getMindvision(hCamera);
+		int camera = camera_.init(2);
+		cv::Mat frame = camera_.getFrame(camera);
 		if(!frame.empty()) {
 			auto msg =
 			    cv_bridge::CvImage(std_msgs::msg::Header(),
@@ -30,7 +30,7 @@ private:
 		}
 	}
 
-	MindVision camera;
+	MindVision camera_;
 	rclcpp::Publisher<sensor_msgs::msg::Image>::SharedPtr
 	    publisher_;
 	rclcpp::TimerBase::SharedPtr timer_;

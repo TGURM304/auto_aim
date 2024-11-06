@@ -2,16 +2,19 @@
 #include <sensor_msgs/msg/image.hpp>
 #include <opencv2/opencv.hpp>
 #include <cv_bridge/cv_bridge.hpp>
+#include <chrono>
+
+using Image = sensor_msgs::msg::Image;
+using namespace std::literals;
 
 
 class gray_node: public rclcpp::Node {
 public:
 	gray_node(): Node("gray_node") {
-		publisher_ =
-		    this->create_publisher<sensor_msgs::msg::Image>(
-		        "camera/gray_stream", 10);
+		publisher_ = this->create_publisher<Image>(
+		    "camera/gray_stream", 10);
 		timer_ = this->create_wall_timer(
-		    std::chrono::milliseconds(1),
+		    1ms,
 		    std::bind(&gray_node::publish_image, this));
 		cap_.open(0);
 	}
@@ -31,10 +34,10 @@ private:
 	}
 
 	cv::VideoCapture cap_;
-	rclcpp::Publisher<sensor_msgs::msg::Image>::SharedPtr
-	    publisher_;
+	rclcpp::Publisher<Image>::SharedPtr publisher_;
 	rclcpp::TimerBase::SharedPtr timer_;
 };
+// TODO: 声明与实现分离
 
 
 int main(int argc, char **argv) {
