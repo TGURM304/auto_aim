@@ -23,16 +23,9 @@ find_package(MVSDK REQUIRED)
 include_directories("${CMAKE_SOURCE_DIR}/include")
 
 add_executable(stream_node "src/stream_node.cpp")
-add_executable(gray_node "src/gray_node.cpp")
-add_executable(test_node "src/test_node.cpp")
-
-ament_target_dependencies(
-  gray_node
-  "rclcpp"
-  "sensor_msgs"
-  "OpenCV"
-  "cv_bridge"
-)
+add_executable(video_node "src/video_node.cpp")
+# add_executable(test_node "src/test_node.cpp")
+# add_executable(gray_node "src/gray_node.cpp")
 
 ament_target_dependencies(
   stream_node
@@ -48,21 +41,43 @@ target_link_libraries(stream_node
 )
 
 ament_target_dependencies(
-  test_node
+  video_node
   "rclcpp"
+  "sensor_msgs"
   "OpenCV"
-#   "MVSDK"
+  "cv_bridge"
 )
 
-target_link_libraries(test_node
-  MVSDK
-)
+# ament_target_dependencies(
+#   test_node
+#   "rclcpp"
+#   "OpenCV"
+# #   "MVSDK"
+# )
+
+# target_link_libraries(test_node
+#   MVSDK
+# )
+
+# ament_target_dependencies(
+#   gray_node
+#   "rclcpp"
+#   "sensor_msgs"
+#   "OpenCV"
+#   "cv_bridge"
+# #   "MVSDK"
+# )
+
+# target_link_libraries(gray_node
+#   MVSDK
+# )
 
 
 install(TARGETS
-  gray_node
   stream_node
-  test_node
+  video_node
+  # gray_node
+  # test_node
   DESTINATION lib/${PROJECT_NAME})
 
 if(BUILD_TESTING)
