@@ -1,8 +1,8 @@
 #include "../dependencies/MVSDK/include/CameraApi.h" // 相机SDK的API头文件
 #include "opencv2/core/core.hpp"
-#include "opencv2/highgui/highgui.hpp"
 #include <stdio.h>
 #include <opencv2/highgui.hpp>
+#include <opencv2/opencv.hpp>
 
 using namespace cv;
 
@@ -62,33 +62,46 @@ int mindvisionInit(int channel = 3) {
 
 
 cv::Mat getMindvision(int hCamera) {
-	tSdkFrameHead sFrameInfo;
-	BYTE *pbyBuffer;
+	if(hCamera == -1) {
+		printf("相机初始化失败,Coding=-1\n");
+		cv::Mat frame = cv::Mat::ones(480, 640, CV_8UC3)
+		    * 255; 
+		std::string text = "Camera initialization failederror code: -1";
+		cv::Point position(20, 240); 
+		cv::putText(frame, text, position,
+		            cv::FONT_HERSHEY_SIMPLEX, 1.0,
+		            cv::Scalar(0, 0, 255), 2);
+		return frame;
+	} else {
+		tSdkFrameHead sFrameInfo;
+		BYTE *pbyBuffer;
 
-	CameraGetImageBuffer(hCamera, &sFrameInfo, &pbyBuffer,
-	                     1000);
-	CameraImageProcess(hCamera, pbyBuffer, g_pRgbBuffer,
-	                   &sFrameInfo);
+		CameraGetImageBuffer(hCamera, &sFrameInfo,
+		                     &pbyBuffer, 1000);
+		CameraImageProcess(hCamera, pbyBuffer, g_pRgbBuffer,
+		                   &sFrameInfo);
 
-	// 使用 cv::Mat 替代 IplImage
-	cv::Mat matImage(
-	    sFrameInfo.iHeight, // 高度
-	    sFrameInfo.iWidth,  // 宽度
-	    sFrameInfo.uiMediaType == CAMERA_MEDIA_TYPE_MONO8
-	        ? CV_8UC1
-	        : CV_8UC3, // 类型：单通道或者三通道
-	    g_pRgbBuffer   // 数据缓冲区
-	);
+		// 使用 cv::Mat 替代 IplImage
+		cv::Mat frame(
+		    sFrameInfo.iHeight, // 高度
+		    sFrameInfo.iWidth,  // 宽度
+		    sFrameInfo.uiMediaType
+		            == CAMERA_MEDIA_TYPE_MONO8
+		        ? CV_8UC1
+		        : CV_8UC3, // 类型：单通道或者三通道
+		    g_pRgbBuffer // 数据缓冲区
+		);
 
-	// 在成功调用CameraGetImageBuffer后，必须调用CameraReleaseImageBuffer来释放获得的buffer。
-	CameraReleaseImageBuffer(hCamera, pbyBuffer);
+		// 在成功调用CameraGetImageBuffer后，必须调用CameraReleaseImageBuffer来释放获得的buffer。
+		CameraReleaseImageBuffer(hCamera, pbyBuffer);
 
-	return matImage;
+		return frame;
+	}
 }
 
 
 int main() {
-    // channel参数1为MONO8 ,其他为BGR8
+	// channel参数1为MONO8 ,其他为BGR8
 	int hCamera = mindvisionInit(2);
 	while(1) {
 		cv::Mat frame = getMindvision(hCamera);
