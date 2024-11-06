@@ -6,7 +6,8 @@
 
 using namespace cv;
 
-unsigned char *g_pRgbBuffer; // 处理后数据缓存区
+
+unsigned char *g_pRgbBuffer;
 
 int mindvisionInit(int channel = 3) {
 	int iCameraCounts = 1;
@@ -64,10 +65,11 @@ int mindvisionInit(int channel = 3) {
 cv::Mat getMindvision(int hCamera) {
 	if(hCamera == -1) {
 		printf("相机初始化失败,Coding=-1\n");
-		cv::Mat frame = cv::Mat::ones(480, 640, CV_8UC3)
-		    * 255; 
-		std::string text = "Camera initialization failederror code: -1";
-		cv::Point position(20, 240); 
+		cv::Mat frame =
+		    cv::Mat::ones(480, 640, CV_8UC3) * 255;
+		std::string text =
+		    "Camera initialization failederror code: -1";
+		cv::Point position(20, 240);
 		cv::putText(frame, text, position,
 		            cv::FONT_HERSHEY_SIMPLEX, 1.0,
 		            cv::Scalar(0, 0, 255), 2);
@@ -114,10 +116,7 @@ int main() {
 			break;
 		}
 	}
-	// 反初始化相机
-	CameraUnInit(hCamera);
-	// 释放分配的内存
-	free(g_pRgbBuffer);
+
 
 	return 0;
 }
