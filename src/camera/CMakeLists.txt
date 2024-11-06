@@ -17,24 +17,19 @@ find_package(OpenCV REQUIRED)
 find_package(cv_bridge REQUIRED)
 
 add_executable(stream_node src/stream_node.cpp)
-add_executable(gray_node src/gray_node.cpp)
-add_executable(test_node src/test_node.cpp)
+add_executable(video_node src/video_node.cpp)
+# add_executable(test_node src/test_node.cpp)
+# add_executable(gray_node src/gray_node.cpp)
 
-target_link_libraries(test_node
-  libMVSDK.so  # 链接 MindVision SDK 库
-)
+
+# target_link_libraries(test_node
+#   libMVSDK.so  # 链接 MindVision SDK 库
+# )
 
 target_link_libraries(stream_node
   libMVSDK.so  # 链接 MindVision SDK 库
 )
 
-ament_target_dependencies(
-  gray_node
-  "rclcpp"
-  "sensor_msgs"
-  "OpenCV"
-  "cv_bridge"
-)
 
 ament_target_dependencies(
   stream_node
@@ -45,18 +40,34 @@ ament_target_dependencies(
 )
 
 ament_target_dependencies(
-  test_node
+  video_node
   "rclcpp"
+  "sensor_msgs"
   "OpenCV"
+  "cv_bridge"
 )
 
+# ament_target_dependencies(
+#   test_node
+#   "rclcpp"
+#   "OpenCV"
+# )
+
+# ament_target_dependencies(
+#   gray_node
+#   "rclcpp"
+#   "sensor_msgs"
+#   "OpenCV"
+#   "cv_bridge"
+# )
 
 
 
 install(TARGETS 
-  gray_node
   stream_node
-  test_node
+  video_node
+  # gray_node
+  # test_node
   DESTINATION lib/${PROJECT_NAME})
 
 if(BUILD_TESTING)
