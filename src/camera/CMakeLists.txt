@@ -9,24 +9,22 @@ if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
   add_compile_options(-Wall -Wextra -Wpedantic)
 endif()
 
+
+set(MVSDK_DIR "${CMAKE_SOURCE_DIR}/dependencies/MVSDK")
+
 # find dependencies
 find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(sensor_msgs REQUIRED)
 find_package(OpenCV REQUIRED)
 find_package(cv_bridge REQUIRED)
+find_package(MVSDK REQUIRED)
 
-add_executable(stream_node src/stream_node.cpp)
-add_executable(gray_node src/gray_node.cpp)
-add_executable(test_node src/test_node.cpp)
+include_directories("${CMAKE_SOURCE_DIR}/include")
 
-target_link_libraries(test_node
-  libMVSDK.so  # 链接 MindVision SDK 库
-)
-
-target_link_libraries(stream_node
-  libMVSDK.so  # 链接 MindVision SDK 库
-)
+add_executable(stream_node "src/stream_node.cpp")
+add_executable(gray_node "src/gray_node.cpp")
+add_executable(test_node "src/test_node.cpp")
 
 ament_target_dependencies(
   gray_node
@@ -42,18 +40,26 @@ ament_target_dependencies(
   "sensor_msgs"
   "OpenCV"
   "cv_bridge"
+#   "MVSDK"
+)
+
+target_link_libraries(stream_node
+  MVSDK
 )
 
 ament_target_dependencies(
   test_node
   "rclcpp"
   "OpenCV"
+#   "MVSDK"
+)
+
+target_link_libraries(test_node
+  MVSDK
 )
 
 
-
-
-install(TARGETS 
+install(TARGETS
   gray_node
   stream_node
   test_node
