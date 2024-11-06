@@ -2,24 +2,23 @@
 #include <sensor_msgs/msg/image.hpp>
 #include <opencv2/opencv.hpp>
 #include <cv_bridge/cv_bridge.hpp>
+#include "mindvision.cpp"
 
-
-class gray_node: public rclcpp::Node {
+class stream_node: public rclcpp::Node {
 public:
-	gray_node(): Node("gray_node") {
+	stream_node(): Node("stream_node") {
 		publisher_ =
 		    this->create_publisher<sensor_msgs::msg::Image>(
-		        "camera/gray_stream", 10);
+		        "camera/stream", 10);
 		timer_ = this->create_wall_timer(
 		    std::chrono::milliseconds(1),
-		    std::bind(&gray_node::publish_image, this));
-		cap_.open(0);
+		    std::bind(&stream_node::publish, this));
 	}
 
 private:
-	void publish_image() {
-		cv::Mat frame;
-		cap_ >> frame;
+	void publish() {
+		int hCamera = camera.Init(2);
+		cv::Mat frame = camera.getMindvision(hCamera);
 		if(!frame.empty()) {
 			auto msg =
 			    cv_bridge::CvImage(std_msgs::msg::Header(),
@@ -29,7 +28,7 @@ private:
 		}
 	}
 
-	cv::VideoCapture cap_;
+	MindVision camera;
 	rclcpp::Publisher<sensor_msgs::msg::Image>::SharedPtr
 	    publisher_;
 	rclcpp::TimerBase::SharedPtr timer_;
@@ -38,7 +37,7 @@ private:
 
 int main(int argc, char **argv) {
 	rclcpp::init(argc, argv);
-	rclcpp::spin(std::make_shared<gray_node>());
+	rclcpp::spin(std::make_shared<stream_node>());
 	rclcpp::shutdown();
 	return 0;
 }
