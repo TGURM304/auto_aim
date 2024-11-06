@@ -20,10 +20,12 @@ add_executable(stream_node src/stream_node.cpp)
 add_executable(gray_node src/gray_node.cpp)
 add_executable(test_node src/test_node.cpp)
 
-
-
 target_link_libraries(test_node
-    libMVSDK.so  # 链接 MindVision SDK 库
+  libMVSDK.so  # 链接 MindVision SDK 库
+)
+
+target_link_libraries(stream_node
+  libMVSDK.so  # 链接 MindVision SDK 库
 )
 
 ament_target_dependencies(
