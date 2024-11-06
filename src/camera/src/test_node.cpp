@@ -1,8 +1,10 @@
-#include "../dependencies/MVSDK/include/CameraApi.h" // 相机SDK的API头文件
-#include "opencv2/core/core.hpp"
-#include <stdio.h>
+#include <cstdio>
+
+#include <opencv2/core/core.hpp>
 #include <opencv2/highgui.hpp>
 #include <opencv2/opencv.hpp>
+
+#include <MVSDK/CameraApi.h>
 
 using namespace cv;
 
