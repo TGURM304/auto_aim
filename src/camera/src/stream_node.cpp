@@ -2,7 +2,9 @@
 #include <sensor_msgs/msg/image.hpp>
 #include <opencv2/opencv.hpp>
 #include <cv_bridge/cv_bridge.hpp>
-#include "mindvision.cpp"
+
+#include "mindvision.hpp"
+
 
 class stream_node: public rclcpp::Node {
 public:
@@ -33,6 +35,7 @@ private:
 	    publisher_;
 	rclcpp::TimerBase::SharedPtr timer_;
 };
+// TODO: 声明与实现分离
 
 
 int main(int argc, char **argv) {
