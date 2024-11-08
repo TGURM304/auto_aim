@@ -13,7 +13,7 @@ public:
 		    this->create_publisher<sensor_msgs::msg::Image>(
 		        "camera/stream", 10);
 		timer_ = this->create_wall_timer(
-		    std::chrono::milliseconds(1),
+		    std::chrono::milliseconds(0),
 		    std::bind(&stream_node::publish, this));
 	}
 

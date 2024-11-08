@@ -12,7 +12,7 @@ MindVision::~MindVision() {
 	free(rgb_buffer_);
 }
 
-int MindVision::init(int channel = 3) {
+int MindVision::init(int channel = 2) {
 	CameraSdkInit(1);
 
 	// 枚举设备, 并建立设备列表
