@@ -2,7 +2,6 @@
 #include <sensor_msgs/msg/image.hpp>
 #include <opencv2/opencv.hpp>
 #include <cv_bridge/cv_bridge.hpp>
-#include <chrono>
 
 using Image = sensor_msgs::msg::Image;
 using namespace std::literals;
