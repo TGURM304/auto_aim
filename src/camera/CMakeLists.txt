@@ -22,7 +22,7 @@ find_package(MVSDK REQUIRED)
 
 include_directories("${CMAKE_SOURCE_DIR}/include")
 
-add_executable(stream_node "src/stream_node.cpp")
+add_executable(stream_node "src/stream_node.cpp" "src/mindvision.cpp")
 add_executable(video_node "src/video_node.cpp")
 # add_executable(test_node "src/test_node.cpp")
 # add_executable(gray_node "src/gray_node.cpp")
