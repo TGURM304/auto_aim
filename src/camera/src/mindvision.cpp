@@ -13,6 +13,7 @@ MindVision::~MindVision() {
 }
 
 int MindVision::init(int channel = 2) {
+	// 1 表示中文
 	CameraSdkInit(1);
 
 	// 枚举设备, 并建立设备列表
@@ -41,7 +42,7 @@ int MindVision::init(int channel = 2) {
 	// 该结构体中包含了相机可设置的各种参数的范围信息, 决定了相关函数的参数
 	CameraGetCapability(camera_, &capability_);
 
-	// 分配内存, 保存RGB数据
+	// 分配内存, 保存 RGB 数据
 	rgb_buffer_ = (unsigned char*)malloc(
 	    capability_.sResolutionRange.iHeightMax
 	    * capability_.sResolutionRange.iWidthMax * 3);
@@ -57,6 +58,10 @@ int MindVision::init(int channel = 2) {
 		CameraSetIspOutFormat(camera_,
 		                      CAMERA_MEDIA_TYPE_BGR8);
 	}
+	return 0;
+}
+
+int MindVision::isSuccessfulInit() {
 	return camera_;
 }
 
@@ -68,40 +73,45 @@ void showText(cv::Mat& frame, const std::string& msg) {
 	            cv::Scalar(0, 0, 255), 2);
 }
 
-cv::Mat MindVision::getFrame(int camera) {
-	if(camera == -1) {
+cv::Mat MindVision::getFrame() {
+	if(!isSuccessfulInit()) {
 		cv::Mat frame =
 		    cv::Mat::ones(480, 640, CV_8UC3) * 255;
-		showText(frame, "[-1] no device connected");
-		return frame;
-	} else if(camera == -2) {
-		cv::Mat frame =
-		    cv::Mat::ones(480, 640, CV_8UC3) * 255;
-		showText(frame,
-		         "[-2] camera initialization failed");
-		return frame;
-	} else {
-		tSdkFrameHead frame_info;
-		BYTE* buffer;
+		const char* msg = NULL;
 
-		CameraGetImageBuffer(camera, &frame_info, &buffer,
-		                     1000);
-		CameraImageProcess(camera, buffer, rgb_buffer_,
-		                   &frame_info);
+		switch(isSuccessfulInit()) {
+		case -1:
+			msg = "[-1] no device connected";
+			break;
+		case -2:
+			msg = "[-2] camera initialization failed";
+			break;
+		}
 
-		// 使用 cv::Mat 替代 IplImage
-		cv::Mat frame(frame_info.iHeight, frame_info.iWidth,
-		              frame_info.uiMediaType
-		                      == CAMERA_MEDIA_TYPE_MONO8
-		                  /* 单通道或者三通道 */
-		                  ? CV_8UC1
-		                  : CV_8UC3,
-		              rgb_buffer_);
-
-		// 在成功调用 CameraGetImageBuffer 后,
-		// 必须调用 CameraReleaseImageBuffer 来释放获得的 buffer
-		CameraReleaseImageBuffer(camera, buffer);
-
+		showText(frame, msg);
 		return frame;
 	}
+
+	tSdkFrameHead frame_info;
+	BYTE* buffer;
+
+	CameraGetImageBuffer(camera_, &frame_info, &buffer,
+	                     1000);
+	CameraImageProcess(camera_, buffer, rgb_buffer_,
+	                   &frame_info);
+
+	// 使用 cv::Mat 替代 IplImage
+	cv::Mat frame(
+	    frame_info.iHeight, frame_info.iWidth,
+	    frame_info.uiMediaType == CAMERA_MEDIA_TYPE_MONO8
+	        /* 单通道或者三通道 */
+	        ? CV_8UC1
+	        : CV_8UC3,
+	    rgb_buffer_);
+
+	// 在成功调用 CameraGetImageBuffer 后,
+	// 必须调用 CameraReleaseImageBuffer 来释放获得的 buffer
+	CameraReleaseImageBuffer(camera_, buffer);
+
+	return frame;
 }

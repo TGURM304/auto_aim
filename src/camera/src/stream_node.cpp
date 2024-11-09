@@ -9,6 +9,8 @@
 class stream_node: public rclcpp::Node {
 public:
 	stream_node(): Node("stream_node") {
+		camera_.init(2);
+
 		publisher_ =
 		    this->create_publisher<sensor_msgs::msg::Image>(
 		        "camera/stream", 10);
@@ -19,8 +21,7 @@ public:
 
 private:
 	void publish() {
-		int camera = camera_.init(2);
-		cv::Mat frame = camera_.getFrame(camera);
+		cv::Mat frame = camera_.getFrame();
 		if(!frame.empty()) {
 			auto msg =
 			    cv_bridge::CvImage(std_msgs::msg::Header(),
