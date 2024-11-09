@@ -7,10 +7,10 @@
 
 int main() {
 	auto mv = MindVision();
-	int camera = mv.init(2);
+	mv.init(2);
 
 	while(1) {
-		cv::Mat frame = mv.getFrame(camera);
+		cv::Mat frame = mv.getFrame();
 		if(!frame.empty()) {
 			// 显示图像
 			cv::imshow("Camera Frame", frame);
