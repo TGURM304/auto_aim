@@ -26,7 +26,7 @@ public:
 	 * @retval -1 没有连接设备
 	 * @retval -2 初始化失败
 	 */
-	int isSuccessfulInit();
+	int getErrno();
 
 	/**
 	 * @brief 获取帧
