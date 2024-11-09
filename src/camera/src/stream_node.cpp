@@ -5,7 +5,6 @@
 
 #include "mindvision.hpp"
 
-
 class stream_node: public rclcpp::Node {
 public:
 	stream_node(): Node("stream_node") {
@@ -19,6 +18,15 @@ public:
 		    std::bind(&stream_node::publish, this));
 	}
 
+        publisher_ =
+            this->create_publisher<sensor_msgs::msg::Image>("camera/stream", 10);
+        timer_ = this->create_wall_timer(
+            std::chrono::milliseconds(1),
+            std::bind(&stream_node::publish, this));
+    }
+	~stream_node(){
+		camera_.~MindVision();
+	}
 private:
 	void publish() {
 		cv::Mat frame = camera_.getFrame();
@@ -31,17 +39,15 @@ private:
 		}
 	}
 
-	MindVision camera_;
-	rclcpp::Publisher<sensor_msgs::msg::Image>::SharedPtr
-	    publisher_;
-	rclcpp::TimerBase::SharedPtr timer_;
+    MindVision camera_;
+	int hCamera = camera_.init(2);
+    rclcpp::Publisher<sensor_msgs::msg::Image>::SharedPtr publisher_;
+    rclcpp::TimerBase::SharedPtr timer_;
 };
-// TODO: 声明与实现分离
-
 
 int main(int argc, char **argv) {
-	rclcpp::init(argc, argv);
-	rclcpp::spin(std::make_shared<stream_node>());
-	rclcpp::shutdown();
-	return 0;
+    rclcpp::init(argc, argv);
+    rclcpp::spin(std::make_shared<stream_node>());
+    rclcpp::shutdown();
+    return 0;
 }
