@@ -1,5 +1,4 @@
 #include "mindvision.hpp"
-#include <thread>
 #include <chrono>
 
 MindVision::MindVision() {
@@ -47,8 +46,18 @@ int MindVision::init(int channel = 2) {
 	    capability_.sResolutionRange.iHeightMax
 	    * capability_.sResolutionRange.iWidthMax * 3);
 
+	// 获得相机的特性描述结构体
+	CameraGetCapability(camera_, &capability_);
+
+
 	// 设置gamma值
-	CameraSetGamma(camera_, 150);
+	CameraSetGamma(camera_, 70);
+	// 设置对比度
+	CameraSetContrast(camera_, 100);
+	// 设置饱和度
+	CameraSetSaturation(camera_, 100);
+	// 设置帧率ID, 0为60帧,1为108帧(?)
+	CameraSetFrameSpeed(camera_, 1);
 
 	// 进入工作模式, 开始接收来自相机发送的图像数据
 	CameraPlay(camera_);
@@ -112,6 +121,7 @@ cv::Mat MindVision::getFrame() {
 	        ? CV_8UC1
 	        : CV_8UC3,
 	    rgb_buffer_);
+
 
 	// 在成功调用 CameraGetImageBuffer 后,
 	// 必须调用 CameraReleaseImageBuffer 来释放获得的 buffer
