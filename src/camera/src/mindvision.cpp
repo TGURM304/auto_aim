@@ -47,6 +47,9 @@ int MindVision::init(int channel = 2) {
 	    capability_.sResolutionRange.iHeightMax
 	    * capability_.sResolutionRange.iWidthMax * 3);
 
+	// 设置gamma值
+	CameraSetGamma(camera_, 150);
+
 	// 进入工作模式, 开始接收来自相机发送的图像数据
 	CameraPlay(camera_);
 
