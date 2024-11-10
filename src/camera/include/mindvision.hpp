@@ -38,6 +38,17 @@ public:
 	 */
 	cv::Mat getFrame();
 
+	/**
+	 * @brief 录像
+	 * 
+	 * @param fileSavePath 文件保存路径
+	 * @param time 录制时间
+	 * @return 默认返回1
+	 * @return 未获取到当前帧返回-1
+	 * @return 输出文件打开失败返回-2
+	 */
+	int record(std::string fileSavePath = "./",
+	           int time = 3000);
 
 private:
 	/// @brief 处理后数据缓存区

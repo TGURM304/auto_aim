@@ -1,4 +1,6 @@
 #include "mindvision.hpp"
+#include <thread>
+#include <chrono>
 
 MindVision::MindVision() {
 	printf("MindVision Start\n");
@@ -113,4 +115,51 @@ cv::Mat MindVision::getFrame() {
 	CameraReleaseImageBuffer(camera_, buffer);
 
 	return frame;
+}
+
+int MindVision::record(std::string fileSavePath, int time) {
+	cv::Mat firstFrame = getFrame();
+	if(firstFrame.empty()) {
+		std::cerr << "Failed to get frame!" << std::endl;
+		return -1;
+	}
+
+	int frame_width = firstFrame.cols;
+	int frame_height = firstFrame.rows;
+
+	cv::VideoWriter out(
+	    fileSavePath + "/output.avi",
+	    cv::VideoWriter::fourcc('X', 'V', 'I', 'D'), 108,
+	    cv::Size(frame_width, frame_height));
+
+	if(!out.isOpened()) {
+		std::cerr << "Failed to open video writer!"
+		          << std::endl;
+		return -2;
+	}
+
+	auto startTime = std::chrono::steady_clock::now();
+	auto duration = std::chrono::milliseconds(time);
+
+	while(true) {
+		cv::Mat frame = getFrame();
+
+		if(frame.empty()) {
+			std::cerr << "Failed to get a frame!"
+			          << std::endl;
+			break;
+		}
+
+		out.write(frame);
+		cv::imshow("record", frame);
+		cv::waitKey(1);
+		if(std::chrono::steady_clock::now() - startTime
+		   >= duration) {
+			break;
+		}
+	}
+
+	out.release();
+	cv::destroyAllWindows();
+	return 1;
 }
