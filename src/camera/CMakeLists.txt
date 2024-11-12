@@ -11,10 +11,7 @@ endif()
 
 
 link_directories(${CMAKE_SOURCE_DIR}/dependencies/MVSDK/lib)
-link_directories(${CMAKE_SOURCE_DIR}/dependencies/MVSDK/include)
-
 include_directories(${CMAKE_SOURCE_DIR}/dependencies/MVSDK/include)
-include_directories(${CMAKE_SOURCE_DIR}/include)
 
 
 # find dependencies
@@ -52,11 +49,24 @@ ament_target_dependencies(
   "OpenCV"
 )
 
+target_include_directories(stream_node PUBLIC
+  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+  $<INSTALL_INTERFACE:include/${PROJECT_NAME}>)
+
+target_include_directories(test_node PUBLIC
+$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+$<INSTALL_INTERFACE:include/${PROJECT_NAME}>)
+
+target_include_directories(video_node PUBLIC
+$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+$<INSTALL_INTERFACE:include/${PROJECT_NAME}>)
+
 install(TARGETS
   stream_node
   video_node
   test_node
   DESTINATION lib/${PROJECT_NAME})
+
 
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)
