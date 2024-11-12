@@ -3,11 +3,16 @@ project(aim_armor)
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 20)
+
 
 if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
   add_compile_options(-Wall -Wextra -Wpedantic)
 endif()
+
+
+link_directories(${CMAKE_SOURCE_DIR}/dependencies/onnxruntime/lib)
+include_directories(${CMAKE_SOURCE_DIR}/dependencies/onnxruntime/include)
 
 
 # find dependencies
@@ -15,21 +20,36 @@ find_package(ament_cmake_auto REQUIRED)
 ament_auto_find_build_dependencies()
 
 
-add_executable(test_node src/test_node.cpp)
+add_executable(test1 "src/test/test1.cpp")
+# add_executable(openvinotest "src/test/openvinotest.cpp")
 
 
-target_include_directories(test_node PUBLIC
+# ament_target_dependencies(
+#   openvinotest
+#   "rclcpp"
+#   "OpenCV"
+#   "openvino"
+# )
+
+ament_target_dependencies(
+  test1
+  "rclcpp"
+  "OpenCV"
+)
+
+
+# target_include_directories(openvinotest PUBLIC
+#   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+#   $<INSTALL_INTERFACE:include/${PROJECT_NAME}>)
+
+target_include_directories(test1 PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
   $<INSTALL_INTERFACE:include/${PROJECT_NAME}>)
 
 
-ament_target_dependencies(
-  test_node
-  "rclcpp"
-)
-
 install(TARGETS 
-  test_node
+  # openvinotest
+  test1
   DESTINATION lib/${PROJECT_NAME})
 
 if(BUILD_TESTING)
