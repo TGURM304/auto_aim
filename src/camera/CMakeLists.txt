@@ -10,22 +10,25 @@ if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
 endif()
 
 
-set(MVSDK_DIR "${CMAKE_SOURCE_DIR}/dependencies/MVSDK")
+link_directories(${CMAKE_SOURCE_DIR}/dependencies/MVSDK/lib)
+link_directories(${CMAKE_SOURCE_DIR}/dependencies/MVSDK/include)
+
+include_directories(${CMAKE_SOURCE_DIR}/dependencies/MVSDK/include)
+include_directories(${CMAKE_SOURCE_DIR}/include)
+
 
 # find dependencies
-find_package(ament_cmake REQUIRED)
-find_package(rclcpp REQUIRED)
-find_package(sensor_msgs REQUIRED)
-find_package(OpenCV REQUIRED)
-find_package(cv_bridge REQUIRED)
-find_package(MVSDK REQUIRED)
+find_package(ament_cmake_auto REQUIRED)
+ament_auto_find_build_dependencies()
 
-include_directories("${CMAKE_SOURCE_DIR}/include")
 
 add_executable(stream_node "src/stream_node.cpp" "src/mindvision.cpp")
 add_executable(video_node "src/video_node.cpp")
 add_executable(test_node "src/test_node.cpp" "src/mindvision.cpp")
-# add_executable(gray_node "src/gray_node.cpp")
+
+
+target_link_libraries(stream_node MVSDK)
+target_link_libraries(test_node MVSDK)
 
 ament_target_dependencies(
   stream_node
@@ -33,11 +36,6 @@ ament_target_dependencies(
   "sensor_msgs"
   "OpenCV"
   "cv_bridge"
-#   "MVSDK"
-)
-
-target_link_libraries(stream_node
-  MVSDK
 )
 
 ament_target_dependencies(
@@ -52,35 +50,11 @@ ament_target_dependencies(
   test_node
   "rclcpp"
   "OpenCV"
-# "MVSDK"
 )
-
-target_link_libraries(test_node
-  MVSDK
-)
-
-# target_link_libraries(test_node
-#   MVSDK
-# )
-
-# ament_target_dependencies(
-#   gray_node
-#   "rclcpp"
-#   "sensor_msgs"
-#   "OpenCV"
-#   "cv_bridge"
-# #   "MVSDK"
-# )
-
-# target_link_libraries(gray_node
-#   MVSDK
-# )
-
 
 install(TARGETS
   stream_node
   video_node
-  # gray_node
   test_node
   DESTINATION lib/${PROJECT_NAME})
 
