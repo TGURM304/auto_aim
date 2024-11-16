@@ -21,6 +21,7 @@ ament_auto_find_build_dependencies()
 
 
 add_executable(test1 "src/test/test1.cpp")
+add_executable(detector_node "src/detector_node.cpp")
 # add_executable(openvinotest "src/test/openvinotest.cpp")
 
 
@@ -34,9 +35,18 @@ add_executable(test1 "src/test/test1.cpp")
 ament_target_dependencies(
   test1
   "rclcpp"
+  "sensor_msgs"
   "OpenCV"
+  "cv_bridge"
 )
 
+ament_target_dependencies(
+  detector_node
+  "rclcpp"
+  "sensor_msgs"
+  "OpenCV"
+  "cv_bridge"
+)
 
 # target_include_directories(openvinotest PUBLIC
 #   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
@@ -46,10 +56,14 @@ target_include_directories(test1 PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
   $<INSTALL_INTERFACE:include/${PROJECT_NAME}>)
 
+  target_include_directories(detector_node PUBLIC
+  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+  $<INSTALL_INTERFACE:include/${PROJECT_NAME}>)
 
 install(TARGETS 
   # openvinotest
   test1
+  detector_node
   DESTINATION lib/${PROJECT_NAME})
 
 if(BUILD_TESTING)
