@@ -51,7 +51,7 @@ int MindVision::init(int channel = 2) {
 
 
 	// 设置gamma值
-	CameraSetGamma(camera_, 70);
+	CameraSetGamma(camera_, 110);
 	// 设置对比度
 	CameraSetContrast(camera_, 100);
 	// 设置饱和度
