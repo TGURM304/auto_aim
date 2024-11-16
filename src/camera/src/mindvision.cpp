@@ -49,6 +49,11 @@ int MindVision::init(int channel = 2) {
 	// 获得相机的特性描述结构体
 	CameraGetCapability(camera_, &capability_);
 
+	// 关闭自动曝光
+	// CameraSetAeState(camera_, 0);
+
+	// 设置曝光时间
+	// CameraSetExposureTime(camera_, 1000 * 20);
 
 	// 设置gamma值
 	CameraSetGamma(camera_, 110);
@@ -162,6 +167,10 @@ int MindVision::record(std::string fileSavePath, int time) {
 			          << std::endl;
 			break;
 		}
+		
+		// 大津法二值化
+		// cv::cvtColor(frame, frame, cv::COLOR_BGR2GRAY);
+		// cv::threshold(frame, frame, 0, 255, cv::THRESH_BINARY | cv::THRESH_OTSU);
 
 		out.write(frame);
 		cv::imshow("record", frame);
