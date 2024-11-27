@@ -11,26 +11,15 @@ if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
 endif()
 
 
-link_directories(${CMAKE_SOURCE_DIR}/dependencies/onnxruntime/lib)
-include_directories(${CMAKE_SOURCE_DIR}/dependencies/onnxruntime/include)
-
-
 # find dependencies
 find_package(ament_cmake_auto REQUIRED)
+find_package(OpenVINO REQUIRED)
 ament_auto_find_build_dependencies()
 
 
 add_executable(test1 "src/test/test1.cpp")
 add_executable(detector_node "src/detector_node.cpp")
-# add_executable(openvinotest "src/test/openvinotest.cpp")
 
-
-# ament_target_dependencies(
-#   openvinotest
-#   "rclcpp"
-#   "OpenCV"
-#   "openvino"
-# )
 
 ament_target_dependencies(
   test1
@@ -38,6 +27,8 @@ ament_target_dependencies(
   "sensor_msgs"
   "OpenCV"
   "cv_bridge"
+  "OpenVINO"
+  
 )
 
 ament_target_dependencies(
@@ -48,17 +39,18 @@ ament_target_dependencies(
   "cv_bridge"
 )
 
-# target_include_directories(openvinotest PUBLIC
-#   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-#   $<INSTALL_INTERFACE:include/${PROJECT_NAME}>)
+target_link_libraries(test1 openvino)
+
 
 target_include_directories(test1 PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-  $<INSTALL_INTERFACE:include/${PROJECT_NAME}>)
+  $<INSTALL_INTERFACE:include/${PROJECT_NAME}>
+  openvino)
 
-  target_include_directories(detector_node PUBLIC
+target_include_directories(detector_node PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-  $<INSTALL_INTERFACE:include/${PROJECT_NAME}>)
+  $<INSTALL_INTERFACE:include/${PROJECT_NAME}>
+  )
 
 install(TARGETS 
   # openvinotest
