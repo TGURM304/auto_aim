@@ -44,13 +44,11 @@ target_link_libraries(test1 openvino)
 
 target_include_directories(test1 PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-  $<INSTALL_INTERFACE:include/${PROJECT_NAME}>
-  openvino)
+  $<INSTALL_INTERFACE:include/${PROJECT_NAME}>)
 
 target_include_directories(detector_node PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-  $<INSTALL_INTERFACE:include/${PROJECT_NAME}>
-  )
+  $<INSTALL_INTERFACE:include/${PROJECT_NAME}>)
 
 install(TARGETS 
   # openvinotest
