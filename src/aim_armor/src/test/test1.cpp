@@ -33,7 +33,7 @@ int main() {
 		    1.0 / 255.0); // 转为 f32 类型并归一化
 
 		ov::Shape input_shape = {
-		    1, 3, 64, 64}; // 假设模型输入为 64x64 的图像
+		    1, 3, 64, 64};
 		ov::Tensor input_tensor(
 		    ov::element::f32, input_shape,
 		    resized_image.data); // 使用 f32 类型
