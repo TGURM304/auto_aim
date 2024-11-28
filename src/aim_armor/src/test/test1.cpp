@@ -1,7 +1,7 @@
 #include <opencv2/opencv.hpp>
 #include <openvino/openvino.hpp>
 #include <iostream>
-#include <algorithm>  // std::max_element
+#include <algorithm>
 #include <vector>
 #include <map>
 #include <chrono>
@@ -15,7 +15,7 @@ int main() {
         ov::Core core;
 
         // 设置模型路径
-        std::string model_path = "./model/best.onnx";  // ONNX 模型路径
+        std::string model_path = "./model/best.onnx";
 
         // 读取 ONNX 模型并转换为 OpenVINO 格式
         auto model = core.read_model(model_path);
@@ -28,7 +28,7 @@ int main() {
         auto input_name = model->input().get_any_name();
         auto output_name = model->output().get_any_name();
 
-        // 类别标签（根据你的数据调整）
+        // 类别标签
         std::vector<std::string> class_labels = {"1", "2", "3", "4", "5", "base", "null", "qsz", "sb"};
 
         // 设置数据集根目录
