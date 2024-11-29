@@ -4,8 +4,6 @@
 #include <opencv2/opencv.hpp>
 #include <openvino/openvino.hpp>
 #include <toml.hpp>
-#include <opencv2/calib3d.hpp>
-#include <opencv2/core/mat.hpp>
 #include <string>
 
 class Armor_detector {
