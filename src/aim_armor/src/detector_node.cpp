@@ -2,7 +2,7 @@
 #include <sensor_msgs/msg/image.hpp>
 #include <cv_bridge/cv_bridge.hpp>
 #include <opencv2/opencv.hpp>
-
+#include "armor_detector.hpp"
 
 class ImageSubscriber: public rclcpp::Node {
 public:
@@ -29,9 +29,8 @@ private:
 			    msg->encoding.c_str());
 			return;
 		}
-
-		cv::imshow("detector_node", cv_ptr->image);
-		cv::waitKey(1);
+		Armor_detector detector;
+		detector.init();
 	}
 
 	rclcpp::Subscription<sensor_msgs::msg::Image>::SharedPtr
