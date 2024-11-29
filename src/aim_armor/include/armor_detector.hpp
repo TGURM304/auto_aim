@@ -1,5 +1,5 @@
-#ifndef _CAMERA_H_MINDVISION_
-#define _CAMERA_H_MINDVISION_
+#ifndef _AIMARMOR_H_ARMORDETECTOR_
+#define _AIMARMOR_H_ARMORDETECTOR_
 
 #include <opencv2/opencv.hpp>
 #include <openvino/openvino.hpp>
