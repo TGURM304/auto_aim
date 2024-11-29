@@ -2,7 +2,7 @@ title = "auto_aim"
 version = 1.0
 
 [camera]
-version = "MV" # MV：MindVision；HK：Hikvision
+version = "MV"  # MV：MindVision；HK：Hikvision
 
 [aim_aromr]
 model_path = "./assets/model/best-8.onnx"
