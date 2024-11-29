@@ -32,7 +32,7 @@ public:
 
 private:
     /// @brief 初始化配置文件
-    toml::table config = toml::parse("./assets/config.toml");
+    toml::table config = toml::parse_file("./assets/config.toml");
     /// @brief OpenVINO
 	ov::Core core;
     ov::InferRequest infer_request;
