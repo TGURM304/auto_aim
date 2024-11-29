@@ -29,8 +29,7 @@ private:
 			    msg->encoding.c_str());
 			return;
 		}
-		Armor_detector detector;
-		detector.init();
+		
 	}
 
 	rclcpp::Subscription<sensor_msgs::msg::Image>::SharedPtr
