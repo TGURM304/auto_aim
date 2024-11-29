@@ -1,0 +1,5 @@
+title = "auto_aim"
+version = 1.0
+
+[camera]
+version = "MV" # MV：MindVision；HK：Hikvision
