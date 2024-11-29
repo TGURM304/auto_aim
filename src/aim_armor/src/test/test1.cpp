@@ -15,7 +15,7 @@ int main() {
 		ov::Core core;
 
 		// 设置模型路径
-		std::string model_path = "./model/best.onnx";
+		std::string model_path = "./assets/model/best-8.onnx";
 
 		// 读取 ONNX 模型并转换为 OpenVINO 格式
 		auto model = core.read_model(model_path);
