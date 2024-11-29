@@ -30,8 +30,8 @@ int main() {
 
 		// 类别标签
 		std::vector<std::string> class_labels = {
-		    "1",    "2",    "3",   "4", "5",
-		    "base", "null", "qsz", "sb"};
+		    "1",    "2",    "3",   "4",
+		    "base", "qsz", "sb", "null"};
 
 		// 设置数据集根目录
 		std::string dataset_dir = "./testsets";
