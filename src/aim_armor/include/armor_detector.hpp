@@ -28,6 +28,8 @@ public:
      */
     std::string classify(cv::Mat image);
 
+
+
 private:
     /// @brief 初始化配置文件
     toml::table config = toml::parse_file("./assets/config.toml");
