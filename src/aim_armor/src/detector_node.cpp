@@ -62,7 +62,7 @@ private:
         // 创建 Armors 消息
         interfaces::msg::Armors armors_msg;
         armors_msg.header.stamp = this->get_clock()->now();  // 填充时间戳
-        armors_msg.header.frame_id = "camera_frame";  // 填充帧ID
+        armors_msg.header.frame_id = "armors_msg";  // 填充帧ID
         armors_msg.armors = armors;  // 将检测到的装甲板数组赋值给消息
 
         // 发布 Armors 消息
