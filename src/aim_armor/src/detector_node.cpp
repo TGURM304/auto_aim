@@ -8,17 +8,16 @@
 #include <geometry_msgs/msg/pose.hpp>
 #include <geometry_msgs/msg/point.hpp>
 
-class ImageSubscriber : public rclcpp::Node {
+class DetectorNode : public rclcpp::Node {
 public:
-    ImageSubscriber() : Node("detector_node") {
+    DetectorNode() : Node("detector_node") {
         subscription_ = this->create_subscription<sensor_msgs::msg::Image>(
             "camera/stream", 10,
-            std::bind(&ImageSubscriber::detector, this, std::placeholders::_1)
+            std::bind(&DetectorNode::detector, this, std::placeholders::_1)
         );
         
-        // 创建 Armors 消息的发布器
         armors_publisher_ = this->create_publisher<interfaces::msg::Armors>(
-            "armor_detection", 10
+            "detector/armors", 10
         );
     }
 
@@ -75,7 +74,7 @@ private:
 
 int main(int argc, char **argv) {
     rclcpp::init(argc, argv);
-    rclcpp::spin(std::make_shared<ImageSubscriber>());
+    rclcpp::spin(std::make_shared<DetectorNode>());
     rclcpp::shutdown();
     return 0;
 }
