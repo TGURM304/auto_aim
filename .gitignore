@@ -1,9 +1,9 @@
+tmp/
 build/
 install/
 log/
 Camera/
 testsets/
-
 
 .cache/
 .vscode/
