@@ -7,3 +7,6 @@ version = "MV"  # MV：MindVision；HK：Hikvision
 [aim_aromr]
 model_path = "./assets/model/best-8.onnx"
 classes = ["1", "2", "3", "4", "base", "qsz", "sb", "null"]
+
+[test]
+test_video = "./1.avi"
