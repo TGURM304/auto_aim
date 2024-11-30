@@ -24,7 +24,7 @@ public:
      * @brief 对装甲板中心图案进行分类
      * 
      * @param image 输入用于分类的图像
-     * @return std::string 
+     * @return 数据类别
      */
     std::string classify(cv::Mat image);
 
