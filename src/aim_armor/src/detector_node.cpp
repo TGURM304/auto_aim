@@ -37,8 +37,8 @@ private:
         std::vector<interfaces::msg::Armor> armors;
         for (int i = 0; i < 3; ++i) {
             interfaces::msg::Armor armor;
-            armor.number = "A" + std::to_string(i);
-            armor.type = "Type" + std::to_string(i);
+            armor.number = "1";
+            armor.type = "BIG";
             armor.distance_to_image_center = 100.0f;
 
             // 填充 Pose 信息
