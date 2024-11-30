@@ -14,6 +14,7 @@ endif()
 # find dependencies
 find_package(ament_cmake_auto REQUIRED)
 find_package(OpenVINO REQUIRED)
+find_package(interfaces REQUIRED)
 ament_auto_find_build_dependencies()
 
 
@@ -48,6 +49,7 @@ ament_target_dependencies(
   "OpenCV"
   "cv_bridge"
   "OpenVINO"
+  "interfaces"
 )
 
 # target_link_libraries(test1 openvino)
