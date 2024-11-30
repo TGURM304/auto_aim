@@ -1,25 +1,29 @@
 #include "armor_detector.hpp"
 
 
-Armor_detector::Armor_detector(){
-    printf("Armor_detector Start\n");
+ArmorDetector::ArmorDetector() {
+	printf("ArmorDetector Start\n");
 };
 
-Armor_detector::~Armor_detector(){
-    printf("Armor_detector Shutdown\n");
+ArmorDetector::~ArmorDetector() {
+	printf("ArmorDetector Shutdown\n");
 };
 
-
-int Armor_detector::init() {
+int ArmorDetector::init() {
 	try {
-        // 读取配置
-		std::string model_path = config["aim_aromr"]["model_path"].value_or("./assets/model/best-8.onnx");
-		auto classes_array = config["aim_aromr"]["classes"].as_array();
+		// 读取配置
+		std::string model_path =
+		    config["aim_aromr"]["model_path"].value_or(
+		        "./assets/model/best-8.onnx");
+		auto classes_array =
+		    config["aim_aromr"]["classes"].as_array();
 
 		// 初始化模型
 		auto model = core.read_model(model_path);
-		auto compiled_model = core.compile_model(model, "CPU");
-		infer_request = compiled_model.create_infer_request();
+		auto compiled_model =
+		    core.compile_model(model, "CPU");
+		infer_request =
+		    compiled_model.create_infer_request();
 
 		// 读取图像分类类别
 		size_t index = 0;
@@ -30,16 +34,18 @@ int Armor_detector::init() {
 			}
 		}
 		return 1;
-	} catch (const toml::parse_error& ex) {
-        std::cerr << "Error parsing TOML file: " << ex.what() << std::endl;
-        return -1;
-    } catch (const std::exception& ex) {
-        std::cerr << "Error initializing Armor_detector: " << ex.what() << std::endl;
-        return -1;
-    }
+	} catch(const toml::parse_error& ex) {
+		std::cerr << "Error parsing TOML file: "
+		          << ex.what() << std::endl;
+		return -1;
+	} catch(const std::exception& ex) {
+		std::cerr << "Error initializing ArmorDetector: "
+		          << ex.what() << std::endl;
+		return -1;
+	}
 }
 
-std::string Armor_detector::classify(cv::Mat image) {
+std::string ArmorDetector::classify(cv::Mat image) {
 
 	cv::resize(image, image, cv::Size(64, 64));
 	image.convertTo(image, CV_32F, 1.0 / 255.0); // 归一化

@@ -6,38 +6,38 @@
 #include <toml.hpp>
 #include <string>
 
-class Armor_detector {
-public:
-	Armor_detector();
 
-	~Armor_detector();
+class ArmorDetector {
+public:
+	ArmorDetector();
+
+	~ArmorDetector();
 
 	/**
-     * @brief 初始化装甲板检测类
-     * 
-     * @retval 1 初始化成功
-     * @retval -1 初始化失败
-     */
+	 * @brief 初始化装甲板检测类
+	 *
+	 * @retval 1 初始化成功
+	 * @retval -1 初始化失败
+	 */
 	int init();
 
-    /**
-     * @brief 对装甲板中心图案进行分类
-     * 
-     * @param image 输入用于分类的图像
-     * @return 数据类别
-     */
-    std::string classify(cv::Mat image);
-
-
+	/**
+	 * @brief 对装甲板中心图案进行分类
+	 *
+	 * @param image 输入用于分类的图像
+	 * @return 数据类别
+	 */
+	std::string classify(cv::Mat image);
 
 private:
-    /// @brief 初始化配置文件
-    toml::table config = toml::parse_file("./assets/config.toml");
-    /// @brief OpenVINO
+	/// @brief 初始化配置文件
+	toml::table config =
+	    toml::parse_file("./assets/config.toml");
+	/// @brief OpenVINO
 	ov::Core core;
-    ov::InferRequest infer_request;
-    /// @brief 定义图像分类类别
-    std::array<std::string, 8> classes;
+	ov::InferRequest infer_request;
+	/// @brief 定义图像分类类别
+	std::array<std::string, 8> classes;
 };
 
 #endif
