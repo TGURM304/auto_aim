@@ -63,7 +63,7 @@ std::pair<Light, LightCriterion> Light::from_contour(
 	return make_pair(
 	    Light{.pos = pos_v,
 	          .offset = len_half_pri * dir_v,
-	          .angle = theta,
+	          .angle = theta > 0 ? theta : -theta,
 	          .length = 2 * len_half_pri,
 	          .width = 2 * len_half_sec,
 	          .color = red_blue_ratio > 1.

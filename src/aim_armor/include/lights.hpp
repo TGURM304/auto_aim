@@ -17,6 +17,11 @@ enum ArmorColor {
 };
 
 
+/**
+ * @brief 灯条判据
+ *
+ * 使用内部的信息能够判断是否为有效灯条
+ */
 struct LightCriterion {
 	/// @brief 一票否决
 	/// 当计算过程出现错误等证明此灯条绝对无效的情况时此项为 `true`.
@@ -29,6 +34,7 @@ struct LightCriterion {
 	/// @brief 面积
 	double area;
 };
+// TODO: 全局的判断器
 
 
 struct Light {
