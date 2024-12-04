@@ -9,8 +9,9 @@ model_path = "./assets/model/best-8.onnx"
 classes = ["1", "2", "3", "4", "base", "qsz", "sb", "null"]
 
 [serial]
-device_name= "/dev/tty0"
-baud_rate = 115200
+port= "/dev/ttyUSB0"
+in_baud_rate = 115200
+out_baud_rate = 115200
 
 [test]
 test_video = "./1.avi"
