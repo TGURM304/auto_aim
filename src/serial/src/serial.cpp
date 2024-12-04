@@ -3,9 +3,11 @@
 
 
 struct __attribute__((packed)) Serial::Data{
-	uint8_t mode;
-	float pitch_angle;
-	float yaw_angle;
+	uint8_t head = 0x7E;
+	uint8_t mode = 0;
+	float pitch_angle = 0.0;
+	float yaw_angle = 0.0;
+	uint8_t tail = 0x7F;
 };
 
 Serial::Serial(){
@@ -59,34 +61,23 @@ int Serial::init(){
 }
 
 void Serial::sendData(int fd, Data& data) {
-    uint8_t frame[sizeof(Data) + 2];
-
-    // 帧头
-    frame[0] = 0x7E;
-
-    // 数据
-    std::memcpy(&frame[1], &data, sizeof(Data));
-
-    // 帧尾
-    frame[sizeof(Data) + 1] = 0x7F;
-
-    // 发送数据
-    write(fd, frame, sizeof(frame));
+	write(fd, reinterpret_cast<uint8_t*>(&data), sizeof(Data));
 }
 
 
 bool Serial::receiveData(int fd, Data& data) {
-    uint8_t frame[sizeof(Data) + 2];
+    uint8_t buffer[sizeof(Data)];
 
-    // 读取数据
-    read(fd, frame, sizeof(frame));
-
-    // 校验帧头和帧尾
-    if (frame[0] == 0x7E && frame[sizeof(Data) + 1] == 0x7F) {
-        std::memcpy(&data, &frame[1], sizeof(Data));
-		return true;
+    // 从串口读取数据
+    ssize_t bytes_read = read(fd, buffer, sizeof(Data));
+    
+    if (bytes_read == -1) {
+        return false;
+    } else if (bytes_read != sizeof(Data)) {
+        return false;
     } else {
-        std::cerr << "error" << std::endl;
-		return false;
+        // 将接收到的字节流转换回结构体
+        std::memcpy(&data, buffer, sizeof(Data));
+		return true;
     }
 }
