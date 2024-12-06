@@ -57,7 +57,7 @@ struct Light {
 	/// @brief 颜色
 	ArmorColor color;
 
-	/***
+	/**
 	 * @brief 获取灯条的两端点坐标
 	 *
 	 * 分别是两短边的中点. 不保证顺序.
@@ -66,14 +66,25 @@ struct Light {
 		return std::make_pair(pos + offset, pos - offset);
 	}
 
-	/***
+	/**
 	 * @brief 获取灯条以整型储存的端点坐标
 	 *
 	 * 分别是两短边的中点. 不保证顺序.
 	 */
 	std::pair<Point2i, Point2i> int_points() {
-		return std::make_pair(Point2i(pos + offset),
-		                      Point2i(pos - offset));
+		return std::make_pair(Point2i(pos + offset), Point2i(pos - offset));
+	}
+
+	/**
+	 * @brief 获取完整装甲板边尺寸的端点坐标
+	 *
+	 * 灯条稍短于装甲板边, 补上这个差值.
+	 *
+	 * @warning 不保证绝对精确到装甲板边缘
+	 */
+	std::pair<Vec2d, Vec2d> full_points() {
+		double scale = 2.0;
+		return std::make_pair(pos + scale * offset, pos - scale * offset);
 	}
 
 	/**
@@ -85,8 +96,8 @@ struct Light {
 	 *
 	 * 可通过判据检查是否是有效的灯条.
 	 */
-	static std::pair<Light, LightCriterion> from_contour(
-	    const Contour& contour, const cv::Mat& img);
+	static std::pair<Light, LightCriterion> from_contour(const Contour& contour,
+	                                                     const cv::Mat& img);
 
 	/**
 	 * @brief 尝试从轮廓生成灯条
