@@ -60,7 +60,7 @@ private:
 	 * @return 返回一个元组, 内容是: (长宽比, 两边夹角)
 	 */
 	std::pair<float, float> rect_info(const std::vector<cv::Point2d>& kpnts,
-	                                  const Mat3d& camera);
+	                                  const Matx33d& camera);
 	// TODO: dist 参数
 	// TODO: camera 和 dist 应储存在类中, 还是全局保存?
 

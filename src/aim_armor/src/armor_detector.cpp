@@ -1,5 +1,9 @@
 #include "armor_detector.hpp"
 
+#include <algorithm>
+#include <cmath>
+#include <opencv2/core.hpp>
+#include <opencv2/core/mat.hpp>
 #include <opencv2/core/matx.hpp>
 #include <opencv2/core/types.hpp>
 #include <opencv2/imgproc.hpp>
@@ -87,7 +91,7 @@ T vcross(cv::Vec<T, 2> x, cv::Vec<T, 2> y) {
  * @warning `pnts` 数组的长度必须等于 4
  */
 template<typename T>
-cv::Point_<T> pcenter(const cv::Point_<T> pnts[]) {
+cv::Point_<T> pcenter(const std::vector<cv::Point_<T>>& pnts) {
 	auto p0 = pnts[0];
 	T mu = pcross(pnts[3] - p0, pnts[1] - p0)
 	    / pcross(pnts[2] - p0, pnts[1] - pnts[3]);
@@ -117,6 +121,40 @@ std::vector<cv::Point2d> ArmorDetector::sort_points(const Light& l1,
 	}
 
 	return sorted_pnts;
+}
+
+/**
+ * @brief 转为齐次坐标
+ * (x, y) -> (x, y, 1)
+ */
+cv::Vec3d h_(const cv::Point2d& p) {
+	return cv::Vec3d(p.x, p.y, 1.);
+}
+
+std::pair<float, float> ArmorDetector::rect_info(
+    const std::vector<cv::Point2d>& kpnts, const Matx33d& camera) {
+	// TODO: 去畸变
+
+	cv::Matx33d C_inv;
+	cv::invert(camera, C_inv);
+
+	auto center = C_inv * h_(pcenter(kpnts));
+
+	double lambda1 = 2 * (center - C_inv * h_(kpnts[0]))[0]
+	    / (C_inv * (h_(kpnts[2]) - h_(kpnts[0])))[0];
+	auto diag1 = lambda1 * h_(kpnts[2]) - (2 - lambda1) * h_(kpnts[0]);
+
+	double lambda2 = 2 * (center - C_inv * h_(kpnts[1]))[0]
+	    / (C_inv * (h_(kpnts[3]) - h_(kpnts[1])))[0];
+	auto diag2 = lambda2 * h_(kpnts[3]) - (2 - lambda2) * h_(kpnts[1]);
+
+	auto a = diag1 - diag2;
+	auto b = diag1 + diag2;
+	double la = cv::norm(a);
+	double lb = cv::norm(b);
+
+	return std::make_pair(std::max(la / lb, lb / la),
+	                      std::acos(a.dot(b) / (la * lb)));
 }
 
 void ArmorDetector::perspective(const cv::Mat& img, cv::Mat& out,
