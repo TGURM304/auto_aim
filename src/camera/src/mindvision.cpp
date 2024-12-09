@@ -1,4 +1,5 @@
 #include "mindvision.hpp"
+#include <sys/types.h>
 #include <chrono>
 
 MindVision::MindVision() {
@@ -49,18 +50,26 @@ int MindVision::init(int channel = 2) {
 	// 获得相机的特性描述结构体
 	CameraGetCapability(camera_, &capability_);
 
-	// 关闭自动曝光
-	// CameraSetAeState(camera_, 0);
+	// 获取配置
+	uint16_t aestate = config["mindvision"]["auto_exposure "].value_or(0);
+	uint16_t exposuretime = config["mindvision"]["exposure_time"].value_or(100);
+	uint16_t gamma = config["mindvision"]["gamma"].value_or(100);
+	uint16_t contrast = config["mindvision"]["contrast"].value_or(100);
+	uint16_t saturation = config["mindvision"]["saturation"].value_or(100);
 
-	// 设置曝光时间
-	// CameraSetExposureTime(camera_, 1000 * 20);
+	if (!aestate){
+		// 关闭自动曝光
+		CameraSetAeState(camera_, 0);
+		// 设置曝光时间
+		CameraSetExposureTime(camera_, exposuretime * 1000);
+	}
 
 	// 设置gamma值
-	CameraSetGamma(camera_, 110);
+	CameraSetGamma(camera_, gamma);
 	// 设置对比度
-	CameraSetContrast(camera_, 100);
+	CameraSetContrast(camera_, contrast);
 	// 设置饱和度
-	CameraSetSaturation(camera_, 100);
+	CameraSetSaturation(camera_, saturation);
 	// 设置帧率ID, 0为60帧,1为108帧(?)
 	CameraSetFrameSpeed(camera_, 1);
 

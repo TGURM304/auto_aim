@@ -2,7 +2,7 @@
 #define _CAMERA_H_MINDVISION_
 
 #include <opencv2/opencv.hpp>
-
+#include <toml.hpp>
 #include <MVSDK/CameraApi.h>
 
 
@@ -62,6 +62,8 @@ private:
 	CameraHandle camera_;
 	/// @brief 设备描述信息
 	tSdkCameraCapbility capability_;
+	/// @brief 读取配置文件
+	toml::table config = toml::parse_file("./assets/config.toml");
 };
 
 #endif
