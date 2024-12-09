@@ -51,7 +51,7 @@ int MindVision::init(int channel = 2) {
 	CameraGetCapability(camera_, &capability_);
 
 	// 获取配置
-	uint16_t aestate = config["mindvision"]["auto_exposure "].value_or(0);
+	uint8_t aestate = config["mindvision"]["auto_exposure "].value_or(0);
 	uint16_t exposuretime = config["mindvision"]["exposure_time"].value_or(100);
 	uint16_t gamma = config["mindvision"]["gamma"].value_or(100);
 	uint16_t contrast = config["mindvision"]["contrast"].value_or(100);
