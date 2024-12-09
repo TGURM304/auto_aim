@@ -9,6 +9,8 @@
 class StreamNode: public rclcpp::Node {
 public:
     StreamNode() : Node("stream_node") {
+        config = toml::parse_file("./assets/config.toml");
+        camera_version = config["camera"]["version"].value_or("MV");
         while (true) {
             try {
                 if (camera_version == "MV") {
