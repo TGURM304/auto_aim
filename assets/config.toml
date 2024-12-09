@@ -4,6 +4,13 @@ version = 1.0
 [camera]
 version = "MV"  # MV：MindVision；HK：Hikvision
 
+[mindvision]
+gamma = 110          # 伽马值 
+contrast = 100       # 对比度
+saturation = 100     # 饱和度
+auto_exposure = 0    # 是否开启自动曝光, 0: 否, 1: 是
+exposure_time = 30   # 曝光时间(ms)
+
 [aim_aromr]
 model_path = "./assets/model/best-8.onnx"
 classes = ["1", "2", "3", "4", "base", "qsz", "sb", "null"]
