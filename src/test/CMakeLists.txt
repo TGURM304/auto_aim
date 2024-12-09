@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.8)
-project(getstreamtest)
+project(test)
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -18,17 +18,17 @@ find_package(sensor_msgs REQUIRED)
 find_package(cv_bridge REQUIRED)
 
 
-add_executable(getstreamtest src/getstreamtest.cpp)
+add_executable(getstream src/getstream.cpp)
 
 ament_target_dependencies(
-  getstreamtest
+  getstream
   "rclcpp"
   "OpenCV"
   "sensor_msgs"
   "cv_bridge"
 )
 
-install(TARGETS getstreamtest
+install(TARGETS getstream
   DESTINATION lib/${PROJECT_NAME})
 
 if(BUILD_TESTING)
