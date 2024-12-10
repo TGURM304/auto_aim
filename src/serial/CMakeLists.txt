@@ -11,6 +11,7 @@ endif()
 
 # find dependencies
 find_package(ament_cmake_auto REQUIRED)
+find_package(interfaces REQUIRED)
 ament_auto_find_build_dependencies()
 
 
@@ -20,6 +21,7 @@ add_executable(serial_node "src/serial_node.cpp" "src/serial.cpp")
 ament_target_dependencies(
   serial_node
   "rclcpp"
+  "interfaces"
 )
 
 target_include_directories(serial_node PUBLIC
