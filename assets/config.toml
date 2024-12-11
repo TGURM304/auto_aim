@@ -3,7 +3,7 @@ version = 1.0
 
 [camera]
 version = "MV"  # MV：MindVision；HK：Hikvision
-matrix = [
+matx33d = [
     1050.176611784291254, 0.0, 301.8079077070227,
     0.0, 1050.3160947995561, 225.2905375296807,
     0.0, 0.0, 1.0
