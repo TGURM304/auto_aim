@@ -87,6 +87,10 @@ private:
 	ov::InferRequest infer_request;
 	/// @brief 定义图像分类类别
 	std::array<std::string, 8> classes;
+	///	@brief 相机内参
+	cv::Matx33d camera;
+	///	@brief 畸变参数
+	cv::Matx<double, 1, 5> dist;
 };
 
 #endif

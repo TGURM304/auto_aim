@@ -23,6 +23,23 @@ int ArmorDetector::init() {
 		std::string model_path = config["aim_aromr"]["model_path"].value_or(
 		    "./assets/model/best-8.onnx");
 		auto classes_array = config["aim_aromr"]["classes"].as_array();
+		auto dist_toml = config["camera"]["dist"].as_array();
+		auto matrix_toml = config["camera"]["matx33d"].as_array();
+
+		// 相机内参 matx33d
+		int matx33d_idx = 0;
+		for (const auto& value : *matrix_toml) {
+    		camera(matx33d_idx / 3, matx33d_idx % 3) = value.value_or(0.0);
+    		matx33d_idx++;
+		}
+		
+		// 畸变系数 dist
+		int dist_idx = 0;
+		for (const auto& value : *dist_toml) {
+    		dist(0, dist_idx) = value.value_or(0.0);
+    		dist_idx++;
+		}
+
 
 		// 初始化模型
 		auto model = core.read_model(model_path);
