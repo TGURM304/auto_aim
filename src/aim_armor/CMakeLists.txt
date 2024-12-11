@@ -21,7 +21,7 @@ ament_auto_find_build_dependencies()
 # add_executable(test1 "src/test/test1.cpp")
 # add_executable(test2 "src/test/test2.cpp")
 add_executable(detector_node "src/detector_node.cpp" "src/armor_detector.cpp")
-
+add_executable(tracker_node "src/tracker_node.cpp")
 
 # ament_target_dependencies(
 #   test1
@@ -68,10 +68,15 @@ target_include_directories(detector_node PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
   $<INSTALL_INTERFACE:include/${PROJECT_NAME}>)
 
+target_include_directories(tracker_node PUBLIC
+  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+  $<INSTALL_INTERFACE:include/${PROJECT_NAME}>)
+
 install(TARGETS 
   # test1
   # test2
   detector_node
+  tracker_node
   DESTINATION lib/${PROJECT_NAME})
 
 if(BUILD_TESTING)
