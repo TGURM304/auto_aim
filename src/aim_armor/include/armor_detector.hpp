@@ -5,10 +5,10 @@
 #include <opencv2/opencv.hpp>
 #include <openvino/openvino.hpp>
 #include <string>
-#include <utility>
 
 #include "toml.hpp"
 #include "lights.hpp"
+#include "armors.hpp"
 
 
 class ArmorDetector {
@@ -26,15 +26,15 @@ public:
 	 */
 	int init();
 
+private:
 	/**
 	 * @brief 对装甲板中心图案进行分类
 	 *
 	 * @param image 输入用于分类的图像
-	 * @return 数据类别
+	 * @return 装甲板类别
 	 */
 	std::string classify(const cv::Mat& image);
 
-private:
 	/**
 	 * @brief 按顺序排列两个灯条的 4 个端点
 	 *
@@ -58,11 +58,11 @@ private:
 	 * @param kpnts 矩形四点在图中的坐标
 	 *              必须按顺序排列.
 	 *              参见 `ArmorDetector::sort_points`
-	 * @return 返回一个元组, 内容是: (长宽比, 两边夹角)
+	 * @return 返回一个判据, 可通过判据检查是否是有效的装甲板
 	 */
-	std::pair<float, float> rect_info(const std::vector<cv::Point2d>& kpnts,
-	                                  const Matx33d& camera,
-	                                  const Matx<double, 1, 5>& dist);
+	ArmorCriterion rect_info(const std::vector<cv::Point2d>& kpnts,
+	                         const cv::Matx33d& camera,
+	                         const cv::Matx<double, 1, 5>& dist);
 
 	/**
 	 * @brief 透视变换并二值化
@@ -82,17 +82,14 @@ private:
 
 private:
 	ov::Core core;
-
 	ov::InferRequest infer_request;
 
 	/// @brief 定义图像分类类别
 	std::array<std::string, 8> classes;
 
-	///	@brief 相机内参
 	cv::Matx33d camera;
-
-	///	@brief 畸变参数
 	cv::Matx<double, 1, 5> dist;
 };
+
 
 #endif

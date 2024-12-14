@@ -7,8 +7,7 @@
 #include <utility>
 #include <vector>
 
-using namespace cv;
-using Contour = std::vector<Point>;
+using Contour = std::vector<cv::Point>;
 
 
 enum ArmorColor {
@@ -24,6 +23,7 @@ enum ArmorColor {
  */
 struct LightCriterion {
 	/// @brief 一票否决
+	///
 	/// 当计算过程出现错误等证明此灯条绝对无效的情况时此项为 `true`.
 	/// 此时其余一切数据都不能相信, 包括灯条信息与其他判据.
 	bool one_vote_no;
@@ -34,16 +34,15 @@ struct LightCriterion {
 	/// @brief 面积
 	double area;
 };
-// TODO: 全局的判断器
 
 
 struct Light {
 	/// @brief 质心坐标
-	Vec2d pos;
+	cv::Vec2d pos;
 
 	/// @brief 偏移量
 	/// pos +- offset 即为端点
-	Vec2d offset;
+	cv::Vec2d offset;
 
 	/// @brief 偏角. 弧度制
 	double angle;
@@ -62,7 +61,7 @@ struct Light {
 	 *
 	 * 分别是两短边的中点. 不保证顺序.
 	 */
-	std::pair<Vec2d, Vec2d> points() {
+	std::pair<cv::Vec2d, cv::Vec2d> points() {
 		return std::make_pair(pos + offset, pos - offset);
 	}
 
@@ -71,8 +70,9 @@ struct Light {
 	 *
 	 * 分别是两短边的中点. 不保证顺序.
 	 */
-	std::pair<Point2i, Point2i> int_points() {
-		return std::make_pair(Point2i(pos + offset), Point2i(pos - offset));
+	std::pair<cv::Point2i, cv::Point2i> int_points() {
+		return std::make_pair(cv::Point2i(pos + offset),
+		                      cv::Point2i(pos - offset));
 	}
 
 	/**
@@ -82,7 +82,7 @@ struct Light {
 	 *
 	 * @warning 不保证绝对精确到装甲板边缘
 	 */
-	std::pair<Vec2d, Vec2d> full_points() {
+	std::pair<cv::Vec2d, cv::Vec2d> full_points() {
 		double scale = 2.0;
 		return std::make_pair(pos + scale * offset, pos - scale * offset);
 	}

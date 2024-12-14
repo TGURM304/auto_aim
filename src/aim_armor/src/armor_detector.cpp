@@ -1,6 +1,5 @@
 #include "armor_detector.hpp"
 
-#include <algorithm>
 #include <opencv2/core.hpp>
 #include <opencv2/core/mat.hpp>
 #include <opencv2/core/matx.hpp>
@@ -158,9 +157,9 @@ cv::Vec3d h_(const cv::Point2d& p) {
 	return cv::Vec3d(p.x, p.y, 1.);
 }
 
-std::pair<float, float> ArmorDetector::rect_info(
-    const std::vector<cv::Point2d>& kpnts, const Matx33d& camera,
-    const Matx<double, 1, 5>& dist) {
+ArmorCriterion ArmorDetector::rect_info(const std::vector<cv::Point2d>& kpnts,
+                                        const cv::Matx33d& camera,
+                                        const cv::Matx<double, 1, 5>& dist) {
 	std::vector<cv::Point2d> ud_kpnts{};
 	cv::undistortPoints(kpnts, ud_kpnts, camera, dist);
 
@@ -169,12 +168,18 @@ std::pair<float, float> ArmorDetector::rect_info(
 
 	auto center = C_inv * h_(pcenter(ud_kpnts));
 
-	double lambda1 = 2 * (center - C_inv * h_(ud_kpnts[0]))[0]
-	    / (C_inv * (h_(ud_kpnts[2]) - h_(ud_kpnts[0])))[0];
+	double tmp = 0.;
+
+	tmp = (C_inv * (h_(ud_kpnts[2]) - h_(ud_kpnts[0])))[0];
+	if(tmp < 1e-6)
+		return ArmorCriterion{.one_vote_no = true};
+	double lambda1 = 2 * (center - C_inv * h_(ud_kpnts[0]))[0] / tmp;
 	auto diag1 = lambda1 * h_(ud_kpnts[2]) - (2 - lambda1) * h_(ud_kpnts[0]);
 
-	double lambda2 = 2 * (center - C_inv * h_(ud_kpnts[1]))[0]
-	    / (C_inv * (h_(ud_kpnts[3]) - h_(ud_kpnts[1])))[0];
+	tmp = (C_inv * (h_(ud_kpnts[3]) - h_(ud_kpnts[1])))[0];
+	if(tmp < 1e-6)
+		return ArmorCriterion{.one_vote_no = true};
+	double lambda2 = 2 * (center - C_inv * h_(ud_kpnts[1]))[0] / tmp;
 	auto diag2 = lambda2 * h_(ud_kpnts[3]) - (2 - lambda2) * h_(ud_kpnts[1]);
 
 	auto a = diag1 - diag2;
@@ -182,8 +187,20 @@ std::pair<float, float> ArmorDetector::rect_info(
 	double la = cv::norm(a);
 	double lb = cv::norm(b);
 
-	return std::make_pair(std::max(la / lb, lb / la),
-	                      std::acos(a.dot(b) / (la * lb)));
+	auto oa = kpnts[2] - kpnts[0];
+	auto ob = kpnts[3] - kpnts[1];
+	double ola = cv::norm(oa);
+	double olb = cv::norm(ob);
+	double theta = std::acos(oa.dot(ob) / (ola * olb));
+
+	using namespace std;
+	using namespace std::numbers;
+	return ArmorCriterion{
+	    .one_vote_no = false,
+	    .aspect_ratio = max(la / lb, lb / la),
+	    .edge_angle = acos(a.dot(b) / (la * lb)),
+	    .original_angle = min(theta, pi - theta),
+	};
 }
 
 void ArmorDetector::perspective(const cv::Mat& img, cv::Mat& out,
@@ -200,9 +217,9 @@ void ArmorDetector::perspective(const cv::Mat& img, cv::Mat& out,
 	                     0  , 0,       1      };
 	// clang-format on
 
-	Mat number_img;
+	cv::Mat number_img;
 	cv::warpPerspective(img, number_img, Cut * P, cv::Point(size, size));
-	Mat gray_number_img;
+	cv::Mat gray_number_img;
 	cv::cvtColor(number_img, gray_number_img, cv::COLOR_BGR2GRAY);
 	cv::threshold(gray_number_img, out, 0, 255,
 	              cv::THRESH_OTSU | cv::THRESH_BINARY);
