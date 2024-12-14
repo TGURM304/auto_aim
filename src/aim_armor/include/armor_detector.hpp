@@ -80,6 +80,24 @@ private:
 	void perspective(const cv::Mat& img, cv::Mat& out,
 	                 const std::vector<cv::Point2d>& kpnts, int size);
 
+	/**
+	 * @brief 尝试使用 PnP 解算计算目标装甲板在相机坐标系下的位置
+	 *
+	 * 计算前会根据矫正相机畸变.
+	 *
+	 * @param kpnts      装甲板灯条的 4 个顶点.
+	 *                   必须按顺序排列.
+	 *                   参见 `ArmorDetector::sort_points`
+	 * @param armor_size 装甲板大小
+	 * @return 返回一个元组: (装甲板中心的位置, 装甲板法向量).
+	 *
+	 * 上面说的都是在 相机坐标系 下. 法向量经过归一化.
+	 * 装甲板法向量, 是指在装甲板正面方向的法向量. 所谓正面, 是指有图案的那一面.
+	 */
+	std::optional<std::pair<cv::Vec3d, cv::Vec3d>> pnp_solver(
+	    const std::vector<cv::Point2d>& kpnts, ArmorSize armor_size,
+	    const cv::Matx33d& camera, const cv::Matx<double, 1, 5>& dist);
+
 private:
 	ov::Core core;
 	ov::InferRequest infer_request;

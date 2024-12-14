@@ -1,5 +1,8 @@
 #include "armor_detector.hpp"
 
+#include <optional>
+#include <utility>
+#include <opencv2/calib3d.hpp>
 #include <opencv2/core.hpp>
 #include <opencv2/core/mat.hpp>
 #include <opencv2/core/matx.hpp>
@@ -223,4 +226,41 @@ void ArmorDetector::perspective(const cv::Mat& img, cv::Mat& out,
 	cv::cvtColor(number_img, gray_number_img, cv::COLOR_BGR2GRAY);
 	cv::threshold(gray_number_img, out, 0, 255,
 	              cv::THRESH_OTSU | cv::THRESH_BINARY);
+}
+
+std::optional<std::pair<cv::Vec3d, cv::Vec3d>> ArmorDetector::pnp_solver(
+    const std::vector<cv::Point2d>& kpnts, ArmorSize armor_size,
+    const cv::Matx33d& camera, const cv::Matx<double, 1, 5>& dist) {
+	std::vector<cv::Point2d> img_pnts{};
+	cv::undistortPoints(kpnts, img_pnts, camera, dist);
+
+	std::vector<cv::Point3d> obj_pnts{};
+	if(armor_size == ArmorSize::BIG) {
+		// clang-format off
+		obj_pnts = {{-BIG_ARMOR_WIDTH/2, -BIG_ARMOR_HEIGHT/2, 0},
+		            {-BIG_ARMOR_WIDTH/2,  BIG_ARMOR_HEIGHT/2, 0},
+		            { BIG_ARMOR_WIDTH/2,  BIG_ARMOR_HEIGHT/2, 0},
+		            { BIG_ARMOR_WIDTH/2, -BIG_ARMOR_HEIGHT/2, 0}};
+		// clang-format on
+	} else if(armor_size == ArmorSize::SMALL) {
+		// clang-format off
+		obj_pnts = {{-SMALL_ARMOR_WIDTH/2, -SMALL_ARMOR_HEIGHT/2, 0},
+		            {-SMALL_ARMOR_WIDTH/2,  SMALL_ARMOR_HEIGHT/2, 0},
+		            { SMALL_ARMOR_WIDTH/2,  SMALL_ARMOR_HEIGHT/2, 0},
+		            { SMALL_ARMOR_WIDTH/2, -SMALL_ARMOR_HEIGHT/2, 0}};
+		// clang-format on
+	}
+
+	cv::Vec3d rvec, tvec;
+	bool succ = cv::solvePnP(obj_pnts, img_pnts, camera, dist, rvec, tvec);
+	if(!succ)
+		return std::nullopt;
+
+	// 再一次优化的提高非常有限
+	//cv::solvePnPRefineLM(obj_pnts, img_pnts, camera, dist, rvec, tvec);
+
+	cv::Matx33d R;
+	Rodrigues(rvec, R);
+
+	return std::make_pair(tvec, R * cv::Vec3d(0, 0, 1));
 }
