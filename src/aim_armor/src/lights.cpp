@@ -7,20 +7,18 @@
 #include <utility>
 
 
-std::pair<Light, LightCriterion> Light::from_contour(
-    const Contour& contour, const cv::Mat& img) {
+std::pair<Light, LightCriterion> Light::from_contour(const Contour& contour,
+                                                     const cv::Mat& img) {
 	using namespace std;
 	using namespace std::numbers;
 	using namespace cv;
 
 	Moments m = cv::moments(contour);
 	if(m.m00 < 1e-6)
-		return make_pair(
-		    Light(), LightCriterion{.one_vote_no = true});
+		return make_pair(Light(), LightCriterion{.one_vote_no = true});
 
 	// 几何计算
-	double delta_root = sqrtf(4 * m.mu11 * m.mu11
-	                          + powf(m.mu20 - m.mu02, 2));
+	double delta_root = sqrtf(4 * m.mu11 * m.mu11 + powf(m.mu20 - m.mu02, 2));
 	double A = m.mu20 - m.mu02 + delta_root;
 
 	double theta = pi / 2;
@@ -32,12 +30,10 @@ std::pair<Light, LightCriterion> Light::from_contour(
 		theta = atanf(B);
 	}
 
-	double var_pri =
-	    .5 * (m.mu20 + m.mu02 + delta_root) / m.m00;
+	double var_pri = .5 * (m.mu20 + m.mu02 + delta_root) / m.m00;
 	double len_half_pri = sqrtf(3 * var_pri);
 
-	double var_sec =
-	    .5 * (m.mu20 + m.mu02 - delta_root) / m.m00;
+	double var_sec = .5 * (m.mu20 + m.mu02 - delta_root) / m.m00;
 	double len_half_sec = sqrtf(3 * var_sec);
 
 	Vec2d dir_v = Vec2d(x, y);
@@ -50,35 +46,30 @@ std::pair<Light, LightCriterion> Light::from_contour(
 	double y_list[] = {-0.5, -0.3, 0., 0.3, 0.5};
 	for(double x: x_list) {
 		for(double y: y_list) {
-			auto pos = pos_v + x * len_half_sec * dir_sec_v
-			    + y * len_half_pri * dir_v;
-			color +=
-			    img.at<Vec3i>((int)pos[1], (int)pos[0]);
+			auto pos =
+			    pos_v + x * len_half_sec * dir_sec_v + y * len_half_pri * dir_v;
+			color += img.at<Vec3i>((int)pos[1], (int)pos[0]);
 		}
 	}
 	double red_blue_ratio =
 	    // 加 1 防止出现除 0 错误
 	    (double)(color[2] + 1) / (color[0] + 1);
 
-	return make_pair(
-	    Light{.pos = pos_v,
-	          .offset = len_half_pri * dir_v,
-	          .angle = theta > 0 ? theta : -theta,
-	          .length = 2 * len_half_pri,
-	          .width = 2 * len_half_sec,
-	          .color = red_blue_ratio > 1.
-	              ? ArmorColor::RED
-	              : ArmorColor::BLUE},
-	    LightCriterion{
-	        .one_vote_no = false,
-	        .aspect_ratio = len_half_pri / len_half_sec,
-	        .area = m.m00});
+	return make_pair(Light{.pos = pos_v,
+	                       .offset = len_half_pri * dir_v,
+	                       .angle = theta > 0 ? theta : -theta,
+	                       .length = 2 * len_half_pri,
+	                       .width = 2 * len_half_sec,
+	                       .color = red_blue_ratio > 1. ? ArmorColor::RED
+	                                                    : ArmorColor::BLUE},
+	                 LightCriterion{.one_vote_no = false,
+	                                .aspect_ratio = len_half_pri / len_half_sec,
+	                                .area = m.m00});
 }
 
 std::optional<Light> Light::try_from_contour(
     const Contour& contour, const cv::Mat& img,
-    bool (*check)(const LightCriterion&)) {
+    std::function<bool(const LightCriterion&)> check) {
 	auto ans = Light::from_contour(contour, img);
-	return check(ans.second) ? std::make_optional(ans.first)
-	                         : std::nullopt;
+	return check(ans.second) ? std::make_optional(ans.first) : std::nullopt;
 }

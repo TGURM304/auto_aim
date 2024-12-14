@@ -20,8 +20,9 @@ public:
 	/**
 	 * @brief 初始化装甲板检测类
 	 *
-	 * @retval 1  初始化成功
-	 * @retval -1 初始化失败
+	 * @return 返回错误码. 非 0 即为失败
+	 * @retval -1 初始化失败: 解析配置文件失败
+	 * @retval -2 其他错误
 	 */
 	int init();
 
@@ -80,15 +81,16 @@ private:
 	                 const std::vector<cv::Point2d>& kpnts, int size);
 
 private:
-	/// @brief 初始化配置文件
-	toml::table config = toml::parse_file("./assets/config.toml");
-	/// @brief OpenVINO
 	ov::Core core;
+
 	ov::InferRequest infer_request;
+
 	/// @brief 定义图像分类类别
 	std::array<std::string, 8> classes;
+
 	///	@brief 相机内参
 	cv::Matx33d camera;
+
 	///	@brief 畸变参数
 	cv::Matx<double, 1, 5> dist;
 };

@@ -108,7 +108,7 @@ struct Light {
 	 */
 	static std::optional<Light> try_from_contour(
 	    const Contour& contour, const cv::Mat& img,
-	    bool (*check)(const LightCriterion&));
+	    std::function<bool(const LightCriterion&)> check);
 };
 
 

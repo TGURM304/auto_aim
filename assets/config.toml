@@ -2,29 +2,34 @@ title = "auto_aim"
 version = 1.0
 
 [camera]
-version = "MV"  # MV：MindVision；HK：Hikvision
-matx33d = [
-    1050.176611784291254, 0.0, 301.8079077070227,
-    0.0, 1050.3160947995561, 225.2905375296807,
-    0.0, 0.0, 1.0
-    ]
-dist = [-0.0893641782114391, -0.5153697191214612, -0.0008147925966741238, -0.0000383217287733705, 8.961592240034004]
+version = "MV" # MV: MindVision; HK: Hikvision
+focal = [1050.176611784291254, 1050.3160947995561]
+center = [301.8079077070227, 225.2905375296807]
+dist = [
+  -0.0893641782114391,
+  -0.5153697191214612,
+  -0.0008147925966741238,
+  -0.0000383217287733705,
+  8.961592240034004,
+]
 
 [mindvision]
-gamma = 110          # 伽马值 
-contrast = 100       # 对比度
-saturation = 100     # 饱和度
-auto_exposure = 0    # 是否开启自动曝光, 0: 否, 1: 是
-exposure_time = 30   # 曝光时间(ms)
+gamma = 110           # 伽马值
+contrast = 100        # 对比度
+saturation = 100      # 饱和度
+auto_exposure = false # 是否开启自动曝光
+exposure_time = 30    # 曝光时间 (ms)
 
 [aim_aromr]
-model_path = "./assets/model/best-8.onnx"
+model_path = "assets/model/best-8.onnx"
 classes = ["1", "2", "3", "4", "base", "qsz", "sb", "null"]
 
 [serial]
-port= "/dev/ttyUSB0"
+port = "/dev/ttyUSB0"
 in_baud_rate = 115200
 out_baud_rate = 115200
 
 [test]
 test_video = "./1.avi"
+
+# TODO: 重排与拆分

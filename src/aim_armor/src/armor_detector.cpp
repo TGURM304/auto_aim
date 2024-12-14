@@ -17,53 +17,61 @@ ArmorDetector::~ArmorDetector() {
 
 int ArmorDetector::init() {
 	try {
-		// 读取配置
-		std::string model_path = config["aim_aromr"]["model_path"].value_or(
-		    "./assets/model/best-8.onnx");
-		auto classes_array = config["aim_aromr"]["classes"].as_array();
-		auto dist_toml = config["camera"]["dist"].as_array();
-		auto matrix_toml = config["camera"]["matx33d"].as_array();
-		// FIXME: 更改相机内参在配置文件中的段名
-		// TODO: 拆分内参为 焦距 focal; 主点 center
+		toml::table config = toml::parse_file("assets/config.toml");
 
 		// 相机内参 camera
-		int matx33d_idx = 0;
-		for(const auto& value: *matrix_toml) {
-			camera(matx33d_idx / 3, matx33d_idx % 3) = value.value_or(0.0);
-			matx33d_idx++;
-		}
+		auto focal_toml = config["camera"]["focal"].as_array();
+		auto center_toml = config["camera"]["center"].as_array();
+		// 方便地读取焦距与光心信息
+		// 焦距
+		auto f = [&focal_toml](size_t i) {
+			return focal_toml->get(i)->value_or(0.);
+		};
+		// 光心
+		auto c = [&center_toml](size_t i) {
+			return center_toml->get(i)->value_or(0.);
+		};
+		// clang-format off
+		camera = {f(0),  0. , c(0),
+		           0. , f(1), c(1),
+		           0.,   0. ,  1. };
+		// clang-format on
 
 		// 畸变系数 dist
-		int dist_idx = 0;
+		auto dist_toml = config["camera"]["dist"].as_array();
+		size_t dist_idx = 0;
 		for(const auto& value: *dist_toml) {
-			dist(0, dist_idx) = value.value_or(0.0);
+			dist(0, dist_idx) = value.value_or(0.);
 			dist_idx++;
 		}
 
 		// 初始化模型
+		std::string model_path = config["aim_aromr"]["model_path"].value_or(
+		    "assets/model/best-8.onnx");
 		auto model = core.read_model(model_path);
 		auto compiled_model = core.compile_model(model, "CPU");
 		infer_request = compiled_model.create_infer_request();
 
 		// 读取图像分类类别
-		size_t index = 0;
+		auto classes_array = config["aim_aromr"]["classes"].as_array();
+		size_t classes_idx = 0;
 		for(const auto& item: *classes_array) {
-			if(item.is_string() && index < classes.size()) {
-				classes[index] = item.as_string()->get();
-				++index;
+			if(item.is_string() && classes_idx < classes.size()) {
+				classes[classes_idx] = item.as_string()->get();
+				classes_idx++;
 			}
 		}
-		return 1;
+		return 0;
 	} catch(const toml::parse_error& ex) {
 		std::cerr << "Error parsing TOML file: " << ex.what() << std::endl;
 		return -1;
 	} catch(const std::exception& ex) {
 		std::cerr << "Error initializing ArmorDetector: " << ex.what()
 		          << std::endl;
-		return -1;
+		return -2;
 	}
 }
-// TODO: 返回错误码并在注释中明确含义
+// TODO: 没有配置文件时的错误
 
 std::string ArmorDetector::classify(const cv::Mat& image) {
 
