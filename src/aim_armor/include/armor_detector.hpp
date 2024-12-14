@@ -4,10 +4,10 @@
 #include <opencv2/core/mat.hpp>
 #include <opencv2/opencv.hpp>
 #include <openvino/openvino.hpp>
-#include <toml.hpp>
 #include <string>
 #include <utility>
 
+#include "toml.hpp"
 #include "lights.hpp"
 
 
@@ -56,24 +56,24 @@ private:
 	 *
 	 * @param kpnts 矩形四点在图中的坐标
 	 *              必须按顺序排列.
-	 *              参见 `ArmorDetector::resort_points`
+	 *              参见 `ArmorDetector::sort_points`
 	 * @return 返回一个元组, 内容是: (长宽比, 两边夹角)
 	 */
 	std::pair<float, float> rect_info(const std::vector<cv::Point2d>& kpnts,
-	                                  const Matx33d& camera);
-	// TODO: dist 参数
-	// TODO: camera 和 dist 应储存在类中, 还是全局保存?
+	                                  const Matx33d& camera,
+	                                  const Matx<double, 1, 5>& dist);
 
 	/**
 	 * @brief 透视变换并二值化
 	 *
+	 * @note     此处不必去畸变, 因为收效甚微; 且要对某一片区域重映射, 消耗巨大
 	 * @warning `kpnts` 数组的长度必须等于 4
 	 *
 	 * @param img   要处理的图片
 	 * @param out   经过透视变换与二值化后的图片
 	 * @param kpnts 要变换区域的 4 个顶点.
 	 *              必须按顺序排列.
-	 *              参见 `ArmorDetector::resort_points`
+	 *              参见 `ArmorDetector::sort_points`
 	 * @param size  输出图片的尺寸
 	 */
 	void perspective(const cv::Mat& img, cv::Mat& out,

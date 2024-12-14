@@ -1,12 +1,10 @@
 #include "armor_detector.hpp"
 
 #include <algorithm>
-#include <cmath>
 #include <opencv2/core.hpp>
 #include <opencv2/core/mat.hpp>
 #include <opencv2/core/matx.hpp>
 #include <opencv2/core/types.hpp>
-#include <opencv2/imgproc.hpp>
 
 
 ArmorDetector::ArmorDetector() {
@@ -25,21 +23,22 @@ int ArmorDetector::init() {
 		auto classes_array = config["aim_aromr"]["classes"].as_array();
 		auto dist_toml = config["camera"]["dist"].as_array();
 		auto matrix_toml = config["camera"]["matx33d"].as_array();
+		// FIXME: 更改相机内参在配置文件中的段名
+		// TODO: 拆分内参为 焦距 focal; 主点 center
 
-		// 相机内参 matx33d
+		// 相机内参 camera
 		int matx33d_idx = 0;
-		for (const auto& value : *matrix_toml) {
-    		camera(matx33d_idx / 3, matx33d_idx % 3) = value.value_or(0.0);
-    		matx33d_idx++;
+		for(const auto& value: *matrix_toml) {
+			camera(matx33d_idx / 3, matx33d_idx % 3) = value.value_or(0.0);
+			matx33d_idx++;
 		}
-		
+
 		// 畸变系数 dist
 		int dist_idx = 0;
-		for (const auto& value : *dist_toml) {
-    		dist(0, dist_idx) = value.value_or(0.0);
-    		dist_idx++;
+		for(const auto& value: *dist_toml) {
+			dist(0, dist_idx) = value.value_or(0.0);
+			dist_idx++;
 		}
-
 
 		// 初始化模型
 		auto model = core.read_model(model_path);
@@ -64,11 +63,14 @@ int ArmorDetector::init() {
 		return -1;
 	}
 }
+// TODO: 返回错误码并在注释中明确含义
 
 std::string ArmorDetector::classify(const cv::Mat& image) {
 
 	cv::resize(image, image, cv::Size(64, 64));
-	image.convertTo(image, CV_32F, 1.0 / 255.0); // 归一化
+	// 归一化
+	image.convertTo(image, CV_32F, 1.0 / 255.0);
+
 	// 转换图像格式为 Tensor
 	ov::Shape input_shape = {1, 64, 64, 3}; // NHWC
 	ov::Tensor input_tensor(ov::element::f32, input_shape, image.data);
@@ -149,21 +151,23 @@ cv::Vec3d h_(const cv::Point2d& p) {
 }
 
 std::pair<float, float> ArmorDetector::rect_info(
-    const std::vector<cv::Point2d>& kpnts, const Matx33d& camera) {
-	// TODO: 去畸变
+    const std::vector<cv::Point2d>& kpnts, const Matx33d& camera,
+    const Matx<double, 1, 5>& dist) {
+	std::vector<cv::Point2d> ud_kpnts{};
+	cv::undistortPoints(kpnts, ud_kpnts, camera, dist);
 
 	cv::Matx33d C_inv;
 	cv::invert(camera, C_inv);
 
-	auto center = C_inv * h_(pcenter(kpnts));
+	auto center = C_inv * h_(pcenter(ud_kpnts));
 
-	double lambda1 = 2 * (center - C_inv * h_(kpnts[0]))[0]
-	    / (C_inv * (h_(kpnts[2]) - h_(kpnts[0])))[0];
-	auto diag1 = lambda1 * h_(kpnts[2]) - (2 - lambda1) * h_(kpnts[0]);
+	double lambda1 = 2 * (center - C_inv * h_(ud_kpnts[0]))[0]
+	    / (C_inv * (h_(ud_kpnts[2]) - h_(ud_kpnts[0])))[0];
+	auto diag1 = lambda1 * h_(ud_kpnts[2]) - (2 - lambda1) * h_(ud_kpnts[0]);
 
-	double lambda2 = 2 * (center - C_inv * h_(kpnts[1]))[0]
-	    / (C_inv * (h_(kpnts[3]) - h_(kpnts[1])))[0];
-	auto diag2 = lambda2 * h_(kpnts[3]) - (2 - lambda2) * h_(kpnts[1]);
+	double lambda2 = 2 * (center - C_inv * h_(ud_kpnts[1]))[0]
+	    / (C_inv * (h_(ud_kpnts[3]) - h_(ud_kpnts[1])))[0];
+	auto diag2 = lambda2 * h_(ud_kpnts[3]) - (2 - lambda2) * h_(ud_kpnts[1]);
 
 	auto a = diag1 - diag2;
 	auto b = diag1 + diag2;
@@ -184,8 +188,8 @@ void ArmorDetector::perspective(const cv::Mat& img, cv::Mat& out,
 	double scale = 1.8;
 	// clang-format off
 	cv::Matx33d Cut = {scale, 0, (1-scale)*s/2,
-	                       0, 1,             0,
-	                       0, 0,             1};
+	                     0  , 1,       0      ,
+	                     0  , 0,       1      };
 	// clang-format on
 
 	Mat number_img;
