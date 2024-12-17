@@ -5,6 +5,7 @@
 #include <opencv2/core/types.hpp>
 #include <optional>
 #include <utility>
+#include <functional>
 #include <vector>
 
 using Contour = std::vector<cv::Point>;
