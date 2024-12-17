@@ -14,6 +14,7 @@ rosidl_generate_interfaces(${PROJECT_NAME}
   "msg/Armor.msg"
   "msg/Armors.msg"
   "msg/AimMode.msg"
+  "msg/Target.msg"
 
   DEPENDENCIES
     std_msgs

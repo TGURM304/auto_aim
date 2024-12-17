@@ -55,12 +55,12 @@ int Serial::init(){
     return 1;
 }
 
-void Serial::sendData(int fd, Data& data) {
+void Serial::sendData(Data& data) {
 	write(fd, reinterpret_cast<uint8_t*>(&data), sizeof(Data));
 }
 
 
-bool Serial::receiveData(int fd, Data& data) {
+bool Serial::receiveData(Data& data) {
     uint8_t buffer[sizeof(Data)];
 
     // 从串口读取数据

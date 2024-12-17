@@ -39,7 +39,7 @@ public:
      * @param fd file descriptor(文件描述符)
      * @param data 数据结构体
      */
-	void sendData(int fd, Data& data);
+	void sendData(Data& data);
 
 	/**
      * @brief 接受串口数据
@@ -49,7 +49,7 @@ public:
      * @return true 
      * @return false 
      */
-	bool receiveData(int fd, Data& data);
+	bool receiveData(Data& data);
 
 private:
 	/// @brief 初始化配置文件
