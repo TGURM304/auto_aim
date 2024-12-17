@@ -9,35 +9,41 @@
 #include <geometry_msgs/msg/point.hpp>
 
 
+#include "armor_detector.hpp"
+#include "lights.hpp"
+
+
 using ImageMsg = sensor_msgs::msg::Image;
 using ArmorsMsg = interfaces::msg::Armors;
 using ArmorMsg = interfaces::msg::Armor;
-using namespace std::placeholders;
 
 
 class DetectorNode: public rclcpp::Node {
 public:
 	DetectorNode(): Node("detector_node") {
 		subscription_ = this->create_subscription<ImageMsg>(
-		    "camera/stream", 10, std::bind(&DetectorNode::detector, this, _1));
+		    "camera/stream", 10, std::bind(&DetectorNode::detector, this, std::placeholders::_1));
 
 		armors_publisher_ =
 		    this->create_publisher<ArmorsMsg>("detector/armors", 10);
+		armorDetector.init();
 	}
+	
 
 private:
 	void detector(const ImageMsg::SharedPtr msg) {
-		cv_bridge::CvImagePtr cv_ptr;
-
 		try {
-			cv_ptr =
-			    cv_bridge::toCvCopy(msg, sensor_msgs::image_encodings::BGR8);
+			cv_ptr = cv_bridge::toCvCopy(msg, sensor_msgs::image_encodings::BGR8);
+			frame = cv_ptr->image;
 		} catch(cv_bridge::Exception &e) {
 			RCLCPP_ERROR(this->get_logger(),
 			             "Could not convert from '%s' to 'bgr8'.",
 			             msg->encoding.c_str());
 			return;
 		}
+
+		light.from_contour(contour, frame);
+		std::cout << contour << std::endl;
 
 		std::vector<ArmorMsg> armors;
 		for(int i = 0; i < 3; ++i) {
@@ -70,6 +76,13 @@ private:
 		armors_publisher_->publish(armors_msg);
 	}
 
+	// 初始化armordetector
+	ArmorDetector armorDetector;
+	//初始化lights
+	Light light;
+	cv_bridge::CvImagePtr cv_ptr;
+	cv::Mat frame;
+	std::vector<cv::Point> contour;
 	rclcpp::Subscription<ImageMsg>::SharedPtr subscription_;
 	rclcpp::Publisher<ArmorsMsg>::SharedPtr armors_publisher_;
 };
