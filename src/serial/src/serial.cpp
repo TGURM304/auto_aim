@@ -2,19 +2,14 @@
 #include <serial.hpp>
 
 
-struct __attribute__((packed)) Serial::Data{
-	uint8_t head = 0x7E;
-	uint8_t mode = 0;
-	float pitch_angle = 0.0;
-	float yaw_angle = 0.0;
-	uint8_t tail = 0x7F;
-};
-
 Serial::Serial(){
 	std::cout<< "Serial()" << std::endl;
 };
 
 Serial::~Serial(){
+    if (fd != -1) {
+        close(fd);
+    }
 	std::cout<< "~Serial()" << std::endl;
 };
 
@@ -25,7 +20,7 @@ int Serial::init(){
 	int out_baud = config["serial"]["in_baud_rate"].value_or(B115200);
 
 	// 打开串口
-    int fd = open(serial_port, O_RDWR | O_NOCTTY | O_NDELAY);
+    fd = open(serial_port, O_RDWR | O_NOCTTY | O_NDELAY);
     if (fd == -1) {
         perror("打开串口失败");
         return -1;

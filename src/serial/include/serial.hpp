@@ -8,17 +8,22 @@
 #include <cstring>
 #include <toml.hpp>
 
-class Serial{
+class Serial {
 public:
+	Serial();
 
-    Serial();
+	~Serial();
 
-    ~Serial();
+	/// @brief 串口数据结构体
+	struct __attribute__((packed)) Data {
+		uint8_t head = 0x7E;
+		uint8_t mode = 0;
+		float pitch_angle = 0.0;
+		float yaw_angle = 0.0;
+		uint8_t tail = 0x7F;
+	};
 
-    /// @brief 串口数据结构体
-    struct Data;
-
-    /**
+	/**
      * @brief 初始化串口设备
      * 
      * @return 1 初始化成功
@@ -26,17 +31,17 @@ public:
      * @return -2 获取串口配置失败
      * @return -3 应用串口配置失败
      */
-    int init();
+	int init();
 
-    /**
+	/**
      * @brief 发送串口数据
      * 
      * @param fd file descriptor(文件描述符)
      * @param data 数据结构体
      */
-    void sendData(int fd, Data& data);
+	void sendData(int fd, Data& data);
 
-    /**
+	/**
      * @brief 接受串口数据
      * 
      * @param fd file descriptor(文件描述符)
@@ -44,13 +49,15 @@ public:
      * @return true 
      * @return false 
      */
-    bool receiveData(int fd, Data& data);
+	bool receiveData(int fd, Data& data);
 
 private:
 	/// @brief 初始化配置文件
 	toml::table config = toml::parse_file("./assets/config.toml");
-    /// @brief 串口配置
-    struct termios options;
+	/// @brief 串口配置
+	struct termios options;
+	/// @brief 串口文件描述符
+	int fd;
 };
 
 #endif
