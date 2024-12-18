@@ -3,7 +3,7 @@
 
 #include <opencv2/opencv.hpp>
 #include <toml.hpp>
-#include <MVSDK/CameraApi.h>
+#include <CameraApi.h>
 
 
 class MindVision {
