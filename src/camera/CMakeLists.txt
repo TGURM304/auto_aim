@@ -14,6 +14,11 @@ link_directories(${CMAKE_SOURCE_DIR}/dependencies/MVSDK/lib)
 include_directories(${CMAKE_SOURCE_DIR}/dependencies/MVSDK/include)
 
 
+
+# link_directories(${CMAKE_SOURCE_DIR}/dependencies/HKSDK/lib)
+include_directories(${CMAKE_SOURCE_DIR}/dependencies/HKSDK/include)
+
+
 # find dependencies
 find_package(ament_cmake_auto REQUIRED)
 ament_auto_find_build_dependencies()
