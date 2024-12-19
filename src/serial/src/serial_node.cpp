@@ -53,7 +53,7 @@ public:
 private:
     void sender(const TargrtMsg::SharedPtr msg) {
         Serial::Data data;
-        data.mode = msg->mode;
+        data.mode = msg->aim_mode;
         data.pitch_angle = msg->pitch_angle;
         data.yaw_angle = msg->yaw_angle;
         serial_.sendData(data);
