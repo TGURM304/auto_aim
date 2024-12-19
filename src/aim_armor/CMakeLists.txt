@@ -34,6 +34,9 @@ ament_target_dependencies(
 
 ament_target_dependencies(
   tracker_node
+  "rclcpp"
+  "sensor_msgs"
+  "interfaces"
 )
 
 target_link_libraries(detector_node openvino)
