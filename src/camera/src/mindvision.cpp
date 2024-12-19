@@ -20,7 +20,6 @@ int MindVision::init(int channel = 2) {
 	// 枚举设备, 并建立设备列表
 	status_ = CameraEnumerateDevice(&camera_enum_list_, &camera_cnt_);
 	printf("state = %d\ncount = %d\n", status_, camera_cnt_);
-
 	// 没有连接设备
 	if(camera_cnt_ == 0) {
 		return camera_ = -1;
@@ -73,7 +72,7 @@ int MindVision::init(int channel = 2) {
 
 	// 进入工作模式, 开始接收来自相机发送的图像数据
 	CameraPlay(camera_);
-
+	
 	// 配置相机输出格式
 	if(channel == 1) {
 		CameraSetIspOutFormat(camera_, CAMERA_MEDIA_TYPE_MONO8);
