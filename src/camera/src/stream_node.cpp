@@ -20,7 +20,9 @@ public:
                     break;
                 } else if (camera_version == "HK") {
                     nRet = camera_hk.init();
-                    RCLCPP_ERROR(this->get_logger(), "Error code: 0x%x", nRet);
+                    if(nRet != MV_OK){
+                        RCLCPP_ERROR(this->get_logger(), "Error code: 0x%x", nRet);
+                    }
                     break;
                 } else {
                     std::printf("配置文件错误，无法识别的相机类型: %s，尝试重新获取配置\n", camera_version.c_str());
@@ -53,10 +55,12 @@ private:
         } else {
             frame = camera_mv.getFrame();
         }
-        cv::imshow("123",frame);
         if (!frame.empty()) {
             auto msg = cv_bridge::CvImage(std_msgs::msg::Header(), "bgr8", frame).toImageMsg();
             publisher_->publish(*msg);
+        }
+        else{
+            std::cout << "+++" << std::endl;
         }
     }
 

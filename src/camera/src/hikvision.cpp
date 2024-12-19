@@ -1,9 +1,6 @@
 #include "hikvision.hpp"
-#include <cstdio>
-#include <cstdlib>
-#include <opencv2/core/mat.hpp>
-#include <string>
-#include <thread>
+#include <opencv2/highgui.hpp>
+
 
 static void showText(cv::Mat& frame, const std::string& msg) {
 	cv::Point position(20, 240);
@@ -32,18 +29,18 @@ HikVision::~HikVision(){
     MV_CC_DestroyHandle(camera_handle);
     // 反初始化SDK
     MV_CC_Finalize();
-    // 释放内存
-    free(pData);
 }
 
 int HikVision::init(){
     // 初始化SDK
 	nRet = MV_CC_Initialize();
+    memset(&device_list, 0, sizeof(MV_CC_DEVICE_INFO_LIST));
 
 	if (nRet != MV_OK){
 		printf("Initialize SDK fail! nRet [0x%x]\n", nRet);
         return nRet;
 	}
+
     int i = 1;
     do{
         nRet = MV_CC_EnumDevices(MV_USB_DEVICE, &device_list);
@@ -51,11 +48,9 @@ int HikVision::init(){
         if (nRet != MV_OK){
             printf("MV_CC_EnumDevices fail! nRet [0x%x]\n", nRet);
         }
-        std::this_thread::sleep_for(std::chrono::seconds(1)); 
-        ++i;
+        i++;
     }while(device_list.nDeviceNum == 0 && i <=10);
-
-
+    
     // 创建句柄
     nRet = MV_CC_CreateHandle(&camera_handle, device_list.pDeviceInfo[0]);
     if (nRet != MV_OK){
@@ -71,12 +66,34 @@ int HikVision::init(){
     }
 
     // 设置触发模式为off
-    // TODO: MV_CC_SetEnumValue是干吗的
     nRet = MV_CC_SetEnumValue(camera_handle, "TriggerMode", 0);
     if (nRet != MV_OK){
         printf("MV_CC_SetTriggerMode fail! nRet [0x%x]\n", nRet);
         return nRet;
     }
+
+    // 设置采集模式为连续采集
+    nRet = MV_CC_SetEnumValue(camera_handle, "AcquisitionMode", 2);
+    if (nRet != MV_OK){
+        printf("MV_CC_SetAcquisitionMode fail! nRet [0x%x]\n", nRet);
+        return nRet;
+    }
+
+    // 设置像素格式
+    nRet = MV_CC_SetPixelFormat(camera_handle, PixelType_Gvsp_BGR8_Packed);
+    if(nRet != MV_OK){
+        printf("MV_CC_SetPixelFormat fail! nRet [0x%x]\n", nRet);
+        return nRet;
+    }
+
+    // 设置曝光
+    nRet = MV_CC_SetFloatValue(camera_handle, "ExposureTime", 1000 * 10);
+
+    // 设置Gamma
+    nRet = MV_CC_SetGammaSelector(camera_handle, 10000);
+
+    MV_CC_SetBrightness(camera_handle, 10000);
+
 
     // 开始取流
     nRet = MV_CC_StartGrabbing(camera_handle);
@@ -84,36 +101,23 @@ int HikVision::init(){
         printf("MV_CC_StartGrabbing fail! nRet [0x%x]\n", nRet);
         return nRet;
     }
-
-    // 获取图像数据包的大小
-    memset(&stParam, 0, sizeof(MVCC_INTVALUE));
-    nRet = MV_CC_GetIntValue(camera_handle, "PayloadSize", &stParam);
-    if (nRet != MV_OK){
-        printf("Get PayloadSize fail! nRet [0x%x]\n", nRet);
-        return nRet;
-    }
-    pData = (unsigned char*)malloc(stParam.nCurValue);
-    if (pData == NULL){
-        printf("Memory allocation failed\n");
-        return -1;
-    }
-    return 1;
+    return MV_OK;
 }
 
 std::pair<cv::Mat, int> HikVision::getFrame() {
+    nRet = MV_CC_GetImageBuffer(camera_handle, &frameOut, 1000);
     if (nRet != MV_OK) {
         cv::Mat frame = cv::Mat::ones(480, 640, CV_8UC3) * 255;
         showText(frame,decimalTohex(nRet));
         return std::make_pair(frame, nRet);
     }
-    nRet = MV_CC_GetOneFrameTimeout(camera_handle, pData, nDataSize, &stImageInfo, 1000);
+    cv::Mat frame = cv::Mat(frameOut.stFrameInfo.nHeight, frameOut.stFrameInfo.nWidth, CV_8UC3, frameOut.pBufAddr); 
+    nRet = MV_CC_FreeImageBuffer(camera_handle, &frameOut);
     if (nRet != MV_OK) {
         cv::Mat frame = cv::Mat::ones(480, 640, CV_8UC3) * 255;
         showText(frame,decimalTohex(nRet));
         return std::make_pair(frame, nRet);
     }
-    // test
-    // printf("Get one frame: Width = %d, Height = %d, FrameNum = %d\n", stImageInfo.nWidth, stImageInfo.nHeight, stImageInfo.nFrameNum);
-    cv::Mat frame(stImageInfo.nHeight, stImageInfo.nWidth, CV_8UC3, pData);
+
     return std::make_pair(frame, MV_OK);
 }
