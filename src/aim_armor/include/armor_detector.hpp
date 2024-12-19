@@ -26,7 +26,6 @@ public:
 	 */
 	int init();
 
-private:
 	/**
 	 * @brief 对装甲板中心图案进行分类
 	 *
@@ -34,6 +33,9 @@ private:
 	 * @return 装甲板类别
 	 */
 	std::string classify(const cv::Mat& image);
+
+private:
+
 
 	/**
 	 * @brief 按顺序排列两个灯条的 4 个端点
