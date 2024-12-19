@@ -39,5 +39,10 @@ private:
     // unsigned char* pData = NULL;
     /// @brief 图像结构体，图像地址及图像信息
     MV_FRAME_OUT frameOut;
+private:
+    /// @brief 配置文件
+    toml::table config = toml::parse_file("./assets/config.toml");
+    /// @brief 曝光时间
+    int exposuretime = 10;
 
 };

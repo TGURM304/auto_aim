@@ -49,7 +49,7 @@ int MindVision::init(int channel = 2) {
 	// 获取配置
 	auto mv_config = config["mindvision"];
 	uint8_t aestate = mv_config["auto_exposure"].value_or(false) ? 1 : 0;
-	uint16_t exposuretime = mv_config["exposure_time"].value_or(100);
+	uint16_t exposuretime = mv_config["exposure_time"].value_or(30);
 	uint16_t gamma = mv_config["gamma"].value_or(100);
 	uint16_t contrast = mv_config["contrast"].value_or(100);
 	uint16_t saturation = mv_config["saturation"].value_or(100);

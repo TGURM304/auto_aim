@@ -17,6 +17,8 @@ static std::string decimalTohex(int num) {
 
 
 HikVision::HikVision(){
+    auto hk_config = config["mindvision"];
+    exposuretime = hk_config["exposure_time"].value_or(30);
     printf("HikVision Start\n");
 }
 
@@ -87,13 +89,15 @@ int HikVision::init(){
     }
 
     // 设置曝光
-    nRet = MV_CC_SetFloatValue(camera_handle, "ExposureTime", 1000 * 10);
+    nRet = MV_CC_SetFloatValue(camera_handle, "ExposureTime", 1000 * exposuretime);
 
     // 设置Gamma
     nRet = MV_CC_SetGammaSelector(camera_handle, 10000);
 
-    MV_CC_SetBrightness(camera_handle, 10000);
+    // 设置亮度
+    nRet = MV_CC_SetBrightness(camera_handle, 10000);
 
+    // TODO: HK更多参数设置
 
     // 开始取流
     nRet = MV_CC_StartGrabbing(camera_handle);
