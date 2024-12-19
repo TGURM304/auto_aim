@@ -26,10 +26,10 @@ add_executable(video_node "src/video_node.cpp")
 target_link_libraries(stream_node 
   MVSDK
   MvCameraControl
-  # FormatConversion
-  # MediaProcess
-  # MVRender
-  # MvUsb3vTL
+  FormatConversion
+  MediaProcess
+  MVRender
+  MvUsb3vTL
 )
 
 
