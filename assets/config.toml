@@ -2,7 +2,7 @@ title = "auto_aim"
 version = 1.0
 
 [camera]
-version = "MV" # MV: MindVision; HK: Hikvision
+version = "HK" # MV: MindVision; HK: Hikvision
 focal = [1050.176611784291254, 1050.3160947995561]
 center = [301.8079077070227, 225.2905375296807]
 dist = [
