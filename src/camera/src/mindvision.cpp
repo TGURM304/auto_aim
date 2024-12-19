@@ -87,7 +87,7 @@ int MindVision::getErrno() {
 	return camera_ > 0 ? 0 : camera_;
 }
 
-void showText(cv::Mat& frame, const std::string& msg) {
+static void showText(cv::Mat& frame, const std::string& msg) {
 	printf("%s\n", msg.c_str());
 	cv::Point position(20, 240);
 	cv::putText(frame, msg, position, cv::FONT_HERSHEY_SIMPLEX, 1.0,
