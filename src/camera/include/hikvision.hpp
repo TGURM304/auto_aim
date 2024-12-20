@@ -21,7 +21,11 @@ public:
      */
     int init();
 
-
+    /**
+     * @brief 从相机获取一帧图像
+     * 
+     * @return std::pair<cv::Mat, int> 返回一帧及其状态码 
+     */
     std::pair<cv::Mat, int> getFrame();
 
 private:
