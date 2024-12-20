@@ -9,28 +9,29 @@ if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
   add_compile_options(-Wall -Wextra -Wpedantic)
 endif()
 
+link_directories(/opt/MVS/lib/64/)
+# link_directories(${CMAKE_SOURCE_DIR}/dependencies/MVSDK/lib/)
+include_directories(${CMAKE_SOURCE_DIR}/dependencies/MVSDK/include/)
 
-link_directories(${CMAKE_SOURCE_DIR}/dependencies/MVSDK/lib)
-include_directories(${CMAKE_SOURCE_DIR}/dependencies/MVSDK/include)
-
-
-
-# link_directories(${CMAKE_SOURCE_DIR}/dependencies/HKSDK/lib)
-include_directories(${CMAKE_SOURCE_DIR}/dependencies/HKSDK/include)
-
+# link_directories(${CMAKE_SOURCE_DIR}/dependencies/HKSDK/lib/)
+include_directories(${CMAKE_SOURCE_DIR}/dependencies/HKSDK/include/)
 
 # find dependencies
 find_package(ament_cmake_auto REQUIRED)
 ament_auto_find_build_dependencies()
 
-
-add_executable(stream_node "src/stream_node.cpp" "src/mindvision.cpp")
+add_executable(stream_node "src/stream_node.cpp" "src/mindvision.cpp" "src/hikvision.cpp")
 add_executable(video_node "src/video_node.cpp")
-# add_executable(test_node "src/test_node.cpp" "src/mindvision.cpp")
 
+target_link_libraries(stream_node 
+  MVSDK
+  MvCameraControl
+  FormatConversion
+  MediaProcess
+  MVRender
+  MvUsb3vTL
+)
 
-target_link_libraries(stream_node MVSDK)
-# target_link_libraries(test_node MVSDK)
 
 ament_target_dependencies(
   stream_node
@@ -48,19 +49,9 @@ ament_target_dependencies(
   "cv_bridge"
 )
 
-# ament_target_dependencies(
-#   test_node
-#   "rclcpp"
-#   "OpenCV"
-# )
-
 target_include_directories(stream_node PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
   $<INSTALL_INTERFACE:include/${PROJECT_NAME}>)
-
-# target_include_directories(test_node PUBLIC
-# $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-# $<INSTALL_INTERFACE:include/${PROJECT_NAME}>)
 
 target_include_directories(video_node PUBLIC
 $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
@@ -69,7 +60,6 @@ $<INSTALL_INTERFACE:include/${PROJECT_NAME}>)
 install(TARGETS
   stream_node
   video_node
-  # test_node
   DESTINATION lib/${PROJECT_NAME})
 
 

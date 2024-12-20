@@ -12,3 +12,6 @@ testsets/
 *.jpg
 *.avi
 *.png
+
+start_floxglove.sh
+

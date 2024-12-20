@@ -51,20 +51,6 @@ private:
 			armor.number = "1";
 			armor.type = "BIG";
 			armor.distance_to_image_center = 100.0f;
-
-			armor.pose.position.x = i * 100.0;
-			armor.pose.position.y = i * 50.0;
-			armor.pose.position.z = 0.0;
-			armor.pose.orientation.x = 0.0;
-			armor.pose.orientation.y = 0.0;
-			armor.pose.orientation.z = 0.0;
-			armor.pose.orientation.w = 1.0;
-
-			armor.kpts.push_back(geometry_msgs::msg::Point());
-			armor.kpts.back().x = i * 10.0;
-			armor.kpts.back().y = i * 5.0;
-			armor.kpts.back().z = 0.0;
-
 			armors.push_back(armor);
 		}
 

@@ -1,3 +1,3 @@
-uint8 mode
+uint8 aim_mode
 float32 pitch_angle
 float32 yaw_angle
