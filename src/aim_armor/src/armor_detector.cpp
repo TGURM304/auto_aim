@@ -1,12 +1,15 @@
 #include "armor_detector.hpp"
 
-#include <optional>
+#include <cassert>
+#include <cmath>
 #include <utility>
 #include <opencv2/calib3d.hpp>
 #include <opencv2/core.hpp>
 #include <opencv2/core/mat.hpp>
 #include <opencv2/core/matx.hpp>
 #include <opencv2/core/types.hpp>
+
+#define RAD2DEG(rad) ((rad) / std::numbers::pi * 180.)
 
 
 ArmorDetector::ArmorDetector() {
@@ -21,17 +24,40 @@ int ArmorDetector::init() {
 	try {
 		toml::table config = toml::parse_file("assets/config.toml");
 
+#define SET_ARG(var, name)                                                 \
+	do {                                                                   \
+		var##_cri[0].name =                                                \
+		    config["aim_armor"][#var][#name].as_array()->get(0)->value_or( \
+		        NAN);                                                      \
+		var##_cri[1].name =                                                \
+		    config["aim_armor"][#var][#name].as_array()->get(1)->value_or( \
+		        NAN);                                                      \
+		assert(var##_cri[0].name <= var##_cri[1].name);                    \
+	} while(0)
+
+		// 灯条检测所需参数
+		// 从配置文件中导入
+		SET_ARG(light, aspect_ratio);
+		SET_ARG(light, area);
+		SET_ARG(armor, aspect_ratio);
+		SET_ARG(armor, edge_angle);
+		SET_ARG(armor, original_angle);
+
 		// 相机内参 camera
 		auto focal_toml = config["camera"]["focal"].as_array();
 		auto center_toml = config["camera"]["center"].as_array();
 		// 方便地读取焦距与光心信息
 		// 焦距
 		auto f = [&focal_toml](size_t i) {
-			return focal_toml->get(i)->value_or(0.);
+			auto val = focal_toml->get(i)->value_or(NAN);
+			assert(!std::isnan(val));
+			return val;
 		};
 		// 光心
 		auto c = [&center_toml](size_t i) {
-			return center_toml->get(i)->value_or(0.);
+			auto val = center_toml->get(i)->value_or(NAN);
+			assert(!std::isnan(val));
+			return val;
 		};
 		// clang-format off
 		camera = {f(0),  0. , c(0),
@@ -201,8 +227,8 @@ ArmorCriterion ArmorDetector::rect_info(const std::vector<cv::Point2d>& kpnts,
 	return ArmorCriterion{
 	    .one_vote_no = false,
 	    .aspect_ratio = max(la / lb, lb / la),
-	    .edge_angle = acos(a.dot(b) / (la * lb)),
-	    .original_angle = min(theta, pi - theta),
+	    .edge_angle = RAD2DEG(acos(a.dot(b) / (la * lb))),
+	    .original_angle = RAD2DEG(min(theta, pi - theta)),
 	};
 }
 
@@ -263,4 +289,20 @@ std::optional<std::pair<cv::Vec3d, cv::Vec3d>> ArmorDetector::pnp_solver(
 	Rodrigues(rvec, R);
 
 	return std::make_pair(tvec, R * cv::Vec3d(0, 0, 1));
+}
+
+#define BETWEEN(x, l, r) ((l) <= (x) && (x) < (r))
+
+#define CHECK_PARAM(name, var, field) \
+	BETWEEN((var.field), (name##_cri[0].field), (name##_cri[1].field))
+
+bool ArmorDetector::light_check(const LightCriterion& lc) {
+	return !lc.one_vote_no && CHECK_PARAM(light, lc, aspect_ratio)
+	    && CHECK_PARAM(light, lc, area);
+}
+
+bool ArmorDetector::armor_check(const ArmorCriterion& ac) {
+	return !ac.one_vote_no && CHECK_PARAM(armor, ac, aspect_ratio)
+	    && CHECK_PARAM(armor, ac, edge_angle)
+	    && CHECK_PARAM(armor, ac, original_angle);
 }

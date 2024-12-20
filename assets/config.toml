@@ -24,6 +24,15 @@ exposure_time = 30    # 曝光时间 (ms)
 model_path = "assets/model/best-8.onnx"
 classes = ["1", "2", "3", "4", "base", "qsz", "sb", "null"]
 
+[aim_aromr.light]
+aspect_radio = [2.2, inf]
+area = [60, inf]
+
+[aim_aromr.armor]
+aspect_radio = [-inf, inf]   # FIXME
+edge_angle = [75, 105]
+original_angle = [-inf, inf]
+
 [serial]
 port = "/dev/ttyUSB0"
 in_baud_rate = 115200

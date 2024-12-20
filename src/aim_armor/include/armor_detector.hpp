@@ -99,6 +99,12 @@ private:
 	    const cv::Matx33d& camera, const cv::Matx<double, 1, 5>& dist);
 
 private:
+	LightCriterion light_cri[2];
+	bool light_check(const LightCriterion& lc);
+	ArmorCriterion armor_cri[2];
+	bool armor_check(const ArmorCriterion& ac);
+
+private:
 	ov::Core core;
 	ov::InferRequest infer_request;
 

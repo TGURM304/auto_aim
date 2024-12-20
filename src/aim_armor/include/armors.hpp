@@ -5,7 +5,7 @@
 #define BIG_ARMOR_HEIGHT   5.5e-2  /* m */
 #define BIG_ARMOR_WIDTH    22.8e-2 /* m */
 #define SMALL_ARMOR_HEIGHT 5.5e-2  /* m */
-#define SMALL_ARMOR_WIDTH  0.      /* TODO */
+#define SMALL_ARMOR_WIDTH  13.5e-2 /* m */
 
 
 enum ArmorSize {
@@ -38,12 +38,12 @@ struct ArmorCriterion {
 
 	/// @brief 重建后平行四边形的邻边夹角
 	///
-	/// [0, pi)
+	/// [0, 180)
 	double edge_angle;
 
 	/// @brief 原始 (图像中) 的对边 (两灯条) 间夹角
 	///
-	/// [0, pi/2)
+	/// [0, 90)
 	double original_angle;
 };
 
