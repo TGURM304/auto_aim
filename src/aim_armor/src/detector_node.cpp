@@ -10,7 +10,7 @@
 #include <geometry_msgs/msg/pose.hpp>
 #include <interfaces/msg/aim_mode.hpp>
 
-#include "armors.hpp"
+#include "lights.hpp"
 
 using AimMode = interfaces::msg::AimMode;
 using ImageMsg = sensor_msgs::msg::Image;
