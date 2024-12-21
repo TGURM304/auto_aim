@@ -13,30 +13,23 @@ using AimModeMsg = interfaces::msg::AimMode;
 class SerialReceiver : public rclcpp::Node {
 public:
     SerialReceiver(Serial &serial): Node("serial_receiver_node"), serial_(serial) {
-        // 创建一个发布者，发布 AimModeMsg 类型的消息
         publisher = this->create_publisher<AimModeMsg>("/serial/mode", 10);
-
-        // 设置定时器，每1秒发布一次消息
         timer = this->create_wall_timer(
-            std::chrono::microseconds(1),
-            std::bind(&SerialReceiver::timer_callback, this));
+            std::chrono::microseconds(10),
+            std::bind(&SerialReceiver::reveriver, this));
     }
 
 private:
-    void timer_callback() {
-        // 创建消息并发布
-        auto message = AimModeMsg();
-        message.color = 1;
-        message.mode = 0;
-        
-        // 假设你要在这里调用 serial.sendData()
-        Serial::Data data;  // 定义适当的数据
-        serial_.sendData(data);  // 调用 sendData
-        
-        publisher->publish(message);
+    void reveriver() {
+        // TODO:串口读取
+        // test
+        aimmodemsg.color = 'r';
+        aimmodemsg.mode  = 'a';
+        publisher->publish(aimmodemsg);
     }
 
-    Serial &serial_;  // 引用 Serial 类
+    Serial &serial_; 
+    AimModeMsg aimmodemsg;
     rclcpp::Publisher<AimModeMsg>::SharedPtr publisher;
     rclcpp::TimerBase::SharedPtr timer;
 };
@@ -47,7 +40,7 @@ public:
     SerialSender(Serial &serial): Node("serial_sender_node"), serial_(serial) {
         // 订阅目标消息
         subscription = this->create_subscription<TargrtMsg>(
-            "/target", 10, std::bind(&SerialSender::sender, this, std::placeholders::_1));
+            "/target/armor", 10, std::bind(&SerialSender::sender, this, std::placeholders::_1));
     }
 
 private:

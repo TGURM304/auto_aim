@@ -165,7 +165,7 @@ private:
 		}
 	}
 	TargetMsg message;
-	Tracker tracker_;
+	Tracker &tracker_;
 	rclcpp::Publisher<TargetMsg>::SharedPtr publisher;
 	rclcpp::TimerBase::SharedPtr timer;
 };
@@ -190,7 +190,7 @@ private:
 		}
 	}
 
-	Tracker tracker_;
+	Tracker &tracker_;
 	ArmorMsg armor_msg;
 	rclcpp::Subscription<ArmorsMsg>::SharedPtr subscription;
 	rclcpp::TimerBase::SharedPtr timer;

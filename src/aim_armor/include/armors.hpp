@@ -13,6 +13,10 @@ enum ArmorSize {
 	SMALL,
 };
 
+enum ArmorColor {
+	RED,
+	BLUE,
+};
 
 /**
  * @brief 装甲板判据 (仅为几何视角)

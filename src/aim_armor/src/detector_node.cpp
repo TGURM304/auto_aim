@@ -1,4 +1,5 @@
-#include <opencv2/core/matx.hpp>
+#include <sys/types.h>
+#include <opencv2/highgui.hpp>
 #include <opencv2/opencv.hpp>
 #include <rclcpp/rclcpp.hpp>
 #include <sensor_msgs/msg/image.hpp>
@@ -7,11 +8,11 @@
 #include <interfaces/msg/armor.hpp>
 #include <interfaces/msg/armors.hpp>
 #include <geometry_msgs/msg/pose.hpp>
-#include "armor_detector.hpp"
+#include <interfaces/msg/aim_mode.hpp>
+
 #include "armors.hpp"
-#include "lights.hpp"
 
-
+using AimMode = interfaces::msg::AimMode;
 using ImageMsg = sensor_msgs::msg::Image;
 using ArmorsMsg = interfaces::msg::Armors;
 using ArmorMsg = interfaces::msg::Armor;
@@ -19,7 +20,18 @@ using ArmorMsg = interfaces::msg::Armor;
 
 class Detector {
 public:
-	Detector(){};
+	// 从下位机接收的击打模式
+	struct RunMode {
+		// TODO: 默认应该是什么值
+		ArmorColor color = RED;
+		u_int8_t mode;
+	} runmode;
+
+public:
+	Detector():
+	lowerWhite(0, 0, 200), upperWhite(180, 60, 255){
+
+	                       };
 	~Detector(){};
 
 	cv::Mat frame;
@@ -31,10 +43,19 @@ public:
 		// armor_msg.number = "1";
 		// armor_msg.distance_to_image_center = .0;
 		// armors.push_back(armor_msg);
-		
+
+		if(!frame.empty()) {
+		}
+
 		return armors;
 	}
 
+// 图像处理
+private:
+	cv::Scalar lowerWhite;
+	cv::Scalar upperWhite;
+	cv::Mat hsv, binary, gray;
+// 装甲板识别
 private:
 	ArmorMsg armor_msg;
 };
@@ -78,10 +99,53 @@ private:
 };
 
 
+class Get_Mode_Node: public rclcpp::Node {
+public:
+	Get_Mode_Node(Detector &detector):
+	Node("serial_sender_node"), detector_(detector) {
+		// 订阅目标消息
+		subscription = this->create_subscription<AimMode>(
+		    "/serial/mode", 10,
+		    std::bind(&Get_Mode_Node::setmode, this, std::placeholders::_1));
+	}
+
+private:
+	void setmode(const AimMode::SharedPtr msg) {
+		detector_.runmode.mode = msg->mode;
+		if(msg->color == 'r'){
+			color = RED;
+		}
+		else if(msg->color == 'b'){
+			color = BLUE;
+		}
+		else{
+			detector_.runmode.mode = RED;
+		}
+		detector_.runmode.mode = color;
+	}
+
+	Detector &detector_;
+	ArmorColor color;
+	rclcpp::Subscription<AimMode>::SharedPtr subscription;
+	rclcpp::TimerBase::SharedPtr timer;
+};
+
+
 int main(int argc, char **argv) {
 	Detector detector;
 	rclcpp::init(argc, argv);
-	rclcpp::spin(std::make_shared<Detector_Sender_Node>(detector));
+
+	auto detector_node = std::make_shared<Detector_Sender_Node>(detector);
+	auto get_mode_node = std::make_shared<Get_Mode_Node>(detector);
+
+	// 使用多线程执行器来管理节点
+	rclcpp::executors::MultiThreadedExecutor executor;
+	// 添加节点到执行器
+	executor.add_node(detector_node);
+	executor.add_node(get_mode_node);
+	// 启动执行器
+	executor.spin();
+
 	rclcpp::shutdown();
 	return 0;
 }
