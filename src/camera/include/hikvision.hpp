@@ -46,7 +46,12 @@ private:
 private:
     /// @brief 配置文件
     toml::table config = toml::parse_file("./assets/config.toml");
+    /// @brief 是否开启自动白平衡
+    bool autobalance = true;
+    /// @brief 是否开启自动曝光
+    bool autoexposure = false;
     /// @brief 曝光时间
     int exposuretime = 10;
-
+    /// @brief 亮度
+    int brightness = 100;
 };

@@ -21,7 +21,10 @@ auto_exposure = false # 是否开启自动曝光
 exposure_time = 30    # 曝光时间 (ms)
 
 [hikvision]
-exposure_time = 10    # 曝光时间 (ms)
+brightness = 100         # 亮度
+auto_whitebalance = true # 是否开启自动白平衡
+auto_exposure = false    # 是否开启自动曝光
+exposure_time = 10       # 曝光时间 (ms)
 
 [aim_aromr]
 model_path = "assets/model/best-8.onnx"
