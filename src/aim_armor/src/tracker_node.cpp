@@ -6,6 +6,7 @@
 #include <interfaces/msg/armor.hpp>
 #include <interfaces/msg/armors.hpp>
 #include <interfaces/msg/target.hpp>
+#include <vector>
 
 
 using ArmorsMsg = interfaces::msg::Armors;
@@ -15,14 +16,6 @@ using TargetMsg = interfaces::msg::Target;
 
 class Tracker {
 public:
-	Tracker() {
-		target.aim_mode = 0;
-		target.pitch_angle = .0;
-		target.yaw_angle = .0;
-	};
-
-	~Tracker(){};
-
 	// 状态
 	enum State { SEARCHING, TRACKING };
 	// 装甲板类别
@@ -39,26 +32,61 @@ public:
 	struct Armor {
 		std::string number;
 		float distance;
-	} armor;
+	} rarmor;
 
+	std::vector<Armor> armors;
 
-	bool isFindArmor() {
-		// TODO: 是否找到装甲板
+public:
+	Tracker() {
+		target.aim_mode = 0;
+		target.pitch_angle = .0;
+		target.yaw_angle = .0;
+	};
 
-		return true;
-	}
-
-	bool isSameBoard() {
-		// TODO: 判断是否是同一装甲板
-		return true;
-	}
+	~Tracker(){};
 
 	Target tracking() {
 		switch(currentState) {
 		case SEARCHING: {
+			// 如果未找到装甲板
+			if(isNotFindArmors()) {
+				target.aim_mode = 0;
+				target.pitch_angle = 0;
+				target.yaw_angle = 0;
+				break;
+			} else {
+				float mindistance = 2000000;
+				for(auto armor: armors) {
+					if(armor.distance < mindistance) {
+						mindistance = armor.distance;
+						currentArmor.distance = armor.distance;
+						currentArmor.number = numToClass(armor.number);
+						// TODO: 加入弹道解算
+						target.aim_mode = 1;
+						target.pitch_angle = 0;
+						target.yaw_angle = 0;
+					}
+				}
+				previousArmor = currentArmor;
+				currentState = TRACKING;
+			}
 			break;
 		}
+
 		case TRACKING: {
+			// 如果当前装甲板与之前的装甲板相同
+			if(isSameBoard(currentArmor)) {
+				target.aim_mode = 1;
+				target.pitch_angle = 0; 
+				target.yaw_angle = 0; 
+				previousArmor = currentArmor;
+			} else {
+				// 如果不是同一个装甲板，切换到搜索模式
+				currentState = SEARCHING;
+				target.aim_mode = 0;
+				target.pitch_angle = 0; 
+				target.yaw_angle = 0; 
+			}
 			break;
 		}
 		default: {
@@ -69,32 +97,74 @@ public:
 	}
 
 private:
+	// 将number转换为Classes 枚举值
+	Classes numToClass(const std::string &str) {
+		if(str == "1")
+			return NUM1;
+		if(str == "2")
+			return NUM2;
+		if(str == "3")
+			return NUM3;
+		if(str == "4")
+			return NUM4;
+		if(str == "base")
+			return BASE;
+		if(str == "qsz")
+			return QSZ;
+		if(str == "sb")
+			return SB;
+		return NONE;
+	}
+
+private:
 	// 当前跟踪状态
 	State currentState = SEARCHING;
-	Classes previousClass = NONE;
+	// 跟踪的装甲板
+	struct TrackedArmor {
+		Classes number;
+		float distance;
+	} previousArmor, currentArmor;
+
+	// 是否找到装甲板
+	bool isNotFindArmors() {
+		return armors.empty();
+	}
+
+	bool isSameBoard(TrackedArmor &armor) {
+		// TODO: 更改目标跟踪的算法,目前是非常弱智的小学生写法
+		float distanceThreshold = 50; // 距离阈值
+		// 比较装甲板的编号和距离
+		if(armor.number == previousArmor.number) {
+			if(std::abs(armor.distance - previousArmor.distance)
+			   < distanceThreshold) {
+				return true;
+			}
+			return true;
+		}
+		return false;
+	}
 };
 
 class TargetSender: public rclcpp::Node {
 public:
 	TargetSender(Tracker &tracker):
-	Node("serial_receiver_node"), tracker_(tracker) {
-		// 创建一个发布者，发布 AimModeMsg 类型的消息
+	Node("tracker_sendtarget_node"), tracker_(tracker) {
 		publisher = this->create_publisher<TargetMsg>("/target/armor", 10);
-
-		// 设置定时器，每1秒发布一次消息
 		timer = this->create_wall_timer(
 		    std::chrono::microseconds(1),
-		    std::bind(&TargetSender::timer_callback, this));
+		    std::bind(&TargetSender::send_target, this));
 	}
 
 private:
-	void timer_callback() {
-		// 创建消息并发布
-		auto message = TargetMsg();
-
-		publisher->publish(message);
+	void send_target() {
+		if(tracker_.target.aim_mode != 0) {
+			message.aim_mode = tracker_.target.aim_mode;
+			message.pitch_angle = tracker_.target.pitch_angle;
+			message.yaw_angle = tracker_.target.yaw_angle;
+			publisher->publish(message);
+		}
 	}
-
+	TargetMsg message;
 	Tracker tracker_;
 	rclcpp::Publisher<TargetMsg>::SharedPtr publisher;
 	rclcpp::TimerBase::SharedPtr timer;
@@ -103,18 +173,20 @@ private:
 
 class ArmorsReceiver: public rclcpp::Node {
 public:
-	ArmorsReceiver(Tracker &tracker): Node("detector_node"), tracker_(tracker) {
-		// 订阅目标消息
+	ArmorsReceiver(Tracker &tracker):
+	Node("tracker_getarmors_node"), tracker_(tracker) {
 		subscription = this->create_subscription<ArmorsMsg>(
 		    "/detector/armors", 10,
-		    std::bind(&ArmorsReceiver::sender, this, std::placeholders::_1));
+		    std::bind(&ArmorsReceiver::receiver, this, std::placeholders::_1));
 	}
 
 private:
-	void sender(const ArmorsMsg::SharedPtr armors_msg){
-		for(auto armor :armors_msg->armors){
-			tracker_.armor.distance = armor.distance_to_image_center;
-			tracker_.armor.number = armor.number;
+	void receiver(const ArmorsMsg::SharedPtr armors_msg) {
+		for(auto armor: armors_msg->armors) {
+			tracker_.rarmor.distance = armor.distance_to_image_center;
+			tracker_.rarmor.number = armor.number;
+			tracker_.armors.push_back(tracker_.rarmor);
+			std::cout << tracker_.rarmor.distance << std::endl;
 		}
 	}
 
