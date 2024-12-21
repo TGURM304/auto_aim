@@ -1,6 +1,9 @@
 #ifndef _AIMARMOR_H_ARMORS_
 #define _AIMARMOR_H_ARMORS_
 
+#include <opencv2/core/matx.hpp>
+#include <string>
+
 
 #define BIG_ARMOR_HEIGHT   5.5e-2  /* m */
 #define BIG_ARMOR_WIDTH    22.8e-2 /* m */
@@ -48,7 +51,18 @@ struct ArmorCriterion {
 
 
 struct Armor {
-	// TODO: Armor
+	/// @brief 装甲板中心图案的类别
+	std::string classes;
+
+	/// @brief 装甲板的位置
+	///
+	/// 在相机坐标系下
+	cv::Vec3d pos;
+
+	/// @brief 装甲板朝向
+	///
+	/// 即装甲板的法向量
+	cv::Vec3d ori;
 };
 
 

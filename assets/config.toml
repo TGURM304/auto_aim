@@ -29,6 +29,7 @@ exposure_time = 10       # 曝光时间 (ms)
 [aim_aromr]
 model_path = "assets/model/best-8.onnx"
 classes = ["1", "2", "3", "4", "base", "qsz", "sb", "null"]
+# TODO: 使用单字符区分
 
 [aim_aromr.light]
 aspect_radio = [2.2, inf]

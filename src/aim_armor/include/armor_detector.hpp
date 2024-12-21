@@ -26,15 +26,27 @@ public:
 	 */
 	int init();
 
+	/**
+	 * @brief 匹配装甲板
+	 *
+	 * @param armors 匹配的装甲板将会附加到此列表后面
+	 * @param img    从此图片中匹配
+	 * @param color  敌方颜色. 将只会匹配这个颜色的装甲板
+	 * @return 返回匹配到的装甲板数量
+	 */
+	size_t match_armors(std::vector<Armor>& armors, const cv::Mat& img,
+	                    ArmorColor color);
 
 private:
 	/**
-	 * @brief 对装甲板中心图案进行分类
+	 * @brief 预处理图片
 	 *
-	 * @param image 输入用于分类的图像
-	 * @return 装甲板类别
+	 * 图片二值化并做开运算去噪
+	 *
+	 * @param out 输出图片
+	 * @param in  输入图片
 	 */
-	std::string classify(const cv::Mat& image);
+	void preprocess(cv::Mat& out, const cv::Mat& in);
 
 	/**
 	 * @brief 按顺序排列两个灯条的 4 个端点
@@ -80,6 +92,14 @@ private:
 	 */
 	void perspective(const cv::Mat& img, cv::Mat& out,
 	                 const std::vector<cv::Point2d>& kpnts, int size);
+
+	/**
+	 * @brief 对装甲板中心图案进行分类
+	 *
+	 * @param image 输入用于分类的图像. 图像尺寸为 64*64
+	 * @return 装甲板类别
+	 */
+	std::string classify(const cv::Mat& image);
 
 	/**
 	 * @brief 尝试使用 PnP 解算计算目标装甲板在相机坐标系下的位置

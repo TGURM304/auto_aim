@@ -102,8 +102,6 @@ int ArmorDetector::init() {
 // TODO: 没有配置文件时的错误
 
 std::string ArmorDetector::classify(const cv::Mat& image) {
-
-	cv::resize(image, image, cv::Size(64, 64));
 	// 归一化
 	image.convertTo(image, CV_32F, 1.0 / 255.0);
 
@@ -305,4 +303,89 @@ bool ArmorDetector::armor_check(const ArmorCriterion& ac) {
 	return !ac.one_vote_no && CHECK_PARAM(armor, ac, aspect_ratio)
 	    && CHECK_PARAM(armor, ac, edge_angle)
 	    && CHECK_PARAM(armor, ac, original_angle);
+}
+
+void ArmorDetector::preprocess(cv::Mat& out, const cv::Mat& in) {
+	constexpr int thresh = 160;
+	constexpr int kernel_size = 10;
+
+	cv::Mat gray_img;
+	cv::cvtColor(in, gray_img, cv::COLOR_BGR2GRAY);
+	cv::Mat bin_img;
+	cv::threshold(gray_img, bin_img, thresh, 255, cv::THRESH_BINARY);
+	cv::morphologyEx(bin_img, out, cv::MORPH_OPEN,
+	                 cv::Mat::ones(kernel_size, kernel_size, CV_8U));
+}
+
+size_t ArmorDetector::match_armors(std::vector<Armor>& armors,
+                                   const cv::Mat& img, ArmorColor color) {
+	using namespace std::placeholders;
+
+	cv::Mat bin_img;
+	preprocess(bin_img, img);
+
+	std::vector<Contour> cnts;
+	std::vector<cv::Vec4i> _;
+	cv::findContours(bin_img, cnts, _, cv::RETR_EXTERNAL,
+	                 cv::CHAIN_APPROX_SIMPLE);
+
+	std::vector<Light> lights;
+	auto check = std::bind(&ArmorDetector::light_check, this, _1);
+	for(auto& cnt: cnts) {
+		auto tmp = Light::try_from_contour(cnt, img, check);
+		if(!tmp.has_value())
+			continue;
+		auto light = tmp.value();
+		if(light.color != color)
+			continue;
+		lights.push_back(light);
+	}
+
+	size_t cnt = 0;
+	for(size_t i = 0; i < lights.size(); i++) {
+		for(size_t j = i + 1; j < lights.size(); j++) {
+			auto l1 = lights[i];
+			auto l2 = lights[j];
+
+			auto kpnts = sort_points(l1, l2);
+			auto armor_cri = rect_info(kpnts, camera, dist);
+			if(!armor_check(armor_cri))
+				continue;
+
+			cv::Mat fig;
+			perspective(img, fig, kpnts, 64);
+			auto classes = classify(fig);
+
+			ArmorSize size;
+			if(classes == "1") {
+				size = ArmorSize::BIG;
+			} else if(classes == "2") {
+				size = ArmorSize::SMALL;
+			} else if(classes == "3") {
+				size = ArmorSize::SMALL;
+			} else if(classes == "4") {
+				size = ArmorSize::SMALL;
+			} else if(classes == "base") {
+				size = ArmorSize::BIG;
+			} else if(classes == "qsz") {
+				size = ArmorSize::SMALL;
+			} else if(classes == "sb") {
+				size = ArmorSize::SMALL;
+			} else if(classes == "null") {
+				size = ArmorSize::SMALL;
+			} else {
+				continue;
+			}
+			// TODO: 待类别统一为 char 后重构
+			// TODO: 类别与装甲板长宽比综合判断
+			auto tmp = pnp_solver(kpnts, size, camera, dist);
+			if(!tmp.has_value())
+				continue;
+
+			armors.emplace_back(classes, tmp.value().first, tmp.value().second);
+			cnt++;
+		}
+	}
+
+	return cnt;
 }
