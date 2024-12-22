@@ -26,17 +26,17 @@ auto_whitebalance = true # 是否开启自动白平衡
 auto_exposure = false    # 是否开启自动曝光
 exposure_time = 10       # 曝光时间 (ms)
 
-[aim_aromr]
+[aim_armor]
 model_path = "assets/model/best-8.onnx"
 classes = ["1", "2", "3", "4", "base", "qsz", "sb", "null"]
 # TODO: 使用单字符区分
 
-[aim_aromr.light]
-aspect_radio = [2.2, inf]
+[aim_armor.light]
+aspect_ratio = [2.2, inf]
 area = [60, inf]
 
-[aim_aromr.armor]
-aspect_radio = [-inf, inf]   # FIXME
+[aim_armor.armor]
+aspect_ratio = [-inf, inf]   # FIXME
 edge_angle = [75, 105]
 original_angle = [-inf, inf]
 

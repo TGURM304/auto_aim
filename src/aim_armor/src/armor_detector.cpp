@@ -74,14 +74,14 @@ int ArmorDetector::init() {
 		}
 
 		// 初始化模型
-		std::string model_path = config["aim_aromr"]["model_path"].value_or(
+		std::string model_path = config["aim_armor"]["model_path"].value_or(
 		    "assets/model/best-8.onnx");
 		auto model = core.read_model(model_path);
 		auto compiled_model = core.compile_model(model, "CPU");
 		infer_request = compiled_model.create_infer_request();
 
 		// 读取图像分类类别
-		auto classes_array = config["aim_aromr"]["classes"].as_array();
+		auto classes_array = config["aim_armor"]["classes"].as_array();
 		size_t classes_idx = 0;
 		for(const auto& item: *classes_array) {
 			if(item.is_string() && classes_idx < classes.size()) {
