@@ -37,6 +37,7 @@ ament_target_dependencies(
   "rclcpp"
   "sensor_msgs"
   "interfaces"
+  "OpenCV"
 )
 
 target_link_libraries(detector_node openvino)

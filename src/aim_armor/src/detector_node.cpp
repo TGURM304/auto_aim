@@ -11,6 +11,7 @@
 #include <interfaces/msg/aim_mode.hpp>
 
 #include "lights.hpp"
+#include "armor_detector.hpp"
 
 using AimMode = interfaces::msg::AimMode;
 using ImageMsg = sensor_msgs::msg::Image;
@@ -28,36 +29,22 @@ public:
 	} runmode;
 
 public:
-	Detector():
-	lowerWhite(0, 0, 200), upperWhite(180, 60, 255){
-
-	                       };
+	Detector(){};
 	~Detector(){};
 
 	cv::Mat frame;
-	std::vector<ArmorMsg> armors;
+	std::vector<Armor> armors;
 
-	std::vector<ArmorMsg> get_armors() {
-		// test
-		// armors.clear();
-		// armor_msg.number = "1";
-		// armor_msg.distance_to_image_center = .0;
-		// armors.push_back(armor_msg);
-
+	std::vector<Armor> get_armors() {
+		armors.clear();
 		if(!frame.empty()) {
+			ad.match_armors(armors, frame, runmode.color);
 		}
-
 		return armors;
 	}
 
-// 图像处理
 private:
-	cv::Scalar lowerWhite;
-	cv::Scalar upperWhite;
-	cv::Mat hsv, binary, gray;
-// 装甲板识别
-private:
-	ArmorMsg armor_msg;
+	ArmorDetector ad;
 };
 
 
@@ -75,6 +62,7 @@ public:
 
 private:
 	void detector(const ImageMsg::SharedPtr msg) {
+		armors_msg.armors.clear();
 		try {
 			cv_ptr =
 			    cv_bridge::toCvCopy(msg, sensor_msgs::image_encodings::BGR8);
@@ -85,13 +73,23 @@ private:
 			             msg->encoding.c_str());
 			return;
 		}
-		armors_msg.armors = detector_.get_armors();
+		for(auto armor: detector_.get_armors()) {
+			armor_msg.classes = armor.classes;
+			armor_msg.pos.x = armor.pos[0];
+			armor_msg.pos.y = armor.pos[1];
+			armor_msg.pos.z = armor.pos[2];
+			armor_msg.ori.x = armor.ori[0];
+			armor_msg.ori.y = armor.ori[1];
+			armor_msg.ori.z = armor.ori[2];
+			armors_msg.armors.push_back(armor_msg);
+		}
 		armors_msg.header.frame_id = "1";
 		armors_msg.header.stamp = this->get_clock()->now();
 		armors_publisher_->publish(armors_msg);
 	}
 
 	Detector detector_;
+	ArmorMsg armor_msg;
 	ArmorsMsg armors_msg;
 	cv_bridge::CvImagePtr cv_ptr;
 	rclcpp::Subscription<ImageMsg>::SharedPtr subscription_;
@@ -112,13 +110,11 @@ public:
 private:
 	void setmode(const AimMode::SharedPtr msg) {
 		detector_.runmode.mode = msg->mode;
-		if(msg->color == 'r'){
+		if(msg->color == 'r') {
 			color = RED;
-		}
-		else if(msg->color == 'b'){
+		} else if(msg->color == 'b') {
 			color = BLUE;
-		}
-		else{
+		} else {
 			detector_.runmode.mode = RED;
 		}
 		detector_.runmode.mode = color;

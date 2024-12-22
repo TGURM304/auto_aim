@@ -12,7 +12,7 @@ public:
         publisher_ = this->create_publisher<Image>(
             "camera/stream", 10);
         timer_ = this->create_wall_timer(
-            10ms, std::bind(&StreamNode::publish, this));
+            5ms, std::bind(&StreamNode::publish, this));
 
         openVideoFile(VIDEO_FILE_PATH);
         if (!cap_.isOpened()) {
