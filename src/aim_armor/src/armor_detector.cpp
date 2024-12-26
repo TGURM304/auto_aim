@@ -2,6 +2,9 @@
 
 #include <cassert>
 #include <cmath>
+#include <opencv2/opencv.hpp>
+#include <random>
+#include <string>
 #include <utility>
 #include <opencv2/calib3d.hpp>
 #include <opencv2/core.hpp>
@@ -10,6 +13,33 @@
 #include <opencv2/core/types.hpp>
 
 #define RAD2DEG(rad) ((rad) / std::numbers::pi * 180.)
+
+
+void save_image_random_filename(const cv::Mat& fig, const std::string& category) {
+    // 获取当前时间戳
+    std::time_t now = std::time(nullptr);
+    std::stringstream ss;
+    ss << now;  // 将时间戳转换为字符串
+
+    // 随机数生成器
+    std::random_device rd;
+    std::mt19937 gen(rd());
+    std::uniform_int_distribution<> dis(1000, 9999);  // 随机数范围
+
+    // 生成随机数
+    int random_number = dis(gen);
+
+    // 生成带类别的文件名
+    std::string filename = category + "_" + ss.str() + "_" + std::to_string(random_number) + ".jpg";
+
+    // 保存图像
+    if (cv::imwrite("./tmp/"+filename, fig)) {
+        std::cout << "图像已保存为 " << filename << std::endl;
+    } else {
+        std::cout << "保存图像失败！" << std::endl;
+    }
+}
+
 
 
 ArmorDetector::ArmorDetector() {
@@ -101,10 +131,12 @@ int ArmorDetector::init() {
 }
 // TODO: 没有配置文件时的错误
 
-std::string ArmorDetector::classify(const cv::Mat& image) {
+std::string ArmorDetector::classify(cv::Mat& image) {
+
+	// cv::resize(image, image, cv::Size(64, 64));
+
 	// 归一化
 	image.convertTo(image, CV_32F, 1.0 / 255.0);
-
 	// 转换图像格式为 Tensor
 	ov::Shape input_shape = {1, 64, 64, 3}; // NHWC
 	ov::Tensor input_tensor(ov::element::f32, input_shape, image.data);
@@ -233,11 +265,25 @@ ArmorCriterion ArmorDetector::rect_info(const std::vector<cv::Point2d>& kpnts,
 void ArmorDetector::perspective(const cv::Mat& img, cv::Mat& out,
                                 const std::vector<cv::Point2d>& kpnts,
                                 int size) {
-	double s = (double)size;
-	std::vector<cv::Point2d> out_pnts = {{0., 0.}, {0., s}, {s, s}, {s, 0.}};
-	auto P = cv::getPerspectiveTransform(kpnts, out_pnts);
+	float s = (float)size;
+	std::vector<cv::Point2f> out_pnts = {{0., 0.}, {0., s}, {s, s}, {s, 0.}};
 
-	double scale = 1.8;
+	
+    std::vector<cv::Point2f> kpnts_float;
+    for (const auto& pt : kpnts) {
+        kpnts_float.push_back(cv::Point2f(static_cast<float>(pt.x), static_cast<float>(pt.y)));
+    }
+
+	float lightLen = cv::norm(kpnts[1]-kpnts[0]);
+
+	kpnts_float[0].y = kpnts_float[0].y - lightLen*0.6;
+	kpnts_float[1].y = kpnts_float[1].y + lightLen*0.6;
+	kpnts_float[2].y = kpnts_float[2].y + lightLen*0.6;
+	kpnts_float[3].y = kpnts_float[3].y - lightLen*0.6;
+
+
+	auto P = cv::getPerspectiveTransform(kpnts_float, out_pnts);
+	double scale = 1.5;
 	// clang-format off
 	cv::Matx33d Cut = {scale, 0, (1-scale)*s/2,
 	                     0  , 1,       0      ,
@@ -250,7 +296,10 @@ void ArmorDetector::perspective(const cv::Mat& img, cv::Mat& out,
 	cv::cvtColor(number_img, gray_number_img, cv::COLOR_BGR2GRAY);
 	cv::threshold(gray_number_img, out, 0, 255,
 	              cv::THRESH_OTSU | cv::THRESH_BINARY);
+	cv::cvtColor(out, out, cv::COLOR_GRAY2RGB);
 }
+
+
 
 std::optional<std::pair<cv::Vec3d, cv::Vec3d>> ArmorDetector::pnp_solver(
     const std::vector<cv::Point2d>& kpnts, ArmorSize armor_size,
@@ -336,8 +385,13 @@ size_t ArmorDetector::match_armors(std::vector<Armor>& armors,
 		if(!tmp.has_value())
 			continue;
 		auto light = tmp.value();
-		if(light.color != color)
-			continue;
+
+		// if(light.color != color){
+		// 	// test
+		// 	std::cout << "color" << std::endl;
+		// 	continue;
+		// }
+
 		lights.push_back(light);
 	}
 
@@ -349,12 +403,18 @@ size_t ArmorDetector::match_armors(std::vector<Armor>& armors,
 
 			auto kpnts = sort_points(l1, l2);
 			auto armor_cri = rect_info(kpnts, camera, dist);
-			if(!armor_check(armor_cri))
-				continue;
 
-			cv::Mat fig;
+			// if(!armor_check(armor_cri))
+			// 	continue;
+
+			cv::Mat fig, fig_save;
 			perspective(img, fig, kpnts, 64);
+			fig_save = fig.clone();
 			auto classes = classify(fig);
+
+			if(!fig_save.empty() && classes != "null"){
+				save_image_random_filename(fig_save, classes);
+			}
 
 			ArmorSize size;
 			if(classes == "1") {
@@ -389,3 +449,6 @@ size_t ArmorDetector::match_armors(std::vector<Armor>& armors,
 
 	return cnt;
 }
+
+
+
