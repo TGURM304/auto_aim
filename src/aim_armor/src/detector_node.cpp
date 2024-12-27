@@ -13,7 +13,7 @@
 #include "lights.hpp"
 #include "armor_detector.hpp"
 
-using AimMode = interfaces::msg::AimMode;
+using AimModemsg = interfaces::msg::AimMode;
 using ImageMsg = sensor_msgs::msg::Image;
 using ArmorsMsg = interfaces::msg::Armors;
 using ArmorMsg = interfaces::msg::Armor;
@@ -29,7 +29,9 @@ public:
 	} runmode;
 
 public:
-	Detector(){};
+	Detector(){
+		ad.init();
+	};
 	~Detector(){};
 
 	cv::Mat frame;
@@ -102,27 +104,25 @@ public:
 	Get_Mode_Node(Detector &detector):
 	Node("serial_sender_node"), detector_(detector) {
 		// 订阅目标消息
-		subscription = this->create_subscription<AimMode>(
+		subscription = this->create_subscription<AimModemsg>(
 		    "/serial/mode", 10,
 		    std::bind(&Get_Mode_Node::setmode, this, std::placeholders::_1));
 	}
 
 private:
-	void setmode(const AimMode::SharedPtr msg) {
+	void setmode(const AimModemsg::SharedPtr msg) {
 		detector_.runmode.mode = msg->mode;
 		if(msg->color == 'r') {
-			color = RED;
+			detector_.runmode.color = RED;
 		} else if(msg->color == 'b') {
-			color = BLUE;
+			detector_.runmode.color = BLUE;
 		} else {
 			detector_.runmode.mode = RED;
 		}
-		detector_.runmode.mode = color;
 	}
 
 	Detector &detector_;
-	ArmorColor color;
-	rclcpp::Subscription<AimMode>::SharedPtr subscription;
+	rclcpp::Subscription<AimModemsg>::SharedPtr subscription;
 	rclcpp::TimerBase::SharedPtr timer;
 };
 

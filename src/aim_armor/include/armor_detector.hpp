@@ -99,7 +99,7 @@ private:
 	 * @param image 输入用于分类的图像. 图像尺寸为 64*64
 	 * @return 装甲板类别
 	 */
-	std::string classify(const cv::Mat& image);
+	std::string classify(cv::Mat& image);
 
 	/**
 	 * @brief 尝试使用 PnP 解算计算目标装甲板在相机坐标系下的位置

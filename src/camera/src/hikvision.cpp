@@ -124,11 +124,11 @@ int HikVision::init() {
 	}
 
 	// 设置亮度
-	nRet = MV_CC_SetIntValue(camera_handle, "Brightness", brightness);
-	if(nRet != MV_OK) {
-		printf("MV_CC_SetBrightness fail! nRet [0x%x]\n", nRet);
-		return nRet;
-	}
+	// nRet = MV_CC_SetIntValue(camera_handle, "Brightness", brightness);
+	// if(nRet != MV_OK) {
+	// 	printf("MV_CC_SetBrightness fail! nRet [0x%x]\n", nRet);
+	// 	return nRet;
+	// }
 
 	// TODO: HK更多参数设置
 

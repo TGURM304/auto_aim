@@ -17,14 +17,13 @@ dist = [
 gamma = 110           # 伽马值
 contrast = 100        # 对比度
 saturation = 100      # 饱和度
-auto_exposure = false # 是否开启自动曝光
+auto_exposure = true # 是否开启自动曝光
 exposure_time = 30    # 曝光时间 (ms)
 
 [hikvision]
-brightness = 100         # 亮度
 auto_whitebalance = true # 是否开启自动白平衡
-auto_exposure = false    # 是否开启自动曝光
-exposure_time = 10       # 曝光时间 (ms)
+auto_exposure = false   # 是否开启自动曝光
+exposure_time = 15       # 曝光时间 (ms)
 
 [aim_armor]
 model_path = "assets/model/best-8.onnx"
@@ -32,7 +31,7 @@ classes = ["1", "2", "3", "4", "base", "qsz", "sb", "null"]
 # TODO: 使用单字符区分
 
 [aim_armor.light]
-aspect_ratio = [2.2, inf]
+aspect_ratio = [1.6, 9.0]
 area = [60, inf]
 
 [aim_armor.armor]
