@@ -1,7 +1,7 @@
 #include <rclcpp/rclcpp.hpp>
 #include <sensor_msgs/msg/image.hpp>
 #include <opencv2/opencv.hpp>
-#include <cv_bridge/cv_bridge.hpp>
+#include <cv_bridge/cv_bridge.h>
 
 using Image = sensor_msgs::msg::Image;
 using namespace std::literals;
@@ -19,7 +19,7 @@ public:
             RCLCPP_ERROR(this->get_logger(), "Failed to open video file");
             return;
         }
-        
+
         // 获取视频帧总数
         total_frames_ = static_cast<int>(cap_.get(cv::CAP_PROP_FRAME_COUNT));
         frame_counter_ = 0;

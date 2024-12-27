@@ -2,7 +2,7 @@
 #include <rclcpp/rclcpp.hpp>
 #include <sensor_msgs/msg/image.hpp>
 #include <opencv2/opencv.hpp>
-#include <cv_bridge/cv_bridge.hpp>
+#include <cv_bridge/cv_bridge.h>
 
 #include "mindvision.hpp"
 #include "hikvision.hpp"
@@ -33,7 +33,7 @@ public:
                 std::printf("读取配置文件失败: %s\n", e.what());
             }
         }
-		
+
         // 创建发布器和定时器
         publisher_ = this->create_publisher<sensor_msgs::msg::Image>("camera/stream", 10);
         timer_ = this->create_wall_timer(std::chrono::milliseconds(0), std::bind(&StreamNode::publish, this));
