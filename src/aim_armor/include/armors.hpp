@@ -16,6 +16,32 @@ enum ArmorSize {
 	SMALL,
 };
 
+
+enum ArmorClasses { NUM1, NUM2, NUM3, NUM4, BASE, QSZ, SB, NONE };
+
+/**
+ * @brief 将描述装甲板种类的字符串转为枚举值
+ */
+inline ArmorClasses str_to_classes(const std::string& str) {
+	if(str == "1")
+		return NUM1;
+	else if(str == "2")
+		return NUM2;
+	else if(str == "3")
+		return NUM3;
+	else if(str == "4")
+		return NUM4;
+	else if(str == "base")
+		return BASE;
+	else if(str == "qsz")
+		return QSZ;
+	else if(str == "sb")
+		return SB;
+	else
+		return NONE;
+}
+
+
 /**
  * @brief 装甲板判据 (仅为几何视角)
  *
@@ -52,7 +78,7 @@ struct ArmorCriterion {
 
 struct Armor {
 	/// @brief 装甲板中心图案的类别
-	std::string classes;
+	ArmorClasses classes;
 
 	/// @brief 装甲板的位置
 	///

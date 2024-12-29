@@ -99,7 +99,7 @@ private:
 	 * @param image 输入用于分类的图像. 图像尺寸为 64*64
 	 * @return 装甲板类别
 	 */
-	std::string classify(cv::Mat& image);
+	ArmorClasses classify(cv::Mat& image);
 
 	/**
 	 * @brief 尝试使用 PnP 解算计算目标装甲板在相机坐标系下的位置
@@ -128,9 +128,6 @@ private:
 private:
 	ov::Core core;
 	ov::InferRequest infer_request;
-
-	/// @brief 定义图像分类类别
-	std::array<std::string, 8> classes;
 
 	cv::Matx33f camera;
 	cv::Matx<float, 1, 5> dist;

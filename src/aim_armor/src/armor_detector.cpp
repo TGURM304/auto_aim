@@ -111,15 +111,6 @@ int ArmorDetector::init() {
 		auto compiled_model = core.compile_model(model, "CPU");
 		infer_request = compiled_model.create_infer_request();
 
-		// 读取图像分类类别
-		auto classes_array = config["aim_armor"]["classes"].as_array();
-		size_t classes_idx = 0;
-		for(const auto& item: *classes_array) {
-			if(item.is_string() && classes_idx < classes.size()) {
-				classes[classes_idx] = item.as_string()->get();
-				classes_idx++;
-			}
-		}
 		return 0;
 	} catch(const toml::parse_error& ex) {
 		std::cerr << "Error parsing TOML file: " << ex.what() << std::endl;
@@ -132,7 +123,7 @@ int ArmorDetector::init() {
 }
 // TODO: 没有配置文件时的错误
 
-std::string ArmorDetector::classify(cv::Mat& image) {
+ArmorClasses ArmorDetector::classify(cv::Mat& image) {
 	// 归一化
 	image.convertTo(image, CV_32F, 1.0 / 255.0);
 	// 转换图像格式为 Tensor
@@ -147,7 +138,7 @@ std::string ArmorDetector::classify(cv::Mat& image) {
 	int predicted_class = std::distance(
 	    output_data,
 	    std::max_element(output_data, output_data + output_tensor.get_size()));
-	return classes[predicted_class];
+	return (ArmorClasses)predicted_class;
 }
 
 /**
@@ -226,16 +217,21 @@ ArmorCriterion ArmorDetector::rect_info(const std::vector<cv::Point2f>& kpnts,
 	auto center = C_inv * h_(pcenter(ud_kpnts));
 
 	double tmp = 0.;
+	// 当计算出现问题时, 返回此值
+	auto wrong_retval = ArmorCriterion{.one_vote_no = true,
+	                                   .aspect_ratio = NAN,
+	                                   .edge_angle = NAN,
+	                                   .original_angle = NAN};
 
 	tmp = (C_inv * (h_(ud_kpnts[2]) - h_(ud_kpnts[0])))[0];
 	if(tmp < 1e-6)
-		return ArmorCriterion{.one_vote_no = true};
+		return wrong_retval;
 	double lambda1 = 2 * (center - C_inv * h_(ud_kpnts[0]))[0] / tmp;
 	auto diag1 = lambda1 * h_(ud_kpnts[2]) - (2 - lambda1) * h_(ud_kpnts[0]);
 
 	tmp = (C_inv * (h_(ud_kpnts[3]) - h_(ud_kpnts[1])))[0];
 	if(tmp < 1e-6)
-		return ArmorCriterion{.one_vote_no = true};
+		return wrong_retval;
 	double lambda2 = 2 * (center - C_inv * h_(ud_kpnts[1]))[0] / tmp;
 	auto diag2 = lambda2 * h_(ud_kpnts[3]) - (2 - lambda2) * h_(ud_kpnts[1]);
 
@@ -396,26 +392,22 @@ size_t ArmorDetector::match_armors(std::vector<Armor>& armors,
 			//}
 
 			ArmorSize size;
-			if(classes == "1") {
+			switch(classes) {
+			case NUM1:
+			case BASE:
 				size = ArmorSize::BIG;
-			} else if(classes == "2") {
+				break;
+			case NUM2:
+			case NUM3:
+			case NUM4:
+			case QSZ:
+			case SB:
+			case NONE:
 				size = ArmorSize::SMALL;
-			} else if(classes == "3") {
-				size = ArmorSize::SMALL;
-			} else if(classes == "4") {
-				size = ArmorSize::SMALL;
-			} else if(classes == "base") {
-				size = ArmorSize::BIG;
-			} else if(classes == "qsz") {
-				size = ArmorSize::SMALL;
-			} else if(classes == "sb") {
-				size = ArmorSize::SMALL;
-			} else if(classes == "null") {
-				size = ArmorSize::SMALL;
-			} else {
+				break;
+			default:
 				continue;
-			}
-			// TODO: 待类别统一为 char 后重构
+			};
 			// TODO: 类别与装甲板长宽比综合判断
 			auto tmp = pnp_solver(kpnts, size, camera, dist);
 			if(!tmp.has_value())

@@ -9,6 +9,8 @@
 #include <interfaces/msg/target.hpp>
 #include <vector>
 
+#include "armors.hpp"
+
 
 using ArmorsMsg = interfaces::msg::Armors;
 using ArmorMsg = interfaces::msg::Armor;
@@ -19,8 +21,6 @@ class Tracker {
 public:
 	// 状态
 	enum State { SEARCHING, TRACKING };
-	// 装甲板类别
-	enum Classes { NUM1, NUM2, NUM3, NUM4, BASE, QSZ, SB, NONE };
 
 	// 打击目标结构体（发送的数据）
 	struct Target {
@@ -29,15 +29,7 @@ public:
 		float yaw_angle;
 	} target;
 
-	struct Armor {
-		/// @brief 装甲板中心图案的类别
-		std::string classes;
-		/// @brief 装甲板的位置
-		cv::Vec3d pos;
-		/// @brief 装甲板朝向
-		cv::Vec3d ori;
-
-	} rarmor;
+	Armor rarmor;
 
 	std::vector<Armor> armors;
 
@@ -62,11 +54,11 @@ public:
 			} else {
 				float mindistance = 2000000;
 				for(auto armor: armors) {
-					int yz_2 = (armor.pos[1]+armor.pos[2])/2;
+					int yz_2 = (armor.pos[1] + armor.pos[2]) / 2;
 					if(yz_2 < mindistance) {
 						mindistance = yz_2;
 						currentArmor.distance = yz_2;
-						currentArmor.classes = numToClass(armor.classes);
+						currentArmor.classes = armor.classes;
 						// TODO: 加入弹道解算
 						target.aim_mode = 1;
 						target.pitch_angle = 0;
@@ -95,31 +87,10 @@ public:
 			}
 			break;
 		}
-		default: {
+		default:
 			currentState = SEARCHING;
 		}
-		}
 		return target;
-	}
-
-private:
-	// 将number转换为Classes 枚举值
-	Classes numToClass(const std::string &str) {
-		if(str == "1")
-			return NUM1;
-		if(str == "2")
-			return NUM2;
-		if(str == "3")
-			return NUM3;
-		if(str == "4")
-			return NUM4;
-		if(str == "base")
-			return BASE;
-		if(str == "qsz")
-			return QSZ;
-		if(str == "sb")
-			return SB;
-		return NONE;
 	}
 
 private:
@@ -127,7 +98,7 @@ private:
 	State currentState = SEARCHING;
 	// 跟踪的装甲板
 	struct TrackedArmor {
-		Classes classes;
+		ArmorClasses classes;
 		float distance;
 	} previousArmor, currentArmor;
 
@@ -193,7 +164,7 @@ private:
 			    cv::Vec3d(armor.pos.x, armor.pos.y, armor.pos.z);
 			tracker_.rarmor.ori =
 			    cv::Vec3d(armor.ori.x, armor.ori.y, armor.ori.z);
-			tracker_.rarmor.classes = armor.classes;
+			tracker_.rarmor.classes = str_to_classes(armor.classes);
 			tracker_.armors.push_back(tracker_.rarmor);
 			std::cout << armor.pos.x << "|" << armor.pos.y << "|" << armor.pos.z
 			          << std::endl;
