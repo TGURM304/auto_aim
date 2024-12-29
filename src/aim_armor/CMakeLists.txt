@@ -19,6 +19,23 @@ find_package(interfaces REQUIRED)
 ament_auto_find_build_dependencies()
 
 
+# 获取 ROS 发行版环境变量
+if(DEFINED ENV{ROS_DISTRO})
+  set(ROS_DISTRO $ENV{ROS_DISTRO})
+else()
+  message(FATAL_ERROR "ROS_DISTRO is not defined")
+endif()
+
+# 根据 ROS 版本设置宏
+if(ROS_DISTRO STREQUAL "humble")
+  add_definitions(-DROS_HUMBLE)
+elseif (ROS_DISTRO STREQUAL "iron")
+  add_definitions(-DROS_IRON)
+else()
+  message(WARNING "Unknown ROS distribution: ${ROS_DISTRO}")
+endif()
+
+
 add_executable(detector_node "src/detector_node.cpp" "src/armor_detector.cpp" "src/lights.cpp")
 add_executable(tracker_node "src/tracker_node.cpp")
 
@@ -54,9 +71,9 @@ target_include_directories(tracker_node PUBLIC
 # set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fsanitize=address -fsanitize=undefined")
 # set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fsanitize=address -fsanitize=undefined")
 # set(CMAKE_LINKER_FLAGS "${CMAKE_LINKER_FLAGS} -fsanitize=address -fsanitize=undefined")
-  
 
-install(TARGETS 
+
+install(TARGETS
   detector_node
   tracker_node
   DESTINATION lib/${PROJECT_NAME})

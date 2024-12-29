@@ -3,12 +3,19 @@
 #include <opencv2/opencv.hpp>
 #include <rclcpp/rclcpp.hpp>
 #include <sensor_msgs/msg/image.hpp>
-#include <cv_bridge/cv_bridge.h>
 #include <std_msgs/msg/header.hpp>
 #include <interfaces/msg/armor.hpp>
 #include <interfaces/msg/armors.hpp>
 #include <geometry_msgs/msg/pose.hpp>
 #include <interfaces/msg/aim_mode.hpp>
+
+#ifdef ROS_HUMBLE
+#include <cv_bridge/cv_bridge.h>
+#elif defined(ROS_IRON)
+#include <cv_bridge/cv_bridge.hpp>
+#else
+#include <cv_bridge/cv_bridge.h>
+#endif
 
 #include "lights.hpp"
 #include "armor_detector.hpp"
@@ -29,7 +36,7 @@ public:
 	} runmode;
 
 public:
-	Detector(){
+	Detector() {
 		ad.init();
 	};
 	~Detector(){};
