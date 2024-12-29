@@ -6,7 +6,8 @@
 #include <unistd.h>
 #include <termios.h>
 #include <cstring>
-#include <toml.hpp>
+
+#include "toml.hpp"
 
 class Serial {
 public:
@@ -24,36 +25,32 @@ public:
 	};
 
 	/**
-     * @brief 初始化串口设备
-     * 
-     * @return 1 初始化成功
-     * @return -1 打开串口失败
-     * @return -2 获取串口配置失败
-     * @return -3 应用串口配置失败
-     */
+	 * @brief 初始化串口设备
+	 *
+	 * @return 0 初始化成功
+	 * @return -1 打开串口失败
+	 * @return -2 获取串口配置失败
+	 * @return -3 应用串口配置失败
+	 */
 	int init();
 
 	/**
-     * @brief 发送串口数据
-     * 
-     * @param fd file descriptor(文件描述符)
-     * @param data 数据结构体
-     */
+	 * @brief 发送串口数据
+	 *
+	 * @param fd file descriptor (文件描述符)
+	 * @param data 数据结构体
+	 */
 	void sendData(Data& data);
 
 	/**
-     * @brief 接受串口数据
-     * 
-     * @param fd file descriptor(文件描述符)
-     * @param data 数据结构体
-     * @return true 
-     * @return false 
-     */
+	 * @brief 接受串口数据
+	 *
+	 * @param fd file descriptor (文件描述符)
+	 * @param data 数据结构体
+	 */
 	bool receiveData(Data& data);
 
 private:
-	/// @brief 初始化配置文件
-	toml::table config = toml::parse_file("./assets/config.toml");
 	/// @brief 串口配置
 	struct termios options;
 	/// @brief 串口文件描述符
