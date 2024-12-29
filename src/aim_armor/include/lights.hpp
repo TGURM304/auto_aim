@@ -84,7 +84,7 @@ struct Light {
 	 * @warning 不保证绝对精确到装甲板边缘
 	 */
 	std::pair<cv::Vec2d, cv::Vec2d> full_points() {
-		double scale = 2.0;
+		double scale = 3.2;
 		return std::make_pair(pos + scale * offset, pos - scale * offset);
 	}
 

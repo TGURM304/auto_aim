@@ -15,31 +15,32 @@
 #define RAD2DEG(rad) ((rad) / std::numbers::pi * 180.)
 
 
-void save_image_random_filename(const cv::Mat& fig, const std::string& category) {
-    // 获取当前时间戳
-    std::time_t now = std::time(nullptr);
-    std::stringstream ss;
-    ss << now;  // 将时间戳转换为字符串
+void save_image_random_filename(const cv::Mat& fig,
+                                const std::string& category) {
+	// 获取当前时间戳
+	std::time_t now = std::time(nullptr);
+	std::stringstream ss;
+	ss << now; // 将时间戳转换为字符串
 
-    // 随机数生成器
-    std::random_device rd;
-    std::mt19937 gen(rd());
-    std::uniform_int_distribution<> dis(1000, 9999);  // 随机数范围
+	// 随机数生成器
+	std::random_device rd;
+	std::mt19937 gen(rd());
+	std::uniform_int_distribution<> dis(1000, 9999); // 随机数范围
 
-    // 生成随机数
-    int random_number = dis(gen);
+	// 生成随机数
+	int random_number = dis(gen);
 
-    // 生成带类别的文件名
-    std::string filename = category + "_" + ss.str() + "_" + std::to_string(random_number) + ".jpg";
+	// 生成带类别的文件名
+	std::string filename = category + "_" + ss.str() + "_"
+	    + std::to_string(random_number) + ".jpg";
 
-    // 保存图像
-    if (cv::imwrite("./tmp/"+filename, fig)) {
-        std::cout << "图像已保存为 " << filename << std::endl;
-    } else {
-        std::cout << "保存图像失败！" << std::endl;
-    }
+	// 保存图像
+	if(cv::imwrite("./tmp/" + filename, fig)) {
+		std::cout << "图像已保存为 " << filename << std::endl;
+	} else {
+		std::cout << "保存图像失败！" << std::endl;
+	}
 }
-
 
 
 ArmorDetector::ArmorDetector() {
@@ -132,9 +133,6 @@ int ArmorDetector::init() {
 // TODO: 没有配置文件时的错误
 
 std::string ArmorDetector::classify(cv::Mat& image) {
-
-	// cv::resize(image, image, cv::Size(64, 64));
-
 	// 归一化
 	image.convertTo(image, CV_32F, 1.0 / 255.0);
 	// 转换图像格式为 Tensor
@@ -183,11 +181,11 @@ cv::Point_<T> pcenter(const std::vector<cv::Point_<T>>& pnts) {
 	return p0 + mu * pnts[2];
 }
 
-std::vector<cv::Point2d> ArmorDetector::sort_points(const Light& l1,
+std::vector<cv::Point2f> ArmorDetector::sort_points(const Light& l1,
                                                     const Light& l2) {
 	cv::Point2d light_pnts[2][2] = {{l1.pos + l1.offset, l1.pos - l1.offset},
 	                                {l2.pos + l2.offset, l2.pos - l2.offset}};
-	std::vector<cv::Point2d> sorted_pnts(4);
+	std::vector<cv::Point2f> sorted_pnts(4);
 
 	// 求得四点的重心, 即对四点取平均
 	cv::Point2d center = {0, 0};
@@ -216,9 +214,9 @@ cv::Vec3d h_(const cv::Point2d& p) {
 	return cv::Vec3d(p.x, p.y, 1.);
 }
 
-ArmorCriterion ArmorDetector::rect_info(const std::vector<cv::Point2d>& kpnts,
-                                        const cv::Matx33d& camera,
-                                        const cv::Matx<double, 1, 5>& dist) {
+ArmorCriterion ArmorDetector::rect_info(const std::vector<cv::Point2f>& kpnts,
+                                        const cv::Matx33f& camera,
+                                        const cv::Matx<float, 1, 5>& dist) {
 	std::vector<cv::Point2d> ud_kpnts{};
 	cv::undistortPoints(kpnts, ud_kpnts, camera, dist);
 
@@ -263,29 +261,15 @@ ArmorCriterion ArmorDetector::rect_info(const std::vector<cv::Point2d>& kpnts,
 }
 
 void ArmorDetector::perspective(const cv::Mat& img, cv::Mat& out,
-                                const std::vector<cv::Point2d>& kpnts,
+                                const std::vector<cv::Point2f>& kpnts,
                                 int size) {
 	float s = (float)size;
 	std::vector<cv::Point2f> out_pnts = {{0., 0.}, {0., s}, {s, s}, {s, 0.}};
 
-	
-    std::vector<cv::Point2f> kpnts_float;
-    for (const auto& pt : kpnts) {
-        kpnts_float.push_back(cv::Point2f(static_cast<float>(pt.x), static_cast<float>(pt.y)));
-    }
-
-	float lightLen = cv::norm(kpnts[1]-kpnts[0]);
-
-	kpnts_float[0].y = kpnts_float[0].y - lightLen*0.6;
-	kpnts_float[1].y = kpnts_float[1].y + lightLen*0.6;
-	kpnts_float[2].y = kpnts_float[2].y + lightLen*0.6;
-	kpnts_float[3].y = kpnts_float[3].y - lightLen*0.6;
-
-
-	auto P = cv::getPerspectiveTransform(kpnts_float, out_pnts);
-	double scale = 1.5;
+	auto P = cv::getPerspectiveTransform(kpnts, out_pnts);
+	float scale = 1.5;
 	// clang-format off
-	cv::Matx33d Cut = {scale, 0, (1-scale)*s/2,
+	cv::Matx33f Cut = {scale, 0, (1-scale)*s/2,
 	                     0  , 1,       0      ,
 	                     0  , 0,       1      };
 	// clang-format on
@@ -300,14 +284,13 @@ void ArmorDetector::perspective(const cv::Mat& img, cv::Mat& out,
 }
 
 
-
-std::optional<std::pair<cv::Vec3d, cv::Vec3d>> ArmorDetector::pnp_solver(
-    const std::vector<cv::Point2d>& kpnts, ArmorSize armor_size,
-    const cv::Matx33d& camera, const cv::Matx<double, 1, 5>& dist) {
-	std::vector<cv::Point2d> img_pnts{};
+std::optional<std::pair<cv::Vec3f, cv::Vec3f>> ArmorDetector::pnp_solver(
+    const std::vector<cv::Point2f>& kpnts, ArmorSize armor_size,
+    const cv::Matx33f& camera, const cv::Matx<float, 1, 5>& dist) {
+	std::vector<cv::Point2f> img_pnts{};
 	cv::undistortPoints(kpnts, img_pnts, camera, dist);
 
-	std::vector<cv::Point3d> obj_pnts{};
+	std::vector<cv::Point3f> obj_pnts{};
 	if(armor_size == ArmorSize::BIG) {
 		// clang-format off
 		obj_pnts = {{-BIG_ARMOR_WIDTH/2, -BIG_ARMOR_HEIGHT/2, 0},
@@ -324,7 +307,7 @@ std::optional<std::pair<cv::Vec3d, cv::Vec3d>> ArmorDetector::pnp_solver(
 		// clang-format on
 	}
 
-	cv::Vec3d rvec, tvec;
+	cv::Vec3f rvec, tvec;
 	bool succ = cv::solvePnP(obj_pnts, img_pnts, camera, dist, rvec, tvec);
 	if(!succ)
 		return std::nullopt;
@@ -332,10 +315,10 @@ std::optional<std::pair<cv::Vec3d, cv::Vec3d>> ArmorDetector::pnp_solver(
 	// 再一次优化的提高非常有限
 	//cv::solvePnPRefineLM(obj_pnts, img_pnts, camera, dist, rvec, tvec);
 
-	cv::Matx33d R;
+	cv::Matx33f R;
 	Rodrigues(rvec, R);
 
-	return std::make_pair(tvec, R * cv::Vec3d(0, 0, 1));
+	return std::make_pair(tvec, R * cv::Vec3f(0, 0, 1));
 }
 
 #define BETWEEN(x, l, r) ((l) <= (x) && (x) < (r))
@@ -385,13 +368,8 @@ size_t ArmorDetector::match_armors(std::vector<Armor>& armors,
 		if(!tmp.has_value())
 			continue;
 		auto light = tmp.value();
-
-		// if(light.color != color){
-		// 	// test
-		// 	std::cout << "color" << std::endl;
-		// 	continue;
-		// }
-
+		if(light.color != color)
+			continue;
 		lights.push_back(light);
 	}
 
@@ -404,17 +382,18 @@ size_t ArmorDetector::match_armors(std::vector<Armor>& armors,
 			auto kpnts = sort_points(l1, l2);
 			auto armor_cri = rect_info(kpnts, camera, dist);
 
-			// if(!armor_check(armor_cri))
-			// 	continue;
+			if(!armor_check(armor_cri))
+				continue;
 
 			cv::Mat fig, fig_save;
 			perspective(img, fig, kpnts, 64);
 			fig_save = fig.clone();
 			auto classes = classify(fig);
 
-			if(!fig_save.empty() && classes != "null"){
-				save_image_random_filename(fig_save, classes);
-			}
+			// 调试使用
+			//if(!fig_save.empty() && classes != "null") {
+			//	save_image_random_filename(fig_save, classes);
+			//}
 
 			ArmorSize size;
 			if(classes == "1") {
@@ -449,6 +428,3 @@ size_t ArmorDetector::match_armors(std::vector<Armor>& armors,
 
 	return cnt;
 }
-
-
-

@@ -57,7 +57,7 @@ private:
 	 * @param l2 第二个灯条
 	 * @return 按顺序排列的点的坐标
 	 */
-	std::vector<cv::Point2d> sort_points(const Light& l1, const Light& l2);
+	std::vector<cv::Point2f> sort_points(const Light& l1, const Light& l2);
 
 	/**
 	 * @brief 计算原始矩形的信息
@@ -73,9 +73,9 @@ private:
 	 *              参见 `ArmorDetector::sort_points`
 	 * @return 返回一个判据, 可通过判据检查是否是有效的装甲板
 	 */
-	ArmorCriterion rect_info(const std::vector<cv::Point2d>& kpnts,
-	                         const cv::Matx33d& camera,
-	                         const cv::Matx<double, 1, 5>& dist);
+	ArmorCriterion rect_info(const std::vector<cv::Point2f>& kpnts,
+	                         const cv::Matx33f& camera,
+	                         const cv::Matx<float, 1, 5>& dist);
 
 	/**
 	 * @brief 透视变换并二值化
@@ -91,7 +91,7 @@ private:
 	 * @param size  输出图片的尺寸
 	 */
 	void perspective(const cv::Mat& img, cv::Mat& out,
-	                 const std::vector<cv::Point2d>& kpnts, int size);
+	                 const std::vector<cv::Point2f>& kpnts, int size);
 
 	/**
 	 * @brief 对装甲板中心图案进行分类
@@ -115,9 +115,9 @@ private:
 	 * 上面说的都是在 相机坐标系 下. 法向量经过归一化.
 	 * 装甲板法向量, 是指在装甲板正面方向的法向量. 所谓正面, 是指有图案的那一面.
 	 */
-	std::optional<std::pair<cv::Vec3d, cv::Vec3d>> pnp_solver(
-	    const std::vector<cv::Point2d>& kpnts, ArmorSize armor_size,
-	    const cv::Matx33d& camera, const cv::Matx<double, 1, 5>& dist);
+	std::optional<std::pair<cv::Vec3f, cv::Vec3f>> pnp_solver(
+	    const std::vector<cv::Point2f>& kpnts, ArmorSize armor_size,
+	    const cv::Matx33f& camera, const cv::Matx<float, 1, 5>& dist);
 
 private:
 	LightCriterion light_cri[2];
@@ -132,8 +132,8 @@ private:
 	/// @brief 定义图像分类类别
 	std::array<std::string, 8> classes;
 
-	cv::Matx33d camera;
-	cv::Matx<double, 1, 5> dist;
+	cv::Matx33f camera;
+	cv::Matx<float, 1, 5> dist;
 };
 
 

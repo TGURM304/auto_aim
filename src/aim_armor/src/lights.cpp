@@ -1,5 +1,6 @@
 #include "lights.hpp"
 
+#include <cmath>
 #include <numbers>
 #include <opencv2/core/matx.hpp>
 #include <opencv2/imgproc.hpp>
@@ -15,7 +16,10 @@ std::pair<Light, LightCriterion> Light::from_contour(const Contour& contour,
 
 	Moments m = cv::moments(contour);
 	if(m.m00 < 1e-6)
-		return make_pair(Light(), LightCriterion{.one_vote_no = true});
+		return make_pair(
+		    Light(),
+		    LightCriterion{
+		        .one_vote_no = true, .aspect_ratio = NAN, .area = NAN});
 
 	// 几何计算
 	double delta_root = sqrtf(4 * m.mu11 * m.mu11 + powf(m.mu20 - m.mu02, 2));
