@@ -40,6 +40,7 @@ endif()
 
 add_executable(stream_node "src/stream_node.cpp" "src/mindvision.cpp" "src/hikvision.cpp")
 add_executable(video_node "src/video_node.cpp")
+add_executable(image_node "src/image_node.cpp")
 
 target_link_libraries(stream_node
   MVSDK
@@ -67,17 +68,30 @@ ament_target_dependencies(
   "cv_bridge"
 )
 
+ament_target_dependencies(
+  image_node
+  "rclcpp"
+  "sensor_msgs"
+  "OpenCV"
+  "cv_bridge"
+)
+
 target_include_directories(stream_node PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
   $<INSTALL_INTERFACE:include/${PROJECT_NAME}>)
 
 target_include_directories(video_node PUBLIC
-$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-$<INSTALL_INTERFACE:include/${PROJECT_NAME}>)
+  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+  $<INSTALL_INTERFACE:include/${PROJECT_NAME}>)
+
+target_include_directories(image_node PUBLIC
+  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+  $<INSTALL_INTERFACE:include/${PROJECT_NAME}>)
 
 install(TARGETS
   stream_node
   video_node
+  image_node
   DESTINATION lib/${PROJECT_NAME})
 
 
