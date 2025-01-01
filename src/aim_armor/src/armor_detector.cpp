@@ -1,5 +1,3 @@
-#include "armor_detector.hpp"
-
 #include <cassert>
 #include <cmath>
 #include <opencv2/opencv.hpp>
@@ -11,6 +9,11 @@
 #include <opencv2/core/mat.hpp>
 #include <opencv2/core/matx.hpp>
 #include <opencv2/core/types.hpp>
+
+#include "armor_detector.hpp"
+#include "armors.hpp"
+#include "lights.hpp"
+
 
 #define RAD2DEG(rad) ((rad) / std::numbers::pi * 180.)
 
@@ -172,10 +175,9 @@ cv::Point_<T> pcenter(const std::vector<cv::Point_<T>>& pnts) {
 	return p0 + mu * pnts[2];
 }
 
-std::vector<cv::Point2f> ArmorDetector::sort_points(const Light& l1,
-                                                    const Light& l2) {
-	cv::Point2d light_pnts[2][2] = {{l1.pos + l1.offset, l1.pos - l1.offset},
-	                                {l2.pos + l2.offset, l2.pos - l2.offset}};
+std::vector<cv::Point2f> ArmorDetector::sort_points(const LinePoints2d& l1p,
+                                                    const LinePoints2d& l2p) {
+	LinePoints2d light_pnts[2] = {l1p, l2p};
 	std::vector<cv::Point2f> sorted_pnts(4);
 
 	// 求得四点的重心, 即对四点取平均
@@ -186,12 +188,12 @@ std::vector<cv::Point2f> ArmorDetector::sort_points(const Light& l1,
 
 	for(int i = 0; i <= 1; i++) {
 		auto light_pnt = light_pnts[i];
-		auto pos = (light_pnt[0] + light_pnt[1]) / 2. - center;
+		auto pos = (light_pnt.first + light_pnt.second) / 2. - center;
 
 		int a = pos.x > 0;
-		int b = pcross(pos, light_pnt[0] - center) < 0;
-		sorted_pnts[(a << 1) + b] = light_pnt[0];
-		sorted_pnts[(a << 1) + !b] = light_pnt[1];
+		int b = pcross(pos, light_pnt.first - center) < 0;
+		sorted_pnts[(a << 1) + b] = light_pnt.first;
+		sorted_pnts[(a << 1) + !b] = light_pnt.second;
 	}
 
 	return sorted_pnts;
@@ -208,15 +210,15 @@ cv::Vec3d h_(const cv::Point2d& p) {
 ArmorCriterion ArmorDetector::rect_info(const std::vector<cv::Point2f>& kpnts,
                                         const cv::Matx33f& camera,
                                         const cv::Matx<float, 1, 5>& dist) {
-	std::vector<cv::Point2d> ud_kpnts{};
+	std::vector<cv::Point2f> ud_kpnts{};
 	cv::undistortPoints(kpnts, ud_kpnts, camera, dist);
 
-	cv::Matx33d C_inv;
+	cv::Matx33f C_inv;
 	cv::invert(camera, C_inv);
 
 	auto center = C_inv * h_(pcenter(ud_kpnts));
 
-	double tmp = 0.;
+	float tmp = 0.;
 	// 当计算出现问题时, 返回此值
 	auto wrong_retval = ArmorCriterion{.one_vote_no = true,
 	                                   .aspect_ratio = NAN,
@@ -226,25 +228,25 @@ ArmorCriterion ArmorDetector::rect_info(const std::vector<cv::Point2f>& kpnts,
 	tmp = (C_inv * (h_(ud_kpnts[2]) - h_(ud_kpnts[0])))[0];
 	if(tmp < 1e-6)
 		return wrong_retval;
-	double lambda1 = 2 * (center - C_inv * h_(ud_kpnts[0]))[0] / tmp;
+	float lambda1 = 2 * (center - C_inv * h_(ud_kpnts[0]))[0] / tmp;
 	auto diag1 = lambda1 * h_(ud_kpnts[2]) - (2 - lambda1) * h_(ud_kpnts[0]);
 
 	tmp = (C_inv * (h_(ud_kpnts[3]) - h_(ud_kpnts[1])))[0];
 	if(tmp < 1e-6)
 		return wrong_retval;
-	double lambda2 = 2 * (center - C_inv * h_(ud_kpnts[1]))[0] / tmp;
+	float lambda2 = 2 * (center - C_inv * h_(ud_kpnts[1]))[0] / tmp;
 	auto diag2 = lambda2 * h_(ud_kpnts[3]) - (2 - lambda2) * h_(ud_kpnts[1]);
 
 	auto a = diag1 - diag2;
 	auto b = diag1 + diag2;
-	double la = cv::norm(a);
-	double lb = cv::norm(b);
+	float la = cv::norm(a);
+	float lb = cv::norm(b);
 
 	auto oa = kpnts[2] - kpnts[0];
 	auto ob = kpnts[3] - kpnts[1];
-	double ola = cv::norm(oa);
-	double olb = cv::norm(ob);
-	double theta = std::acos(oa.dot(ob) / (ola * olb));
+	float ola = cv::norm(oa);
+	float olb = cv::norm(ob);
+	float theta = std::acos(oa.dot(ob) / (ola * olb));
 
 	using namespace std;
 	using namespace std::numbers;
@@ -252,7 +254,7 @@ ArmorCriterion ArmorDetector::rect_info(const std::vector<cv::Point2f>& kpnts,
 	    .one_vote_no = false,
 	    .aspect_ratio = max(la / lb, lb / la),
 	    .edge_angle = RAD2DEG(acos(a.dot(b) / (la * lb))),
-	    .original_angle = RAD2DEG(min(theta, pi - theta)),
+	    .original_angle = RAD2DEG(min(theta, (float)pi - theta)),
 	};
 }
 
@@ -263,6 +265,8 @@ void ArmorDetector::perspective(const cv::Mat& img, cv::Mat& out,
 	std::vector<cv::Point2f> out_pnts = {{0., 0.}, {0., s}, {s, s}, {s, 0.}};
 
 	auto P = cv::getPerspectiveTransform(kpnts, out_pnts);
+	P.convertTo(P, CV_32F);
+
 	float scale = 1.5;
 	// clang-format off
 	cv::Matx33f Cut = {scale, 0, (1-scale)*s/2,
@@ -270,15 +274,13 @@ void ArmorDetector::perspective(const cv::Mat& img, cv::Mat& out,
 	                     0  , 0,       1      };
 	// clang-format on
 
-	cv::Mat number_img;
-	cv::warpPerspective(img, number_img, Cut * P, cv::Point(size, size));
-	cv::Mat gray_number_img;
-	cv::cvtColor(number_img, gray_number_img, cv::COLOR_BGR2GRAY);
-	cv::threshold(gray_number_img, out, 0, 255,
-	              cv::THRESH_OTSU | cv::THRESH_BINARY);
+	// cv::Mat number_img;
+	cv::warpPerspective(img, out, Cut * P, cv::Point(size, size));
+	// cv::Mat gray_number_img;
+	cv::cvtColor(out, out, cv::COLOR_BGR2GRAY);
+	cv::threshold(out, out, 0, 255, cv::THRESH_OTSU | cv::THRESH_BINARY);
 	cv::cvtColor(out, out, cv::COLOR_GRAY2RGB);
 }
-
 
 std::optional<std::pair<cv::Vec3f, cv::Vec3f>> ArmorDetector::pnp_solver(
     const std::vector<cv::Point2f>& kpnts, ArmorSize armor_size,
@@ -375,14 +377,15 @@ size_t ArmorDetector::match_armors(std::vector<Armor>& armors,
 			auto l1 = lights[i];
 			auto l2 = lights[j];
 
-			auto kpnts = sort_points(l1, l2);
-			auto armor_cri = rect_info(kpnts, camera, dist);
+			auto kpnts_fig = sort_points(l1.full_points(), l2.full_points());
+			auto kpnts_pnp = sort_points(l1.points(), l2.points());
+			auto armor_cri = rect_info(kpnts_fig, camera, dist);
 
 			if(!armor_check(armor_cri))
 				continue;
 
 			cv::Mat fig, fig_save;
-			perspective(img, fig, kpnts, 64);
+			perspective(img, fig, kpnts_fig, 64);
 			fig_save = fig.clone();
 			auto classes = classify(fig);
 
@@ -409,7 +412,7 @@ size_t ArmorDetector::match_armors(std::vector<Armor>& armors,
 				continue;
 			};
 			// TODO: 类别与装甲板长宽比综合判断
-			auto tmp = pnp_solver(kpnts, size, camera, dist);
+			auto tmp = pnp_solver(kpnts_pnp, size, camera, dist);
 			if(!tmp.has_value())
 				continue;
 

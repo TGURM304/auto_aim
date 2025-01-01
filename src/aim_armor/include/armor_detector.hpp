@@ -53,11 +53,12 @@ private:
 	 *
 	 * 按 (左下:-- , 左上:-+ , 右上:++ , 右下:+-) 的顺序排列
 	 *
-	 * @param l1 第一个灯条
-	 * @param l2 第二个灯条
+	 * @param l1p 第一个灯条的端点
+	 * @param l2p 第二个灯条的端点
 	 * @return 按顺序排列的点的坐标
 	 */
-	std::vector<cv::Point2f> sort_points(const Light& l1, const Light& l2);
+	std::vector<cv::Point2f> sort_points(const LinePoints2d& l1p,
+	                                     const LinePoints2d& l2p);
 
 	/**
 	 * @brief 计算原始矩形的信息
@@ -95,6 +96,8 @@ private:
 
 	/**
 	 * @brief 对装甲板中心图案进行分类
+	 *
+	 * @warning 将对原图进行操作. 若原图仍有用, 传入时需进行拷贝.
 	 *
 	 * @param image 输入用于分类的图像. 图像尺寸为 64*64
 	 * @return 装甲板类别

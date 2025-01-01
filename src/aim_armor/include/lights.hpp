@@ -10,6 +10,11 @@
 
 using Contour = std::vector<cv::Point>;
 
+template<typename T>
+using LinePoints2 = std::pair<cv::Point_<T>, cv::Point_<T>>;
+using LinePoints2d = LinePoints2<double>;
+using LinePoints2f = LinePoints2<float>;
+
 
 enum ArmorColor {
 	RED,
@@ -62,7 +67,7 @@ struct Light {
 	 *
 	 * 分别是两短边的中点. 不保证顺序.
 	 */
-	std::pair<cv::Vec2d, cv::Vec2d> points() {
+	LinePoints2d points() const {
 		return std::make_pair(pos + offset, pos - offset);
 	}
 
@@ -71,7 +76,7 @@ struct Light {
 	 *
 	 * 分别是两短边的中点. 不保证顺序.
 	 */
-	std::pair<cv::Point2i, cv::Point2i> int_points() {
+	LinePoints2<int> int_points() const {
 		return std::make_pair(cv::Point2i(pos + offset),
 		                      cv::Point2i(pos - offset));
 	}
@@ -83,8 +88,8 @@ struct Light {
 	 *
 	 * @warning 不保证绝对精确到装甲板边缘
 	 */
-	std::pair<cv::Vec2d, cv::Vec2d> full_points() {
-		double scale = 3.2;
+	LinePoints2d full_points() const {
+		double scale = 1.8;
 		return std::make_pair(pos + scale * offset, pos - scale * offset);
 	}
 
