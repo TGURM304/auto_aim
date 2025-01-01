@@ -1,4 +1,5 @@
 #include <cassert>
+#include <chrono>
 #include <cmath>
 #include <opencv2/opencv.hpp>
 #include <random>
@@ -18,30 +19,20 @@
 #define RAD2DEG(rad) ((rad) / std::numbers::pi * 180.)
 
 
-void save_image_random_filename(const cv::Mat& fig,
-                                const std::string& category) {
-	// 获取当前时间戳
-	std::time_t now = std::time(nullptr);
-	std::stringstream ss;
-	ss << now; // 将时间戳转换为字符串
+void save_image_with_time(const cv::Mat& img, const ArmorClasses category) {
+	auto now = std::chrono::system_clock::now();
+	auto timeval = std::chrono::time_point_cast<std::chrono::microseconds>(now)
+	                   .time_since_epoch()
+	                   .count();
 
-	// 随机数生成器
-	std::random_device rd;
-	std::mt19937 gen(rd());
-	std::uniform_int_distribution<> dis(1000, 9999); // 随机数范围
-
-	// 生成随机数
-	int random_number = dis(gen);
-
-	// 生成带类别的文件名
-	std::string filename = category + "_" + ss.str() + "_"
-	    + std::to_string(random_number) + ".jpg";
+	std::stringstream fname;
+	fname << (size_t)category << "_" << timeval << ".jpg";
 
 	// 保存图像
-	if(cv::imwrite("./tmp/" + filename, fig)) {
-		std::cout << "图像已保存为 " << filename << std::endl;
+	if(cv::imwrite("tmp/outimg/" + fname.str(), img)) {
+		std::cout << "图像已保存为 " << fname.str() << std::endl;
 	} else {
-		std::cout << "保存图像失败！" << std::endl;
+		std::cout << "保存图像失败" << std::endl;
 	}
 }
 
@@ -337,7 +328,7 @@ bool ArmorDetector::armor_check(const ArmorCriterion& ac) {
 
 void ArmorDetector::preprocess(cv::Mat& out, const cv::Mat& in) {
 	constexpr int thresh = 160;
-	constexpr int kernel_size = 10;
+	constexpr int kernel_size = 5;
 
 	cv::Mat gray_img;
 	cv::cvtColor(in, gray_img, cv::COLOR_BGR2GRAY);
@@ -384,15 +375,16 @@ size_t ArmorDetector::match_armors(std::vector<Armor>& armors,
 			if(!armor_check(armor_cri))
 				continue;
 
-			cv::Mat fig, fig_save;
+			cv::Mat fig;
 			perspective(img, fig, kpnts_fig, 64);
-			fig_save = fig.clone();
+			// cv::Mat fig_save = fig.clone();
 			auto classes = classify(fig);
 
-			// 调试使用
-			//if(!fig_save.empty() && classes != "null") {
-			//	save_image_random_filename(fig_save, classes);
-			//}
+			// // 调试使用
+			// // DEBUG
+			// if(!fig.empty()) {
+			// 	save_image_with_time(fig_save, classes);
+			// }
 
 			ArmorSize size;
 			switch(classes) {
