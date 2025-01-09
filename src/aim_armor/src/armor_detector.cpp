@@ -380,12 +380,6 @@ size_t ArmorDetector::match_armors(std::vector<Armor>& armors,
 			// cv::Mat fig_save = fig.clone();
 			auto classes = classify(fig);
 
-			// // 调试使用
-			// // DEBUG
-			// if(!fig.empty()) {
-			// 	save_image_with_time(fig_save, classes);
-			// }
-
 			ArmorSize size;
 			switch(classes) {
 			case NUM1:
@@ -397,12 +391,20 @@ size_t ArmorDetector::match_armors(std::vector<Armor>& armors,
 			case NUM4:
 			case QSZ:
 			case SB:
-			case NONE:
 				size = ArmorSize::SMALL;
 				break;
+			case NONE:
 			default:
 				continue;
 			};
+
+			// // DEBUG
+			// // 调试使用
+			// std::cout << classes << std::endl;
+			// if(!fig.empty()) {
+			// 	save_image_with_time(fig_save, classes);
+			// }
+
 			// TODO: 类别与装甲板长宽比综合判断
 			auto tmp = pnp_solver(kpnts_pnp, size, camera, dist);
 			if(!tmp.has_value())

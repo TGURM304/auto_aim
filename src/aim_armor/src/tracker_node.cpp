@@ -164,7 +164,7 @@ private:
 			    cv::Vec3d(armor.pos.x, armor.pos.y, armor.pos.z);
 			tracker_.rarmor.ori =
 			    cv::Vec3d(armor.ori.x, armor.ori.y, armor.ori.z);
-			tracker_.rarmor.classes = str_to_classes(armor.classes);
+			tracker_.rarmor.classes = (ArmorClasses)armor.classes;
 			tracker_.armors.push_back(tracker_.rarmor);
 			std::cout << armor.pos.x << "|" << armor.pos.y << "|" << armor.pos.z
 			          << std::endl;
