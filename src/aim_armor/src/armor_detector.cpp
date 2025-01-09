@@ -2,7 +2,6 @@
 #include <chrono>
 #include <cmath>
 #include <opencv2/opencv.hpp>
-#include <random>
 #include <string>
 #include <utility>
 #include <opencv2/calib3d.hpp>
@@ -163,7 +162,7 @@ cv::Point_<T> pcenter(const std::vector<cv::Point_<T>>& pnts) {
 	auto p0 = pnts[0];
 	T mu = pcross(pnts[3] - p0, pnts[1] - p0)
 	    / pcross(pnts[2] - p0, pnts[1] - pnts[3]);
-	return p0 + mu * pnts[2];
+	return p0 + mu * (pnts[2] - p0);
 }
 
 std::vector<cv::Point2f> ArmorDetector::sort_points(const LinePoints2d& l1p,
@@ -194,8 +193,8 @@ std::vector<cv::Point2f> ArmorDetector::sort_points(const LinePoints2d& l1p,
  * @brief 转为齐次坐标
  * (x, y) -> (x, y, 1)
  */
-cv::Vec3d h_(const cv::Point2d& p) {
-	return cv::Vec3d(p.x, p.y, 1.);
+cv::Vec3f h_(const cv::Point2f& p) {
+	return cv::Vec3f(p.x, p.y, 1.);
 }
 
 ArmorCriterion ArmorDetector::rect_info(const std::vector<cv::Point2f>& kpnts,
@@ -209,6 +208,10 @@ ArmorCriterion ArmorDetector::rect_info(const std::vector<cv::Point2f>& kpnts,
 
 	auto center = C_inv * h_(pcenter(ud_kpnts));
 
+	std::vector<cv::Vec3f> inv_pnts;
+	for(auto& p: ud_kpnts)
+		inv_pnts.push_back(C_inv * h_(p));
+
 	float tmp = 0.;
 	// 当计算出现问题时, 返回此值
 	auto wrong_retval = ArmorCriterion{.one_vote_no = true,
@@ -216,25 +219,35 @@ ArmorCriterion ArmorDetector::rect_info(const std::vector<cv::Point2f>& kpnts,
 	                                   .edge_angle = NAN,
 	                                   .original_angle = NAN};
 
-	tmp = (C_inv * (h_(ud_kpnts[2]) - h_(ud_kpnts[0])))[0];
+	// tmp = (C_inv * (h_(ud_kpnts[2]) - h_(ud_kpnts[0])))[0];
+	// if(tmp < 1e-6)
+	// 	return wrong_retval;
+	// float lambda1 = 2 * (center - C_inv * h_(ud_kpnts[0]))[0] / tmp;
+	// auto diag1 = lambda1 * h_(ud_kpnts[2]) - (2 - lambda1) * h_(ud_kpnts[0]);
+	tmp = (inv_pnts[2] - inv_pnts[0])[0];
 	if(tmp < 1e-6)
 		return wrong_retval;
-	float lambda1 = 2 * (center - C_inv * h_(ud_kpnts[0]))[0] / tmp;
-	auto diag1 = lambda1 * h_(ud_kpnts[2]) - (2 - lambda1) * h_(ud_kpnts[0]);
+	float lambda1 = 2 * (center - inv_pnts[0])[0] / tmp;
+	auto diag1 = lambda1 * inv_pnts[2] - (2 - lambda1) * inv_pnts[0];
 
-	tmp = (C_inv * (h_(ud_kpnts[3]) - h_(ud_kpnts[1])))[0];
+	// tmp = (C_inv * (h_(ud_kpnts[3]) - h_(ud_kpnts[1])))[0];
+	// if(tmp < 1e-6)
+	// 	return wrong_retval;
+	// float lambda2 = 2 * (center - C_inv * h_(ud_kpnts[1]))[0] / tmp;
+	// auto diag2 = lambda2 * h_(ud_kpnts[3]) - (2 - lambda2) * h_(ud_kpnts[1]);
+	tmp = (inv_pnts[3] - inv_pnts[1])[0];
 	if(tmp < 1e-6)
 		return wrong_retval;
-	float lambda2 = 2 * (center - C_inv * h_(ud_kpnts[1]))[0] / tmp;
-	auto diag2 = lambda2 * h_(ud_kpnts[3]) - (2 - lambda2) * h_(ud_kpnts[1]);
+	float lambda2 = 2 * (center - inv_pnts[1])[0] / tmp;
+	auto diag2 = lambda2 * inv_pnts[3] - (2 - lambda2) * inv_pnts[1];
 
 	auto a = diag1 - diag2;
 	auto b = diag1 + diag2;
 	float la = cv::norm(a);
 	float lb = cv::norm(b);
 
-	auto oa = kpnts[2] - kpnts[0];
-	auto ob = kpnts[3] - kpnts[1];
+	auto oa = kpnts[1] - kpnts[0];
+	auto ob = kpnts[2] - kpnts[3];
 	float ola = cv::norm(oa);
 	float olb = cv::norm(ob);
 	float theta = std::acos(oa.dot(ob) / (ola * olb));
@@ -327,8 +340,8 @@ bool ArmorDetector::armor_check(const ArmorCriterion& ac) {
 }
 
 void ArmorDetector::preprocess(cv::Mat& out, const cv::Mat& in) {
-	constexpr int thresh = 160;
-	constexpr int kernel_size = 5;
+	constexpr int thresh = 180;
+	constexpr int kernel_size = 2;
 
 	cv::Mat gray_img;
 	cv::cvtColor(in, gray_img, cv::COLOR_BGR2GRAY);
@@ -370,7 +383,7 @@ size_t ArmorDetector::match_armors(std::vector<Armor>& armors,
 
 			auto kpnts_fig = sort_points(l1.full_points(), l2.full_points());
 			auto kpnts_pnp = sort_points(l1.points(), l2.points());
-			auto armor_cri = rect_info(kpnts_fig, camera, dist);
+			auto armor_cri = rect_info(kpnts_pnp, camera, dist);
 
 			if(!armor_check(armor_cri))
 				continue;
