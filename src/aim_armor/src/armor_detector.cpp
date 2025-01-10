@@ -15,6 +15,8 @@
 #include "lights.hpp"
 
 
+#define debug(var) std::cout << "[debug] " #var ": " << var << std::endl;
+
 #define RAD2DEG(rad) ((rad) / std::numbers::pi * 180.)
 
 
@@ -28,11 +30,15 @@ void save_image_with_time(const cv::Mat& img, const ArmorClasses category) {
 	fname << (size_t)category << "_" << timeval << ".jpg";
 
 	// 保存图像
-	if(cv::imwrite("tmp/outimg/" + fname.str(), img)) {
+	if(cv::imwrite("tmp/" + fname.str(), img)) {
 		std::cout << "图像已保存为 " << fname.str() << std::endl;
 	} else {
 		std::cout << "保存图像失败" << std::endl;
 	}
+}
+
+bool compareLights(const Light& l1, const Light& l2) {
+	return l1.pos[0] < l2.pos[0];
 }
 
 
@@ -103,6 +109,7 @@ int ArmorDetector::init() {
 		auto model = core.read_model(model_path);
 		auto compiled_model = core.compile_model(model, "CPU");
 		infer_request = compiled_model.create_infer_request();
+
 
 		return 0;
 	} catch(const toml::parse_error& ex) {
@@ -201,7 +208,8 @@ ArmorCriterion ArmorDetector::rect_info(const std::vector<cv::Point2f>& kpnts,
                                         const cv::Matx33f& camera,
                                         const cv::Matx<float, 1, 5>& dist) {
 	std::vector<cv::Point2f> ud_kpnts{};
-	cv::undistortPoints(kpnts, ud_kpnts, camera, dist);
+	// cv::undistortPoints(kpnts, ud_kpnts, camera, dist);
+	ud_kpnts = kpnts;
 
 	cv::Matx33f C_inv;
 	cv::invert(camera, C_inv);
@@ -289,8 +297,6 @@ void ArmorDetector::perspective(const cv::Mat& img, cv::Mat& out,
 std::optional<std::pair<cv::Vec3f, cv::Vec3f>> ArmorDetector::pnp_solver(
     const std::vector<cv::Point2f>& kpnts, ArmorSize armor_size,
     const cv::Matx33f& camera, const cv::Matx<float, 1, 5>& dist) {
-	std::vector<cv::Point2f> img_pnts{};
-	cv::undistortPoints(kpnts, img_pnts, camera, dist);
 
 	std::vector<cv::Point3f> obj_pnts{};
 	if(armor_size == ArmorSize::BIG) {
@@ -310,7 +316,7 @@ std::optional<std::pair<cv::Vec3f, cv::Vec3f>> ArmorDetector::pnp_solver(
 	}
 
 	cv::Vec3f rvec, tvec;
-	bool succ = cv::solvePnP(obj_pnts, img_pnts, camera, dist, rvec, tvec);
+	bool succ = cv::solvePnP(obj_pnts, kpnts, camera, dist, rvec, tvec);
 	if(!succ)
 		return std::nullopt;
 
@@ -351,9 +357,13 @@ void ArmorDetector::preprocess(cv::Mat& out, const cv::Mat& in) {
 	                 cv::Mat::ones(kernel_size, kernel_size, CV_8U));
 }
 
+
 size_t ArmorDetector::match_armors(std::vector<Armor>& armors,
-                                   const cv::Mat& img, ArmorColor color) {
+                                   const cv::Mat& img, ArmorColor color,
+                                   cv::Mat& output_img) {
 	using namespace std::placeholders;
+
+	output_img = img.clone();
 
 	cv::Mat bin_img;
 	preprocess(bin_img, img);
@@ -370,14 +380,26 @@ size_t ArmorDetector::match_armors(std::vector<Armor>& armors,
 		if(!tmp.has_value())
 			continue;
 		auto light = tmp.value();
+
 		if(light.color != color)
 			continue;
+
 		lights.push_back(light);
 	}
 
 	size_t cnt = 0;
+	std::vector<bool> matched(lights.size(), false);
+
+	std::sort(lights.begin(), lights.end(), compareLights);
+
 	for(size_t i = 0; i < lights.size(); i++) {
 		for(size_t j = i + 1; j < lights.size(); j++) {
+			if(matched[i])
+				break;
+
+			if(matched[j])
+				continue;
+
 			auto l1 = lights[i];
 			auto l2 = lights[j];
 
@@ -390,7 +412,6 @@ size_t ArmorDetector::match_armors(std::vector<Armor>& armors,
 
 			cv::Mat fig;
 			perspective(img, fig, kpnts_fig, 64);
-			// cv::Mat fig_save = fig.clone();
 			auto classes = classify(fig);
 
 			ArmorSize size;
@@ -411,20 +432,29 @@ size_t ArmorDetector::match_armors(std::vector<Armor>& armors,
 				continue;
 			};
 
-			// // DEBUG
-			// // 调试使用
-			// std::cout << classes << std::endl;
-			// if(!fig.empty()) {
-			// 	save_image_with_time(fig_save, classes);
-			// }
-
-			// TODO: 类别与装甲板长宽比综合判断
 			auto tmp = pnp_solver(kpnts_pnp, size, camera, dist);
 			if(!tmp.has_value())
 				continue;
 
+			cv::line(output_img, kpnts_pnp[0], kpnts_pnp[2],
+			         cv::Scalar(255, 0, 0), 2);
+			cv::line(output_img, kpnts_pnp[1], kpnts_pnp[3],
+			         cv::Scalar(255, 0, 0), 2);
+			cv::line(output_img, kpnts_pnp[0], kpnts_pnp[1],
+			         cv::Scalar(255, 0, 0), 2);
+			cv::line(output_img, kpnts_pnp[2], kpnts_pnp[3],
+			         cv::Scalar(255, 0, 0), 2);
+			cv::putText(output_img, std::to_string(classes),
+			            cv::Point2f(kpnts_pnp[1].x + 5, kpnts_pnp[1].y + 5),
+			            cv::FONT_HERSHEY_SIMPLEX, 1, cv::Scalar(255, 255, 255),
+			            2);
+
 			armors.emplace_back(classes, tmp.value().first, tmp.value().second);
 			cnt++;
+
+			// 标记这两个灯条为已匹配
+			matched[i] = true;
+			matched[j] = true;
 		}
 	}
 

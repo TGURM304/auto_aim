@@ -3,6 +3,7 @@ project(camera)
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_BUILD_TYPE "Debug")
 set(CMAKE_CXX_STANDARD 17)
 
 if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
@@ -58,6 +59,7 @@ ament_target_dependencies(
   "sensor_msgs"
   "OpenCV"
   "cv_bridge"
+  "image_transport"
 )
 
 ament_target_dependencies(

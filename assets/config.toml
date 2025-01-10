@@ -2,15 +2,16 @@ title = "auto_aim"
 version = 1.0
 
 [camera]
-version = "HK" # MV: MindVision; HK: Hikvision
-focal = [1050.176611784291254, 1050.3160947995561]
-center = [301.8079077070227, 225.2905375296807]
+version = "MV" # MV: MindVision; HK: Hikvision
+# focal = [1079.252773, 1087.934656]
+focal = [1080, 1080]
+center = [320.000000, 240.000000]
 dist = [
-  -0.0893641782114391,
-  -0.5153697191214612,
-  -0.0008147925966741238,
-  -0.0000383217287733705,
-  8.961592240034004,
+  -0.100173,
+  0.216010,
+  -0.027498,
+  -0.002229,
+  0.000000
 ]
 
 [mindvision]
@@ -18,29 +19,33 @@ gamma = 110          # 伽马值
 contrast = 100       # 对比度
 saturation = 100     # 饱和度
 auto_exposure = true # 是否开启自动曝光
-exposure_time = 30   # 曝光时间 (ms)
+exposure_time = 12   # 曝光时间 (ms)
 
 [hikvision]
 auto_whitebalance = true # 是否开启自动白平衡
 auto_exposure = false    # 是否开启自动曝光
-exposure_time = 15       # 曝光时间 (ms)
+exposure_time = 12       # 曝光时间 (ms)
 
 [aim_armor]
 model_path = "assets/model/best-8.onnx"
 
+# [aim_armor.light]
+# aspect_ratio = [1, 15]
+# area = [120, inf]
+
 [aim_armor.light]
-aspect_ratio = [1.6, 9.0]
-area = [60, inf]
+aspect_ratio = [-inf, inf]
+area = [120, inf]
 
 [aim_armor.armor]
 aspect_ratio = [-inf, inf]   # FIXME
-edge_angle = [75, 105]
+edge_angle = [70, 108]
 original_angle = [-inf, inf]
 
 [serial]
-port = "/dev/ttyUSB0"
-in_baud_rate = 115200
-out_baud_rate = 115200
+port = "/dev/ttyCH341USB1"
+in_baud_rate = 2000000
+out_baud_rate = 2000000
 
 [test]
 test_video = "./1.avi"

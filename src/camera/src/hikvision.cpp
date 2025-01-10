@@ -39,14 +39,18 @@ HikVision::~HikVision() {
 }
 
 int HikVision::init() {
+	pDataForRGB = (unsigned char*) malloc(1440 * 1080 * 4 + 2048);
+	
 	// 初始化SDK
 	nRet = MV_CC_Initialize();
 	memset(&device_list, 0, sizeof(MV_CC_DEVICE_INFO_LIST));
-
 	if(nRet != MV_OK) {
 		printf("Initialize SDK fail! nRet [0x%x]\n", nRet);
 		return nRet;
 	}
+
+	pstCvtParam.enSrcPixelType = PixelType_Gvsp_BayerRG8;
+	pstCvtParam.enDstPixelType = PixelType_Gvsp_BGR8_Packed;
 
 	int i = 1;
 	do {
@@ -73,7 +77,7 @@ int HikVision::init() {
 	}
 
 	// 设置相机传输速率
-	nRet = MV_USB_SetTransferSize(camera_handle, 0x200000);
+	nRet = MV_USB_SetTransferSize(camera_handle, 0x2000000);
 	if(nRet != MV_OK) {
 		printf("MV_CC_SetTransferSize fail! nRet [0x%x]\n", nRet);
 		return nRet;
@@ -93,44 +97,67 @@ int HikVision::init() {
 		return nRet;
 	}
 
-	// 设置像素格式
-	nRet = MV_CC_SetPixelFormat(camera_handle, PixelType_Gvsp_BGR8_Packed);
+	// 设置为8bit位深
+	nRet = MV_CC_SetEnumValue(camera_handle, "ADCBitDepth", 0);
+	if(nRet != MV_OK) {
+		printf("MV_CC_SetADCBitDepth fail! nRet [0x%x]\n", nRet);
+		return nRet;
+	}
+
+	nRet = MV_CC_SetEnumValue(camera_handle, "PixelFormat",
+	                          PixelType_Gvsp_BayerRG8);
 	if(nRet != MV_OK) {
 		printf("MV_CC_SetPixelFormat fail! nRet [0x%x]\n", nRet);
 		return nRet;
 	}
 
-    // 设置白平衡模式
-	nRet = MV_CC_SetEnumValue(camera_handle, "BalanceWhiteAuto", autobalance? 1 : 0);
+	// 设置白平衡模式
+	nRet = MV_CC_SetEnumValue(camera_handle, "BalanceWhiteAuto",
+	                          autobalance ? 1 : 0);
 	if(nRet != MV_OK) {
 		printf("MV_CC_BalanceWhiteAuto fail! nRet [0x%x]\n", nRet);
 		return nRet;
 	}
 
+
 	// 设置曝光模式
 	nRet =
 	    MV_CC_SetEnumValue(camera_handle, "ExposureAuto", autoexposure ? 1 : 0);
 	if(nRet != MV_OK) {
-		printf("MV_CC_SetExposureAuto fail! nRet [0x%x]\n", nRet);
+		printf("MV_CC_SetExposureAuto fail! nRe`	 `t [0x%x]\n", nRet);
 		return nRet;
 	}
 
-	// 设置曝光
-	nRet =
-	    MV_CC_SetFloatValue(camera_handle, "ExposureTime", 1000 * exposuretime);
+	if(autoexposure ? 1 : 0) { // 设置曝光
+		nRet = MV_CC_SetFloatValue(camera_handle, "ExposureTime",
+		                           1000 * exposuretime);
+		if(nRet != MV_OK) {
+			printf("MV_CC_SetExposureTime fail! nRet [0x%x]\n", nRet);
+			return nRet;
+		}
+	}
+
+	// 增益设置
+	nRet = MV_CC_SetFloatValue(camera_handle, "Gain", 0);
 	if(nRet != MV_OK) {
-		printf("MV_CC_SetExposureTime fail! nRet [0x%x]\n", nRet);
+		printf("MV_CC_SetGain fail! nRet [0x%x]\n", nRet);
 		return nRet;
 	}
 
-	// 设置亮度
-	// nRet = MV_CC_SetIntValue(camera_handle, "Brightness", brightness);
-	// if(nRet != MV_OK) {
-	// 	printf("MV_CC_SetBrightness fail! nRet [0x%x]\n", nRet);
-	// 	return nRet;
-	// }
+	// 插值算法设置
+	nRet = MV_CC_SetBayerCvtQuality(camera_handle, 1);
+	if(nRet != MV_OK) {
+		printf("MV_CC_SetBayerCvtQuality fail! nRet [0x%x]\n", nRet);
+		return nRet;
+	}
 
-	// TODO: HK更多参数设置
+	// ch:获取数据包大小 | en:Get payload size
+	MVCC_INTVALUE stParam;
+	memset(&stParam, 0, sizeof(MVCC_INTVALUE));
+	nRet = MV_CC_GetIntValue(camera_handle, "PayloadSize", &stParam);
+	if(MV_OK != nRet) {
+		printf("Get PayloadSize fail! nRet [0x%x]\n", nRet);
+	}
 
 	// 开始取流
 	nRet = MV_CC_StartGrabbing(camera_handle);
@@ -148,9 +175,47 @@ std::pair<cv::Mat, int> HikVision::getFrame() {
 		showText(frame, decimalTohex(nRet));
 		return std::make_pair(frame, nRet);
 	}
+
+	// pDataForRGB = (unsigned char*)malloc(
+	//     frameOut.stFrameInfo.nWidth * frameOut.stFrameInfo.nHeight * 4 + 2048);
+	
+	if(NULL == pDataForRGB) {
+		cv::Mat frame = cv::Mat::ones(480, 640, CV_8UC3) * 255;
+		nRet = 0x80000108;
+		showText(frame, decimalTohex(nRet));
+		return std::make_pair(frame, nRet);
+	}
+	// 像素格式转换
+	pstCvtParam = {0};
+	// 从上到下依次是：图像宽，图像高，输入数据缓存，输入数据大小，源像素格式，
+	// 目标像素格式，输出数据缓存，提供的输出缓冲区大小
+	pstCvtParam.nWidth = frameOut.stFrameInfo.nWidth;
+	pstCvtParam.nHeight = frameOut.stFrameInfo.nHeight;
+	pstCvtParam.pSrcData = frameOut.pBufAddr;
+	pstCvtParam.nSrcDataLen = frameOut.stFrameInfo.nFrameLen;
+	pstCvtParam.enSrcPixelType = PixelType_Gvsp_BayerRG8;
+	pstCvtParam.enDstPixelType = PixelType_Gvsp_BGR8_Packed;
+	pstCvtParam.pDstBuffer = pDataForRGB;
+	pstCvtParam.nDstBufferSize =
+	    frameOut.stFrameInfo.nWidth * frameOut.stFrameInfo.nHeight * 4 + 2048;
+	pstCvtParam.nDstLen =
+	    frameOut.stFrameInfo.nWidth * frameOut.stFrameInfo.nHeight * 3;
+	nRet = MV_CC_ConvertPixelTypeEx(camera_handle, &pstCvtParam);
+
+	if(MV_OK != nRet) {
+		printf("MV_CC_ConvertPixelTypeEx fail! nRet [%x]\n", nRet);
+	}
+	if(nRet != MV_OK) {
+		cv::Mat frame = cv::Mat::ones(480, 640, CV_8UC3) * 255;
+		showText(frame, decimalTohex(nRet));
+		return std::make_pair(frame, nRet);
+	}
+
+
 	cv::Mat frame =
 	    cv::Mat(frameOut.stFrameInfo.nHeight, frameOut.stFrameInfo.nWidth,
-	            CV_8UC3, frameOut.pBufAddr);
+	            CV_8UC3, pDataForRGB);
+
 	nRet = MV_CC_FreeImageBuffer(camera_handle, &frameOut);
 	if(nRet != MV_OK) {
 		cv::Mat frame = cv::Mat::ones(480, 640, CV_8UC3) * 255;

@@ -36,6 +36,7 @@ endif()
 
 
 add_executable(getstream src/getstream.cpp)
+add_executable(record src/record.cpp)
 
 ament_target_dependencies(
   getstream
@@ -45,8 +46,21 @@ ament_target_dependencies(
   "cv_bridge"
 )
 
+ament_target_dependencies(
+  record
+  "rclcpp"
+  "OpenCV"
+  "sensor_msgs"
+  "cv_bridge"
+)
+
 install(TARGETS getstream
   DESTINATION lib/${PROJECT_NAME})
+
+
+install(TARGETS record
+DESTINATION lib/${PROJECT_NAME})
+
 
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)

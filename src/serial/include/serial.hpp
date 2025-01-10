@@ -1,11 +1,18 @@
 #ifndef _SERIAL_H_SERIAL_
 #define _SERIAL_H_SERIAL_
 
+#include <stdio.h>
+#include <stdlib.h>
 #include <iostream>
-#include <fcntl.h>
 #include <unistd.h>
-#include <termios.h>
-#include <cstring>
+#include <iomanip>
+#include <rclcpp/utilities.hpp>
+#include <sys/types.h> 
+#include <sys/ioctl.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+#include <termios.h> 
+#include <stdint.h>
 
 #include "toml.hpp"
 
@@ -15,13 +22,21 @@ public:
 
 	~Serial();
 
-	/// @brief 串口数据结构体
-	struct __attribute__((packed)) Data {
-		uint8_t head = 0x7E;
+	/// @brief 发送数据结构体
+	struct __attribute__((packed)) Send_Data {
+		uint8_t head = 0xFE;
 		uint8_t mode = 0;
 		float pitch_angle = 0.0;
 		float yaw_angle = 0.0;
-		uint8_t tail = 0x7F;
+		float distance = 0.0;
+		uint8_t tail = 0xFF;
+	};
+
+	/// @brief 接收数据结构体
+	struct __attribute__((packed)) Receive_Data {
+        uint8_t header = 0x5A;
+        uint8_t detect_color = 'r';
+        uint8_t tail = 0xA5;
 	};
 
 	/**
@@ -40,7 +55,7 @@ public:
 	 * @param fd file descriptor (文件描述符)
 	 * @param data 数据结构体
 	 */
-	void sendData(Data& data);
+	void sendData(Send_Data& data);
 
 	/**
 	 * @brief 接受串口数据
@@ -48,7 +63,7 @@ public:
 	 * @param fd file descriptor (文件描述符)
 	 * @param data 数据结构体
 	 */
-	bool receiveData(Data& data);
+	bool receiveData(Receive_Data& data);
 
 private:
 	/// @brief 串口配置

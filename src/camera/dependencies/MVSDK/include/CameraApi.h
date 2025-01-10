@@ -4,8 +4,8 @@
 #define MVSDK_API
 
 #ifdef __cplusplus
- extern "C" {
- #endif
+extern "C" {
+#endif
 
 
 #include "CameraDefine.h"
@@ -70,8 +70,8 @@ MVSDK_API CameraSdkStatus  CameraUSBDeviceUninit();
 //            中错误码的定义。
 /******************************************************/
 MVSDK_API CameraSdkStatus  CameraEnumerateDevice(
-    tSdkCameraDevInfo* pCameraList,
-    INT*               piNums
+        tSdkCameraDevInfo* pCameraList,
+        INT*               piNums
 );
 
 /******************************************************/
@@ -87,8 +87,8 @@ MVSDK_API CameraSdkStatus  CameraEnumerateDevice(
 //            中错误码的定义。
 /******************************************************/
 MVSDK_API CameraSdkStatus  CameraIdleStateDevice(
-    tSdkCameraDevInfo* pCameraList,
-    INT*               piNums
+        tSdkCameraDevInfo* pCameraList,
+        INT*               piNums
 );
 
 
@@ -115,8 +115,8 @@ MVSDK_API INT  CameraEnumerateDeviceEx(
 //            中错误码的定义。
 /******************************************************/
 MVSDK_API CameraSdkStatus  CameraIsOpened(
-  tSdkCameraDevInfo*  pCameraList,
-  BOOL*               pOpened
+        tSdkCameraDevInfo*  pCameraList,
+        BOOL*               pOpened
 );
 
 
@@ -137,10 +137,10 @@ MVSDK_API CameraSdkStatus  CameraIsOpened(
 //            中错误码的定义。
 /******************************************************/
 MVSDK_API CameraSdkStatus  CameraInit(
-    tSdkCameraDevInfo*  pCameraInfo,
-    int                 emParamLoadMode,
-    int                 emTeam,
-    CameraHandle*       pCameraHandle
+        tSdkCameraDevInfo*  pCameraInfo,
+        int                 emParamLoadMode,
+        int                 emTeam,
+        CameraHandle*       pCameraHandle
 );
 
 /******************************************************/
@@ -159,10 +159,10 @@ MVSDK_API CameraSdkStatus  CameraInit(
 //            中错误码的定义。
 /******************************************************/
 MVSDK_API CameraSdkStatus  CameraInitEx(
-    int             iDeviceIndex,
-    int             iParamLoadMode,
-    int             emTeam,
-    CameraHandle*   pCameraHandle
+        int             iDeviceIndex,
+        int             iParamLoadMode,
+        int             emTeam,
+        CameraHandle*   pCameraHandle
 );
 
 /// @ingroup API_OPEN
@@ -177,8 +177,8 @@ MVSDK_API CameraSdkStatus  CameraInitEx(
 /// \param [out] pCameraHandle The handle pointer of the camera, after successful initialization, returns the camera's effective handle.
 /// \return Returns CAMERA_STATUS_SUCCESS(0) successfully. Otherwise, it returns a non-zero error code. Please refer to the definition of the error code in CameraStatus.h.
 MVSDK_API CameraSdkStatus CameraInitEx2(
-	char* CameraName,
-	CameraHandle   *pCameraHandle
+        char* CameraName,
+        CameraHandle   *pCameraHandle
 );
 
 /******************************************************/
@@ -196,10 +196,10 @@ MVSDK_API CameraSdkStatus CameraInitEx2(
 //            中错误码的定义。
 /******************************************************/
 MVSDK_API CameraSdkStatus  CameraSetCallbackFunction(
-    CameraHandle        hCamera,
-    CAMERA_SNAP_PROC    pCallBack,
-    PVOID               pContext,
-    CAMERA_SNAP_PROC*   pCallbackOld
+        CameraHandle        hCamera,
+        CAMERA_SNAP_PROC    pCallBack,
+        PVOID               pContext,
+        CAMERA_SNAP_PROC*   pCallbackOld
 );
 
 /******************************************************/
@@ -211,7 +211,7 @@ MVSDK_API CameraSdkStatus  CameraSetCallbackFunction(
 //            中错误码的定义。
 /******************************************************/
 MVSDK_API CameraSdkStatus  CameraUnInit(
-    CameraHandle hCamera
+        CameraHandle hCamera
 );
 
 /******************************************************/
@@ -224,8 +224,8 @@ MVSDK_API CameraSdkStatus  CameraUnInit(
 //            中错误码的定义。
 /******************************************************/
 MVSDK_API CameraSdkStatus  CameraGetInformation(
-    CameraHandle    hCamera,
-    char**          pbuffer
+        CameraHandle    hCamera,
+        char**          pbuffer
 );
 
 /******************************************************/
@@ -243,10 +243,10 @@ MVSDK_API CameraSdkStatus  CameraGetInformation(
 //            中错误码的定义。
 /******************************************************/
 MVSDK_API CameraSdkStatus  CameraImageProcess(
-    CameraHandle        hCamera,
-    BYTE*               pbyIn,
-    BYTE*               pbyOut,
-    tSdkFrameHead*      pFrInfo
+        CameraHandle        hCamera,
+        BYTE*               pbyIn,
+        BYTE*               pbyOut,
+        tSdkFrameHead*      pFrInfo
 );
 
 /******************************************************/
@@ -266,12 +266,12 @@ MVSDK_API CameraSdkStatus  CameraImageProcess(
 //            中错误码的定义。
 /******************************************************/
 MVSDK_API CameraSdkStatus CameraImageProcessEx(
-    CameraHandle hCamera,
-    BYTE *pbyIn,
-    BYTE *pbyOut,
-    tSdkFrameHead *pFrInfo,
-    UINT uOutFormat,
-    UINT uReserved
+        CameraHandle hCamera,
+        BYTE *pbyIn,
+        BYTE *pbyOut,
+        tSdkFrameHead *pFrInfo,
+        UINT uOutFormat,
+        UINT uReserved
 );
 
 /******************************************************/
@@ -287,8 +287,8 @@ MVSDK_API CameraSdkStatus CameraImageProcessEx(
 //            中错误码的定义。
 /******************************************************/
 MVSDK_API CameraSdkStatus  CameraDisplayInit(
-    CameraHandle    hCamera,
-    HWND            hWndDisplay
+        CameraHandle    hCamera,
+        HWND            hWndDisplay
 );
 
 /******************************************************/
@@ -303,9 +303,9 @@ MVSDK_API CameraSdkStatus  CameraDisplayInit(
 //            中错误码的定义。
 /******************************************************/
 MVSDK_API CameraSdkStatus  CameraDisplayRGB24(
-    CameraHandle        hCamera,
-    BYTE*               pbyRGB24,
-    tSdkFrameHead*      pFrInfo
+        CameraHandle        hCamera,
+        BYTE*               pbyRGB24,
+        tSdkFrameHead*      pFrInfo
 );
 
 /******************************************************/
@@ -321,8 +321,8 @@ MVSDK_API CameraSdkStatus  CameraDisplayRGB24(
 //            中错误码的定义。
 /******************************************************/
 MVSDK_API CameraSdkStatus  CameraSetDisplayMode(
-    CameraHandle    hCamera,
-    INT             iMode
+        CameraHandle    hCamera,
+        INT             iMode
 );
 
 /******************************************************/
@@ -340,9 +340,9 @@ MVSDK_API CameraSdkStatus  CameraSetDisplayMode(
 //            中错误码的定义。
 /******************************************************/
 MVSDK_API CameraSdkStatus  CameraSetDisplayOffset(
-    CameraHandle    hCamera,
-    int             iOffsetX,
-    int             iOffsetY
+        CameraHandle    hCamera,
+        int             iOffsetX,
+        int             iOffsetY
 );
 
 /******************************************************/
@@ -357,9 +357,9 @@ MVSDK_API CameraSdkStatus  CameraSetDisplayOffset(
 //            中错误码的定义。
 /******************************************************/
 MVSDK_API CameraSdkStatus  CameraSetDisplaySize(
-    CameraHandle    hCamera,
-    INT             iWidth,
-    INT             iHeight
+        CameraHandle    hCamera,
+        INT             iWidth,
+        INT             iHeight
 );
 
 /******************************************************/
@@ -382,10 +382,10 @@ MVSDK_API CameraSdkStatus  CameraSetDisplaySize(
 //            中错误码的定义。
 /******************************************************/
 MVSDK_API CameraSdkStatus  CameraGetImageBuffer(
-    CameraHandle        hCamera,
-    tSdkFrameHead*      pFrameInfo,
-    BYTE**              pbyBuffer,
-    UINT                wTimes
+        CameraHandle        hCamera,
+        tSdkFrameHead*      pFrameInfo,
+        BYTE**              pbyBuffer,
+        UINT                wTimes
 );
 
 /******************************************************/
@@ -403,10 +403,10 @@ MVSDK_API CameraSdkStatus  CameraGetImageBuffer(
 //            否则返回0。
 /******************************************************/
 MVSDK_API unsigned char*  CameraGetImageBufferEx(
-    CameraHandle        hCamera,
-    INT*                piWidth,
-    INT*                piHeight,
-    UINT                wTimes
+        CameraHandle        hCamera,
+        INT*                piWidth,
+        INT*                piHeight,
+        UINT                wTimes
 );
 
 
@@ -428,10 +428,10 @@ MVSDK_API unsigned char*  CameraGetImageBufferEx(
 //            中错误码的定义。
 /******************************************************/
 MVSDK_API CameraSdkStatus  CameraSnapToBuffer(
-    CameraHandle        hCamera,
-    tSdkFrameHead*      pFrameInfo,
-    BYTE**              pbyBuffer,
-    UINT                uWaitTimeMs
+        CameraHandle        hCamera,
+        tSdkFrameHead*      pFrameInfo,
+        BYTE**              pbyBuffer,
+        UINT                uWaitTimeMs
 );
 
 /******************************************************/
@@ -444,8 +444,8 @@ MVSDK_API CameraSdkStatus  CameraSnapToBuffer(
 //            中错误码的定义。
 /******************************************************/
 MVSDK_API CameraSdkStatus  CameraReleaseImageBuffer(
-    CameraHandle    hCamera,
-    BYTE*           pbyBuffer
+        CameraHandle    hCamera,
+        BYTE*           pbyBuffer
 );
 
 /******************************************************/
@@ -459,7 +459,7 @@ MVSDK_API CameraSdkStatus  CameraReleaseImageBuffer(
 //            中错误码的定义。
 /******************************************************/
 MVSDK_API CameraSdkStatus  CameraPlay(
-    CameraHandle hCamera
+        CameraHandle hCamera
 );
 
 /******************************************************/
@@ -473,7 +473,7 @@ MVSDK_API CameraSdkStatus  CameraPlay(
 //            中错误码的定义。
 /******************************************************/
 MVSDK_API CameraSdkStatus  CameraPause(
-    CameraHandle hCamera
+        CameraHandle hCamera
 );
 
 /******************************************************/
@@ -486,7 +486,7 @@ MVSDK_API CameraSdkStatus  CameraPause(
 //            中错误码的定义。
 /******************************************************/
 MVSDK_API CameraSdkStatus  CameraStop(
-    CameraHandle hCamera
+        CameraHandle hCamera
 );
 
 /******************************************************/
@@ -505,12 +505,12 @@ MVSDK_API CameraSdkStatus  CameraStop(
 //            中错误码的定义。
 /******************************************************/
 MVSDK_API CameraSdkStatus  CameraInitRecord(
-    CameraHandle    hCamera,
-    int             iFormat,
-    char*           pcSavePath,
-    BOOL            b2GLimit,
-    DWORD           dwQuality,
-    int             iFrameRate
+        CameraHandle    hCamera,
+        int             iFormat,
+        char*           pcSavePath,
+        BOOL            b2GLimit,
+        DWORD           dwQuality,
+        int             iFrameRate
 );
 
 /******************************************************/
@@ -523,7 +523,7 @@ MVSDK_API CameraSdkStatus  CameraInitRecord(
 //            中错误码的定义。
 /******************************************************/
 MVSDK_API CameraSdkStatus  CameraStopRecord(
-    CameraHandle    hCamera
+        CameraHandle    hCamera
 );
 
 /******************************************************/
@@ -541,9 +541,9 @@ MVSDK_API CameraSdkStatus  CameraStopRecord(
 //            中错误码的定义。
 /******************************************************/
 MVSDK_API CameraSdkStatus  CameraPushFrame(
-    CameraHandle    hCamera,
-    BYTE*           pbyImageBuffer,
-    tSdkFrameHead*  pFrInfo
+        CameraHandle    hCamera,
+        BYTE*           pbyImageBuffer,
+        tSdkFrameHead*  pFrInfo
 );
 
 /******************************************************/
@@ -571,12 +571,12 @@ MVSDK_API CameraSdkStatus  CameraPushFrame(
 //            中错误码的定义。
 /******************************************************/
 MVSDK_API CameraSdkStatus  CameraSaveImage(
-    CameraHandle    hCamera,
-    char*           lpszFileName,
-    BYTE*           pbyImageBuffer,
-    tSdkFrameHead*  pFrInfo,
-    BYTE            byFileType,
-    BYTE            byQuality
+        CameraHandle    hCamera,
+        char*           lpszFileName,
+        BYTE*           pbyImageBuffer,
+        tSdkFrameHead*  pFrInfo,
+        BYTE            byFileType,
+        BYTE            byQuality
 );
 
 /******************************************************/
@@ -589,8 +589,8 @@ MVSDK_API CameraSdkStatus  CameraSaveImage(
 //            中错误码的定义。
 /******************************************************/
 MVSDK_API CameraSdkStatus  CameraGetImageResolution(
-    CameraHandle            hCamera,
-    tSdkImageResolution*    psCurVideoSize
+        CameraHandle            hCamera,
+        tSdkImageResolution*    psCurVideoSize
 );
 
 /******************************************************/
@@ -603,8 +603,8 @@ MVSDK_API CameraSdkStatus  CameraGetImageResolution(
 //            中错误码的定义。
 /******************************************************/
 MVSDK_API CameraSdkStatus  CameraSetImageResolution(
-    CameraHandle            hCamera,
-    tSdkImageResolution*    pImageResolution
+        CameraHandle            hCamera,
+        tSdkImageResolution*    pImageResolution
 );
 
 /// @ingroup API_ROI
@@ -618,7 +618,7 @@ MVSDK_API CameraSdkStatus  CameraSetImageResolution(
 /// \param [in] y			   垂直偏移
 /// \param [in] width		   宽
 /// \param [in] height		   高
-/// \param [in] ZoomWidth     最终输出时缩放宽度，0表示不缩放 
+/// \param [in] ZoomWidth     最终输出时缩放宽度，0表示不缩放
 /// \param [in] ZoomHeight    最终输出时缩放高度，0表示不缩放
 /// \return 成功返回 CAMERA_STATUS_SUCCESS(0)。否则返回非0值的错误码, 请参考 CameraStatus.h 中错误码的定义。
 /// \~english
@@ -635,17 +635,17 @@ MVSDK_API CameraSdkStatus  CameraSetImageResolution(
 /// \param [in] ZoomHeight Scales the height of the final output, 0 means no scaling
 /// \return Returns CAMERA_STATUS_SUCCESS(0) successfully. Otherwise, it returns a non-zero error code. Please refer to the definition of the error code in CameraStatus.h.
 MVSDK_API CameraSdkStatus CameraSetImageResolutionEx(
-	CameraHandle            hCamera, 
-	int						iIndex,
-	int						Mode,
-	UINT					ModeSize,
-	int						x,
-	int						y,
-	int						width,
-	int						height,
-	int						ZoomWidth,
-	int						ZoomHeight
-	);
+        CameraHandle            hCamera,
+        int						iIndex,
+        int						Mode,
+        UINT					ModeSize,
+        int						x,
+        int						y,
+        int						width,
+        int						height,
+        int						ZoomWidth,
+        int						ZoomHeight
+);
 
 /******************************************************/
 // 函数名   : CameraGetMediaType
@@ -663,8 +663,8 @@ MVSDK_API CameraSdkStatus CameraSetImageResolutionEx(
 //            中错误码的定义。
 /******************************************************/
 MVSDK_API CameraSdkStatus  CameraGetMediaType(
-    CameraHandle    hCamera,
-    INT*            piMediaType
+        CameraHandle    hCamera,
+        INT*            piMediaType
 );
 
 /******************************************************/
@@ -682,8 +682,8 @@ MVSDK_API CameraSdkStatus  CameraGetMediaType(
 //            中错误码的定义。
 /******************************************************/
 MVSDK_API CameraSdkStatus  CameraSetMediaType(
-    CameraHandle    hCamera,
-    INT             iMediaType
+        CameraHandle    hCamera,
+        INT             iMediaType
 );
 
 /******************************************************/
@@ -696,8 +696,8 @@ MVSDK_API CameraSdkStatus  CameraSetMediaType(
 //            中错误码的定义。
 /******************************************************/
 MVSDK_API CameraSdkStatus  CameraSetAeState(
-    CameraHandle    hCamera,
-    BOOL            bAeState
+        CameraHandle    hCamera,
+        BOOL            bAeState
 );
 
 /******************************************************/
@@ -710,8 +710,8 @@ MVSDK_API CameraSdkStatus  CameraSetAeState(
 //            中错误码的定义。
 /******************************************************/
 MVSDK_API CameraSdkStatus  CameraGetAeState(
-    CameraHandle    hCamera,
-    BOOL*           pAeState
+        CameraHandle    hCamera,
+        BOOL*           pAeState
 );
 
 /******************************************************/
@@ -725,8 +725,8 @@ MVSDK_API CameraSdkStatus  CameraGetAeState(
 //            中错误码的定义。
 /******************************************************/
 MVSDK_API CameraSdkStatus  CameraSetSharpness(
-    CameraHandle    hCamera,
-    int             iSharpness
+        CameraHandle    hCamera,
+        int             iSharpness
 );
 
 /******************************************************/
@@ -739,8 +739,8 @@ MVSDK_API CameraSdkStatus  CameraSetSharpness(
 //            中错误码的定义。
 /******************************************************/
 MVSDK_API CameraSdkStatus  CameraGetSharpness(
-    CameraHandle    hCamera,
-    int*            piSharpness
+        CameraHandle    hCamera,
+        int*            piSharpness
 );
 
 /******************************************************/
@@ -756,8 +756,8 @@ MVSDK_API CameraSdkStatus  CameraGetSharpness(
 //            中错误码的定义。
 /******************************************************/
 MVSDK_API CameraSdkStatus  CameraSetLutMode(
-    CameraHandle    hCamera,
-    int             emLutMode
+        CameraHandle    hCamera,
+        int             emLutMode
 );
 
 /******************************************************/
@@ -771,8 +771,8 @@ MVSDK_API CameraSdkStatus  CameraSetLutMode(
 //            中错误码的定义。
 /******************************************************/
 MVSDK_API CameraSdkStatus  CameraGetLutMode(
-    CameraHandle    hCamera,
-    int*            pemLutMode
+        CameraHandle    hCamera,
+        int*            pemLutMode
 );
 
 /******************************************************/
@@ -787,8 +787,8 @@ MVSDK_API CameraSdkStatus  CameraGetLutMode(
 //            中错误码的定义。
 /******************************************************/
 MVSDK_API CameraSdkStatus  CameraSelectLutPreset(
-    CameraHandle    hCamera,
-    int             iSel
+        CameraHandle    hCamera,
+        int             iSel
 );
 
 /******************************************************/
@@ -801,8 +801,8 @@ MVSDK_API CameraSdkStatus  CameraSelectLutPreset(
 //            中错误码的定义。
 /******************************************************/
 MVSDK_API CameraSdkStatus  CameraGetLutPresetSel(
-    CameraHandle    hCamera,
-    int*            piSel
+        CameraHandle    hCamera,
+        int*            piSel
 );
 
 /******************************************************/
@@ -820,9 +820,9 @@ MVSDK_API CameraSdkStatus  CameraGetLutPresetSel(
 //            中错误码的定义。
 /******************************************************/
 MVSDK_API CameraSdkStatus  CameraSetCustomLut(
-    CameraHandle    hCamera,
-    int       iChannel,
-    USHORT*         pLut
+        CameraHandle    hCamera,
+        int       iChannel,
+        USHORT*         pLut
 );
 
 /******************************************************/
@@ -839,9 +839,9 @@ MVSDK_API CameraSdkStatus  CameraSetCustomLut(
 //            中错误码的定义。
 /******************************************************/
 MVSDK_API CameraSdkStatus  CameraGetCustomLut(
-    CameraHandle    hCamera,
-    int       iChannel,
-    USHORT*         pLut
+        CameraHandle    hCamera,
+        int       iChannel,
+        USHORT*         pLut
 );
 
 /******************************************************/
@@ -859,9 +859,9 @@ MVSDK_API CameraSdkStatus  CameraGetCustomLut(
 //            中错误码的定义。
 /******************************************************/
 MVSDK_API CameraSdkStatus  CameraGetCurrentLut(
-    CameraHandle    hCamera,
-    int       iChannel,
-    USHORT*         pLut
+        CameraHandle    hCamera,
+        int       iChannel,
+        USHORT*         pLut
 );
 
 /******************************************************/
@@ -876,8 +876,8 @@ MVSDK_API CameraSdkStatus  CameraGetCurrentLut(
 //            中错误码的定义。
 /******************************************************/
 MVSDK_API CameraSdkStatus  CameraSetWbMode(
-    CameraHandle    hCamera,
-    BOOL            bAuto
+        CameraHandle    hCamera,
+        BOOL            bAuto
 );
 
 /******************************************************/
@@ -891,8 +891,8 @@ MVSDK_API CameraSdkStatus  CameraSetWbMode(
 //            中错误码的定义。
 /******************************************************/
 MVSDK_API CameraSdkStatus  CameraGetWbMode(
-    CameraHandle    hCamera,
-    BOOL*           pbAuto
+        CameraHandle    hCamera,
+        BOOL*           pbAuto
 );
 
 /******************************************************/
@@ -905,8 +905,8 @@ MVSDK_API CameraSdkStatus  CameraGetWbMode(
 //            中错误码的定义。
 /******************************************************/
 MVSDK_API CameraSdkStatus  CameraSetPresetClrTemp(
-    CameraHandle    hCamera,
-    int             iSel
+        CameraHandle    hCamera,
+        int             iSel
 );
 
 /******************************************************/
@@ -919,8 +919,8 @@ MVSDK_API CameraSdkStatus  CameraSetPresetClrTemp(
 //            中错误码的定义。
 /******************************************************/
 MVSDK_API CameraSdkStatus  CameraGetPresetClrTemp(
-    CameraHandle    hCamera,
-    int*            piSel
+        CameraHandle    hCamera,
+        int*            piSel
 );
 
 /******************************************************/
@@ -935,10 +935,10 @@ MVSDK_API CameraSdkStatus  CameraGetPresetClrTemp(
 //            中错误码的定义。
 /******************************************************/
 MVSDK_API CameraSdkStatus  CameraSetUserClrTempGain(
-  CameraHandle  hCamera,
-  int       iRgain,
-  int       iGgain,
-  int       iBgain
+        CameraHandle  hCamera,
+        int       iRgain,
+        int       iGgain,
+        int       iBgain
 );
 
 
@@ -954,10 +954,10 @@ MVSDK_API CameraSdkStatus  CameraSetUserClrTempGain(
 //            中错误码的定义。
 /******************************************************/
 MVSDK_API CameraSdkStatus  CameraGetUserClrTempGain(
-  CameraHandle  hCamera,
-  int*      piRgain,
-  int*      piGgain,
-  int*      piBgain
+        CameraHandle  hCamera,
+        int*      piRgain,
+        int*      piGgain,
+        int*      piBgain
 );
 
 /******************************************************/
@@ -970,8 +970,8 @@ MVSDK_API CameraSdkStatus  CameraGetUserClrTempGain(
 //            中错误码的定义。
 /******************************************************/
 MVSDK_API CameraSdkStatus  CameraSetUserClrTempMatrix(
-  CameraHandle  hCamera,
-  float*      pMatrix
+        CameraHandle  hCamera,
+        float*      pMatrix
 );
 
 
@@ -985,8 +985,8 @@ MVSDK_API CameraSdkStatus  CameraSetUserClrTempMatrix(
 //            中错误码的定义。
 /******************************************************/
 MVSDK_API CameraSdkStatus  CameraGetUserClrTempMatrix(
-  CameraHandle  hCamera,
-  float*      pMatrix
+        CameraHandle  hCamera,
+        float*      pMatrix
 );
 
 /******************************************************/
@@ -1003,8 +1003,8 @@ MVSDK_API CameraSdkStatus  CameraGetUserClrTempMatrix(
 //            中错误码的定义。
 /******************************************************/
 MVSDK_API CameraSdkStatus  CameraSetClrTempMode(
-  CameraHandle  hCamera,
-  int       iMode
+        CameraHandle  hCamera,
+        int       iMode
 );
 
 /******************************************************/
@@ -1018,8 +1018,8 @@ MVSDK_API CameraSdkStatus  CameraSetClrTempMode(
 //            中错误码的定义。
 /******************************************************/
 MVSDK_API CameraSdkStatus  CameraGetClrTempMode(
-  CameraHandle  hCamera,
-  int*      pimode
+        CameraHandle  hCamera,
+        int*      pimode
 );
 
 
@@ -1034,7 +1034,7 @@ MVSDK_API CameraSdkStatus  CameraGetClrTempMode(
 //            中错误码的定义。
 /******************************************************/
 MVSDK_API CameraSdkStatus  CameraSetOnceWB(
-    CameraHandle    hCamera
+        CameraHandle    hCamera
 );
 
 /******************************************************/
@@ -1046,7 +1046,7 @@ MVSDK_API CameraSdkStatus  CameraSetOnceWB(
 //            中错误码的定义。
 /******************************************************/
 MVSDK_API CameraSdkStatus  CameraSetOnceBB(
-    CameraHandle    hCamera
+        CameraHandle    hCamera
 );
 
 
@@ -1061,8 +1061,8 @@ MVSDK_API CameraSdkStatus  CameraSetOnceBB(
 //            中错误码的定义。
 /******************************************************/
 MVSDK_API CameraSdkStatus  CameraSetAeTarget(
-    CameraHandle    hCamera,
-    int             iAeTarget
+        CameraHandle    hCamera,
+        int             iAeTarget
 );
 
 /******************************************************/
@@ -1075,8 +1075,8 @@ MVSDK_API CameraSdkStatus  CameraSetAeTarget(
 //            中错误码的定义。
 /******************************************************/
 MVSDK_API CameraSdkStatus  CameraGetAeTarget(
-    CameraHandle    hCamera,
-    int*            piAeTarget
+        CameraHandle    hCamera,
+        int*            piAeTarget
 );
 
 
@@ -1091,10 +1091,10 @@ MVSDK_API CameraSdkStatus  CameraGetAeTarget(
 //            中错误码的定义。
 /******************************************************/
 MVSDK_API CameraSdkStatus CameraSetAeExposureRange(
-	CameraHandle    hCamera,
-	double          fMinExposureTime,
-	double			fMaxExposureTime
-	);
+        CameraHandle    hCamera,
+        double          fMinExposureTime,
+        double			fMaxExposureTime
+);
 
 /******************************************************/
 // 函数名   : CameraGetAeExposureRange
@@ -1107,10 +1107,10 @@ MVSDK_API CameraSdkStatus CameraSetAeExposureRange(
 //            中错误码的定义。
 /******************************************************/
 MVSDK_API CameraSdkStatus CameraGetAeExposureRange(
-	CameraHandle    hCamera,
-	double*         fMinExposureTime,
-	double*			fMaxExposureTime
-	);
+        CameraHandle    hCamera,
+        double*         fMinExposureTime,
+        double*			fMaxExposureTime
+);
 
 /******************************************************/
 // 函数名   : CameraSetAeAnalogGainRange
@@ -1123,10 +1123,10 @@ MVSDK_API CameraSdkStatus CameraGetAeExposureRange(
 //            中错误码的定义。
 /******************************************************/
 MVSDK_API CameraSdkStatus CameraSetAeAnalogGainRange(
-	CameraHandle    hCamera,
-	int				iMinAnalogGain,
-	int				iMaxAnalogGain
-	);
+        CameraHandle    hCamera,
+        int				iMinAnalogGain,
+        int				iMaxAnalogGain
+);
 
 /******************************************************/
 // 函数名   : CameraGetAeAnalogGainRange
@@ -1139,10 +1139,10 @@ MVSDK_API CameraSdkStatus CameraSetAeAnalogGainRange(
 //            中错误码的定义。
 /******************************************************/
 MVSDK_API CameraSdkStatus CameraGetAeAnalogGainRange(
-	CameraHandle    hCamera,
-	int*			iMinAnalogGain,
-	int*			iMaxAnalogGain
-	);
+        CameraHandle    hCamera,
+        int*			iMinAnalogGain,
+        int*			iMaxAnalogGain
+);
 
 /// @ingroup API_EXPOSURE
 /// \~chinese
@@ -1156,9 +1156,9 @@ MVSDK_API CameraSdkStatus CameraGetAeAnalogGainRange(
 /// \param [in] iThreshold Stops automatic adjustment if abs (target brightness - image brightness) < iThreshold
 /// \return Returns CAMERA_STATUS_SUCCESS(0) successfully. Otherwise, it returns a non-zero error code. Please refer to the definition of the error code in CameraStatus.h.
 MVSDK_API CameraSdkStatus CameraSetAeThreshold(
-	CameraHandle    hCamera, 
-	int				iThreshold
-	);
+        CameraHandle    hCamera,
+        int				iThreshold
+);
 
 /// @ingroup API_EXPOSURE
 /// \~chinese
@@ -1172,9 +1172,9 @@ MVSDK_API CameraSdkStatus CameraSetAeThreshold(
 /// \param [out] iThreshold Read Threshold
 /// \return Returns CAMERA_STATUS_SUCCESS(0) successfully. Otherwise, it returns a non-zero error code. Please refer to the definition of the error code in CameraStatus.h.
 MVSDK_API CameraSdkStatus CameraGetAeThreshold(
-	CameraHandle    hCamera, 
-	int*			iThreshold
-	);
+        CameraHandle    hCamera,
+        int*			iThreshold
+);
 
 /******************************************************/
 // 函数名   : CameraSetExposureTime
@@ -1190,8 +1190,8 @@ MVSDK_API CameraSdkStatus CameraGetAeThreshold(
 //            中错误码的定义。
 /******************************************************/
 MVSDK_API CameraSdkStatus  CameraSetExposureTime(
-    CameraHandle    hCamera,
-    double          fExposureTime
+        CameraHandle    hCamera,
+        double          fExposureTime
 );
 
 /******************************************************/
@@ -1207,8 +1207,8 @@ MVSDK_API CameraSdkStatus  CameraSetExposureTime(
 //            中错误码的定义。
 /******************************************************/
 MVSDK_API CameraSdkStatus  CameraGetExposureLineTime(
-    CameraHandle    hCamera,
-    double*         pfLineTime
+        CameraHandle    hCamera,
+        double*         pfLineTime
 );
 
 /******************************************************/
@@ -1222,8 +1222,8 @@ MVSDK_API CameraSdkStatus  CameraGetExposureLineTime(
 //            中错误码的定义。
 /******************************************************/
 MVSDK_API CameraSdkStatus  CameraGetExposureTime(
-    CameraHandle    hCamera,
-    double*         pfExposureTime
+        CameraHandle    hCamera,
+        double*         pfExposureTime
 );
 
 /// @ingroup API_EXPOSURE
@@ -1242,11 +1242,11 @@ MVSDK_API CameraSdkStatus  CameraGetExposureTime(
 /// \param [out] pfStep Returns the exposure time in microseconds.
 /// \return Returns CAMERA_STATUS_SUCCESS(0) successfully. Otherwise, it returns a non-zero error code. Please refer to the definition of the error code in CameraStatus.h.
 MVSDK_API CameraSdkStatus CameraGetExposureTimeRange(
-	CameraHandle    hCamera, 
-	double*         pfMin,
-	double*			pfMax,
-	double*			pfStep
-	);
+        CameraHandle    hCamera,
+        double*         pfMin,
+        double*			pfMax,
+        double*			pfStep
+);
 
 /// @ingroup API_EXPOSURE
 /// \~chinese
@@ -1264,10 +1264,10 @@ MVSDK_API CameraSdkStatus CameraGetExposureTimeRange(
 /// \return Returns CAMERA_STATUS_SUCCESS(0) successfully. Otherwise, it returns a non-zero error code. Please refer to the definition of the error code in CameraStatus.h.
 /// \note For CMOS sensors, the unit of exposure is calculated in rows, so the exposure time cannot be continuously adjusted in microseconds. Instead, the entire line will be chosen. After calling this function to set the exposure time, it is recommended to call @link #CameraGetMultiExposureTime @endlink to get the actual set value.
 MVSDK_API CameraSdkStatus CameraSetMultiExposureTime(
-	CameraHandle    hCamera, 
-	int				index,
-	double          fExposureTime
-	);
+        CameraHandle    hCamera,
+        int				index,
+        double          fExposureTime
+);
 
 /// @ingroup API_EXPOSURE
 /// \~chinese
@@ -1283,10 +1283,52 @@ MVSDK_API CameraSdkStatus CameraSetMultiExposureTime(
 /// \param [out] fExposureTime Returns exposure time in microseconds.
 /// \return Returns CAMERA_STATUS_SUCCESS(0) successfully. Otherwise, it returns a non-zero error code. Please refer to the definition of the error code in CameraStatus.h.
 MVSDK_API CameraSdkStatus CameraGetMultiExposureTime(
-	CameraHandle    hCamera, 
-	int				index,
-	double*         fExposureTime
-	);
+        CameraHandle    hCamera,
+        int				index,
+        double*         fExposureTime
+);
+
+/// @ingroup API_EXPOSURE
+/// \~chinese
+/// \brief 设置多重曝光的gamma值。(此功能仅线阵相机支持)
+/// \param [in] hCamera 相机的句柄。
+/// \param [in] index 曝光索引。
+/// \param [in] iGamma 要设定的Gamma值。
+/// \return 成功返回 CAMERA_STATUS_SUCCESS(0)。否则返回非0值的错误码, 请参考 CameraStatus.h 中错误码的定义。
+/// \note 设定的值会马上保存在SDK内部，但是只有当相机处于动态参数生成的LUT模式时，才会生效。请参考@link #CameraSetLutMode @endlink的函数说明部分。
+/// \~english
+/// \brief Sets the gamma value for multiple exposures. (This function is only supported by line scan cameras)
+/// \param [in] hCamera Camera handle.
+/// \param [in] index Exposure index.
+/// \param [in] iGamma The gamma to be set.
+/// \return Returns CAMERA_STATUS_SUCCESS(0) successfully. Otherwise, it returns a non-zero error code. Please refer to the definition of the error code in CameraStatus.h.
+/// \note The set value will be stored in the SDK immediately, but it will only take effect when the camera is in LUT mode generated by dynamic parameters. Please refer to the function description part of @link #CameraSetLutMode @endlink.
+MVSDK_API CameraSdkStatus CameraSetMultiExposureGamma(
+        CameraHandle    hCamera,
+        int				index,
+        int             iGamma
+);
+
+/// @ingroup API_EXPOSURE
+/// \~chinese
+/// \brief 获取多重曝光的gamma值。(此功能仅线阵相机支持)
+/// \param [in] hCamera 相机的句柄。
+/// \param [in] index 曝光索引。
+/// \param [out] piGamma  指针，返回的Gamma值。
+/// \return 成功返回 CAMERA_STATUS_SUCCESS(0)。否则返回非0值的错误码, 请参考 CameraStatus.h 中错误码的定义。
+/// \see CameraSetMultiExposureGamma
+/// \~english
+/// \brief Get the gamma value for multiple exposures. (This function is only supported by line scan cameras)
+/// \param [in] hCamera Camera handle.
+/// \param [in] index Exposure index.
+/// \param [out] piGamma Returns the gamma value.
+/// \return Returns CAMERA_STATUS_SUCCESS(0) successfully. Otherwise, it returns a non-zero error code. Please refer to the definition of the error code in CameraStatus.h.
+/// \see CameraSetMultiExposureGamma
+MVSDK_API CameraSdkStatus CameraGetMultiExposureGamma(
+        CameraHandle    hCamera,
+        int				index,
+        int*            piGamma
+);
 
 /// @ingroup API_EXPOSURE
 /// \~chinese
@@ -1300,9 +1342,9 @@ MVSDK_API CameraSdkStatus CameraGetMultiExposureTime(
 /// \param [in] count The number of exposures enabled.
 /// \return Returns CAMERA_STATUS_SUCCESS(0) successfully. Otherwise, it returns a non-zero error code. Please refer to the definition of the error code in CameraStatus.h.
 MVSDK_API CameraSdkStatus CameraSetMultiExposureCount(
-	CameraHandle    hCamera, 
-	int				count
-	);
+        CameraHandle    hCamera,
+        int				count
+);
 
 /// @ingroup API_EXPOSURE
 /// \~chinese
@@ -1316,9 +1358,9 @@ MVSDK_API CameraSdkStatus CameraSetMultiExposureCount(
 /// \param [out] count The number of exposures enabled.
 /// \return Returns CAMERA_STATUS_SUCCESS(0) successfully. Otherwise, it returns a non-zero error code. Please refer to the definition of the error code in CameraStatus.h.
 MVSDK_API CameraSdkStatus CameraGetMultiExposureCount(
-	CameraHandle    hCamera, 
-	int*			count
-	);
+        CameraHandle    hCamera,
+        int*			count
+);
 
 /// @ingroup API_EXPOSURE
 /// \~chinese
@@ -1332,9 +1374,9 @@ MVSDK_API CameraSdkStatus CameraGetMultiExposureCount(
 /// \param [out] max_count The maximum number of exposures supported.
 /// \return Returns CAMERA_STATUS_SUCCESS(0) successfully. Otherwise, it returns a non-zero error code. Please refer to the definition of the error code in CameraStatus.h.
 MVSDK_API CameraSdkStatus CameraGetMultiExposureMaxCount(
-	CameraHandle    hCamera, 
-	int*			max_count
-	);
+        CameraHandle    hCamera,
+        int*			max_count
+);
 
 /******************************************************/
 // 函数名   : CameraSetAnalogGain
@@ -1348,8 +1390,8 @@ MVSDK_API CameraSdkStatus CameraGetMultiExposureMaxCount(
 //            中错误码的定义。
 /******************************************************/
 MVSDK_API CameraSdkStatus  CameraSetAnalogGain(
-    CameraHandle    hCamera,
-    INT             iAnalogGain
+        CameraHandle    hCamera,
+        INT             iAnalogGain
 );
 
 /******************************************************/
@@ -1363,8 +1405,8 @@ MVSDK_API CameraSdkStatus  CameraSetAnalogGain(
 //            中错误码的定义。
 /******************************************************/
 MVSDK_API CameraSdkStatus  CameraGetAnalogGain(
-    CameraHandle    hCamera,
-    INT*            piAnalogGain
+        CameraHandle    hCamera,
+        INT*            piAnalogGain
 );
 
 /// @ingroup API_EXPOSURE
@@ -1379,9 +1421,9 @@ MVSDK_API CameraSdkStatus  CameraGetAnalogGain(
 /// \param [in] fGain Gain magnification.
 /// \return Returns CAMERA_STATUS_SUCCESS(0) successfully. Otherwise, it returns a non-zero error code. Please refer to the definition of the error code in CameraStatus.h.
 MVSDK_API CameraSdkStatus CameraSetAnalogGainX(
-	CameraHandle    hCamera,
-	float    		fGain
-	);
+        CameraHandle    hCamera,
+        float    		fGain
+);
 
 /// @ingroup API_EXPOSURE
 /// \~chinese
@@ -1397,9 +1439,9 @@ MVSDK_API CameraSdkStatus CameraSetAnalogGainX(
 /// \return Returns CAMERA_STATUS_SUCCESS(0) successfully. Otherwise, it returns a non-zero error code. Please refer to the definition of the error code in CameraStatus.h.
 /// \see CameraSetAnalogGainX
 MVSDK_API CameraSdkStatus CameraGetAnalogGainX(
-	CameraHandle    hCamera, 
-	float*          pfGain
-	);
+        CameraHandle    hCamera,
+        float*          pfGain
+);
 
 /// @ingroup API_EXPOSURE
 /// \~chinese
@@ -1417,11 +1459,11 @@ MVSDK_API CameraSdkStatus CameraGetAnalogGainX(
 /// \param [out] pfStep		pointer, returns the step value.
 /// \return Returns CAMERA_STATUS_SUCCESS(0) successfully. Otherwise, it returns a non-zero error code. Please refer to the definition of the error code in CameraStatus.h.
 MVSDK_API CameraSdkStatus CameraGetAnalogGainXRange(
-	CameraHandle	hCamera, 
-	float*			pfMin,
-	float*			pfMax,
-	float*			pfStep
-	);
+        CameraHandle	hCamera,
+        float*			pfMin,
+        float*			pfMax,
+        float*			pfStep
+);
 
 /******************************************************/
 // 函数名   : CameraSetGain
@@ -1437,10 +1479,10 @@ MVSDK_API CameraSdkStatus CameraGetAnalogGainXRange(
 //            中错误码的定义。
 /******************************************************/
 MVSDK_API CameraSdkStatus  CameraSetGain(
-    CameraHandle    hCamera,
-    int             iRGain,
-    int             iGGain,
-    int             iBGain
+        CameraHandle    hCamera,
+        int             iRGain,
+        int             iGGain,
+        int             iBGain
 );
 
 
@@ -1457,10 +1499,10 @@ MVSDK_API CameraSdkStatus  CameraSetGain(
 //            中错误码的定义。
 /******************************************************/
 MVSDK_API CameraSdkStatus  CameraGetGain(
-    CameraHandle    hCamera,
-    int*            piRGain,
-    int*            piGGain,
-    int*            piBGain
+        CameraHandle    hCamera,
+        int*            piRGain,
+        int*            piGGain,
+        int*            piBGain
 );
 
 
@@ -1477,8 +1519,8 @@ MVSDK_API CameraSdkStatus  CameraGetGain(
 //            中错误码的定义。
 /******************************************************/
 MVSDK_API CameraSdkStatus  CameraSetGamma(
-    CameraHandle    hCamera,
-    int             iGamma
+        CameraHandle    hCamera,
+        int             iGamma
 );
 
 /******************************************************/
@@ -1492,8 +1534,8 @@ MVSDK_API CameraSdkStatus  CameraSetGamma(
 //            中错误码的定义。
 /******************************************************/
 MVSDK_API CameraSdkStatus  CameraGetGamma(
-    CameraHandle    hCamera,
-    int*            piGamma
+        CameraHandle    hCamera,
+        int*            piGamma
 );
 
 /******************************************************/
@@ -1509,8 +1551,8 @@ MVSDK_API CameraSdkStatus  CameraGetGamma(
 //            中错误码的定义。
 /******************************************************/
 MVSDK_API CameraSdkStatus  CameraSetContrast(
-    CameraHandle    hCamera,
-    int             iContrast
+        CameraHandle    hCamera,
+        int             iContrast
 );
 
 /******************************************************/
@@ -1524,8 +1566,8 @@ MVSDK_API CameraSdkStatus  CameraSetContrast(
 //            中错误码的定义。
 /******************************************************/
 MVSDK_API CameraSdkStatus  CameraGetContrast(
-    CameraHandle    hCamera,
-    int*            piContrast
+        CameraHandle    hCamera,
+        int*            piContrast
 );
 
 /******************************************************/
@@ -1540,8 +1582,8 @@ MVSDK_API CameraSdkStatus  CameraGetContrast(
 //            中错误码的定义。
 /******************************************************/
 MVSDK_API CameraSdkStatus  CameraSetSaturation(
-    CameraHandle    hCamera,
-    int             iSaturation
+        CameraHandle    hCamera,
+        int             iSaturation
 );
 
 /******************************************************/
@@ -1554,8 +1596,8 @@ MVSDK_API CameraSdkStatus  CameraSetSaturation(
 //            中错误码的定义。
 /******************************************************/
 MVSDK_API CameraSdkStatus  CameraGetSaturation(
-    CameraHandle    hCamera,
-    int*            piSaturation
+        CameraHandle    hCamera,
+        int*            piSaturation
 );
 
 /******************************************************/
@@ -1568,8 +1610,8 @@ MVSDK_API CameraSdkStatus  CameraGetSaturation(
 //            中错误码的定义。
 /******************************************************/
 MVSDK_API CameraSdkStatus  CameraSetMonochrome(
-    CameraHandle    hCamera,
-    BOOL            bEnable
+        CameraHandle    hCamera,
+        BOOL            bEnable
 );
 
 /******************************************************/
@@ -1583,8 +1625,8 @@ MVSDK_API CameraSdkStatus  CameraSetMonochrome(
 //            中错误码的定义。
 /******************************************************/
 MVSDK_API CameraSdkStatus  CameraGetMonochrome(
-    CameraHandle    hCamera,
-    BOOL*           pbEnable
+        CameraHandle    hCamera,
+        BOOL*           pbEnable
 );
 
 /******************************************************/
@@ -1598,8 +1640,8 @@ MVSDK_API CameraSdkStatus  CameraGetMonochrome(
 //            中错误码的定义。
 /******************************************************/
 MVSDK_API CameraSdkStatus  CameraSetInverse(
-    CameraHandle    hCamera,
-    BOOL            bEnable
+        CameraHandle    hCamera,
+        BOOL            bEnable
 );
 
 /******************************************************/
@@ -1612,8 +1654,8 @@ MVSDK_API CameraSdkStatus  CameraSetInverse(
 //            中错误码的定义。
 /******************************************************/
 MVSDK_API CameraSdkStatus  CameraGetInverse(
-    CameraHandle    hCamera,
-    BOOL*           pbEnable
+        CameraHandle    hCamera,
+        BOOL*           pbEnable
 );
 
 /******************************************************/
@@ -1627,8 +1669,8 @@ MVSDK_API CameraSdkStatus  CameraGetInverse(
 //            中错误码的定义。
 /******************************************************/
 MVSDK_API CameraSdkStatus  CameraSetAntiFlick(
-    CameraHandle    hCamera,
-    BOOL            bEnable
+        CameraHandle    hCamera,
+        BOOL            bEnable
 );
 
 /******************************************************/
@@ -1641,8 +1683,8 @@ MVSDK_API CameraSdkStatus  CameraSetAntiFlick(
 //            中错误码的定义。
 /******************************************************/
 MVSDK_API CameraSdkStatus  CameraGetAntiFlick(
-    CameraHandle    hCamera,
-    BOOL*           pbEnable
+        CameraHandle    hCamera,
+        BOOL*           pbEnable
 );
 
 /******************************************************/
@@ -1655,8 +1697,8 @@ MVSDK_API CameraSdkStatus  CameraGetAntiFlick(
 //            中错误码的定义。
 /******************************************************/
 MVSDK_API CameraSdkStatus  CameraGetLightFrequency(
-    CameraHandle    hCamera,
-    int*            piFrequencySel
+        CameraHandle    hCamera,
+        int*            piFrequencySel
 );
 
 /******************************************************/
@@ -1669,8 +1711,8 @@ MVSDK_API CameraSdkStatus  CameraGetLightFrequency(
 //            中错误码的定义。
 /******************************************************/
 MVSDK_API CameraSdkStatus  CameraSetLightFrequency(
-    CameraHandle    hCamera,
-    int             iFrequencySel
+        CameraHandle    hCamera,
+        int             iFrequencySel
 );
 
 /******************************************************/
@@ -1686,8 +1728,8 @@ MVSDK_API CameraSdkStatus  CameraSetLightFrequency(
 //            中错误码的定义。
 /******************************************************/
 MVSDK_API CameraSdkStatus  CameraSetFrameSpeed(
-    CameraHandle    hCamera,
-    int             iFrameSpeed
+        CameraHandle    hCamera,
+        int             iFrameSpeed
 );
 
 /******************************************************/
@@ -1701,8 +1743,8 @@ MVSDK_API CameraSdkStatus  CameraSetFrameSpeed(
 //            中错误码的定义。
 /******************************************************/
 MVSDK_API CameraSdkStatus  CameraGetFrameSpeed(
-    CameraHandle    hCamera,
-    int*            piFrameSpeed
+        CameraHandle    hCamera,
+        int*            piFrameSpeed
 );
 
 /// @ingroup API_ADVANCE
@@ -1717,9 +1759,9 @@ MVSDK_API CameraSdkStatus  CameraGetFrameSpeed(
 /// \param [in] RateHZ frame rate or line rate (<=0 means maximum frequency).
 /// \return Returns CAMERA_STATUS_SUCCESS(0) successfully. Otherwise, it returns a non-zero error code. Please refer to the definition of the error code in CameraStatus.h.
 MVSDK_API CameraSdkStatus CameraSetFrameRate(
-	CameraHandle    hCamera, 
-	int             RateHZ
-	);
+        CameraHandle    hCamera,
+        int             RateHZ
+);
 
 /// @ingroup API_ADVANCE
 /// \~chinese
@@ -1733,9 +1775,9 @@ MVSDK_API CameraSdkStatus CameraSetFrameRate(
 /// \param [out] RateHZ frame rate or line rate (<=0 means maximum frequency).
 /// \return Returns CAMERA_STATUS_SUCCESS(0) successfully. Otherwise, it returns a non-zero error code. Please refer to the definition of the error code in CameraStatus.h.
 MVSDK_API CameraSdkStatus CameraGetFrameRate(
-	CameraHandle    hCamera, 
-	int*            RateHZ
-	);
+        CameraHandle    hCamera,
+        int*            RateHZ
+);
 
 /******************************************************/
 // 函数名   : CameraSetParameterMode
@@ -1748,8 +1790,8 @@ MVSDK_API CameraSdkStatus CameraGetFrameRate(
 //            中错误码的定义。
 /******************************************************/
 MVSDK_API CameraSdkStatus  CameraSetParameterMode(
-    CameraHandle    hCamera,
-    int             iMode
+        CameraHandle    hCamera,
+        int             iMode
 );
 
 /******************************************************/
@@ -1762,8 +1804,8 @@ MVSDK_API CameraSdkStatus  CameraSetParameterMode(
 //            中错误码的定义。
 /******************************************************/
 MVSDK_API CameraSdkStatus  CameraGetParameterMode(
-    CameraHandle    hCamera,
-    int*            piTarget
+        CameraHandle    hCamera,
+        int*            piTarget
 );
 
 /******************************************************/
@@ -1778,8 +1820,8 @@ MVSDK_API CameraSdkStatus  CameraGetParameterMode(
 //            中错误码的定义。
 /******************************************************/
 MVSDK_API CameraSdkStatus  CameraSetParameterMask(
-    CameraHandle    hCamera,
-    UINT            uMask
+        CameraHandle    hCamera,
+        UINT            uMask
 );
 
 /******************************************************/
@@ -1796,8 +1838,8 @@ MVSDK_API CameraSdkStatus  CameraSetParameterMask(
 //            中错误码的定义。
 /******************************************************/
 MVSDK_API CameraSdkStatus  CameraSaveParameter(
-    CameraHandle    hCamera,
-    int             iTeam
+        CameraHandle    hCamera,
+        int             iTeam
 );
 
 
@@ -1812,8 +1854,8 @@ MVSDK_API CameraSdkStatus  CameraSaveParameter(
 //            中错误码的定义。
 /******************************************************/
 MVSDK_API CameraSdkStatus  CameraSaveParameterToFile(
-  CameraHandle  hCamera,
-  char*       sFileName
+        CameraHandle  hCamera,
+        char*       sFileName
 );
 
 
@@ -1829,8 +1871,8 @@ MVSDK_API CameraSdkStatus  CameraSaveParameterToFile(
 //            中错误码的定义。
 /******************************************************/
 MVSDK_API CameraSdkStatus  CameraReadParameterFromFile(
-    CameraHandle    hCamera,
-    char*           sFileName
+        CameraHandle    hCamera,
+        char*           sFileName
 );
 
 /******************************************************/
@@ -1848,8 +1890,8 @@ MVSDK_API CameraSdkStatus  CameraReadParameterFromFile(
 //            中错误码的定义。
 /******************************************************/
 MVSDK_API CameraSdkStatus  CameraLoadParameter(
-    CameraHandle    hCamera,
-    int             iTeam
+        CameraHandle    hCamera,
+        int             iTeam
 );
 
 /******************************************************/
@@ -1863,8 +1905,8 @@ MVSDK_API CameraSdkStatus  CameraLoadParameter(
 //            中错误码的定义。
 /******************************************************/
 MVSDK_API CameraSdkStatus  CameraGetCurrentParameterGroup(
-    CameraHandle    hCamera,
-    int*            piTeam
+        CameraHandle    hCamera,
+        int*            piTeam
 );
 
 /******************************************************/
@@ -1883,8 +1925,8 @@ MVSDK_API CameraSdkStatus  CameraGetCurrentParameterGroup(
 //            中错误码的定义。
 /******************************************************/
 MVSDK_API CameraSdkStatus  CameraSetTransPackLen(
-    CameraHandle    hCamera,
-    INT             iPackSel
+        CameraHandle    hCamera,
+        INT             iPackSel
 );
 
 /******************************************************/
@@ -1899,8 +1941,8 @@ MVSDK_API CameraSdkStatus  CameraSetTransPackLen(
 //            中错误码的定义。
 /******************************************************/
 MVSDK_API CameraSdkStatus  CameraGetTransPackLen(
-    CameraHandle    hCamera,
-    INT*            piPackSel
+        CameraHandle    hCamera,
+        INT*            piPackSel
 );
 
 /******************************************************/
@@ -1914,8 +1956,8 @@ MVSDK_API CameraSdkStatus  CameraGetTransPackLen(
 //            中错误码的定义。
 /******************************************************/
 MVSDK_API CameraSdkStatus  CameraIsAeWinVisible(
-    CameraHandle    hCamera,
-    BOOL*           pbIsVisible
+        CameraHandle    hCamera,
+        BOOL*           pbIsVisible
 );
 
 /******************************************************/
@@ -1930,8 +1972,8 @@ MVSDK_API CameraSdkStatus  CameraIsAeWinVisible(
 //            中错误码的定义。
 /******************************************************/
 MVSDK_API CameraSdkStatus  CameraSetAeWinVisible(
-    CameraHandle    hCamera,
-    BOOL            bIsVisible
+        CameraHandle    hCamera,
+        BOOL            bIsVisible
 );
 
 /******************************************************/
@@ -1947,11 +1989,11 @@ MVSDK_API CameraSdkStatus  CameraSetAeWinVisible(
 //            中错误码的定义。
 /******************************************************/
 MVSDK_API CameraSdkStatus  CameraGetAeWindow(
-    CameraHandle    hCamera,
-    INT*            piHOff,
-    INT*            piVOff,
-    INT*            piWidth,
-    INT*            piHeight
+        CameraHandle    hCamera,
+        INT*            piHOff,
+        INT*            piVOff,
+        INT*            piWidth,
+        INT*            piHeight
 );
 
 /******************************************************/
@@ -1972,11 +2014,11 @@ MVSDK_API CameraSdkStatus  CameraGetAeWindow(
 //            中错误码的定义。
 /******************************************************/
 MVSDK_API CameraSdkStatus  CameraSetAeWindow(
-    CameraHandle    hCamera,
-    int             iHOff,
-    int             iVOff,
-    int             iWidth,
-    int             iHeight
+        CameraHandle    hCamera,
+        int             iHOff,
+        int             iVOff,
+        int             iWidth,
+        int             iHeight
 );
 
 /******************************************************/
@@ -1990,9 +2032,9 @@ MVSDK_API CameraSdkStatus  CameraSetAeWindow(
 //            中错误码的定义。
 /******************************************************/
 MVSDK_API CameraSdkStatus  CameraSetMirror(
-    CameraHandle    hCamera,
-    int             iDir,
-    BOOL            bEnable
+        CameraHandle    hCamera,
+        int             iDir,
+        BOOL            bEnable
 );
 
 /******************************************************/
@@ -2008,9 +2050,9 @@ MVSDK_API CameraSdkStatus  CameraSetMirror(
 //            中错误码的定义。
 /******************************************************/
 MVSDK_API CameraSdkStatus  CameraGetMirror(
-    CameraHandle    hCamera,
-    int             iDir,
-    BOOL*           pbEnable
+        CameraHandle    hCamera,
+        int             iDir,
+        BOOL*           pbEnable
 );
 
 /// @ingroup API_MIRROR
@@ -2027,10 +2069,10 @@ MVSDK_API CameraSdkStatus  CameraGetMirror(
 /// \param [in] bEnable TRUE to enable mirroring; FALSE to disable mirroring
 /// \return Returns CAMERA_STATUS_SUCCESS(0) successfully. Otherwise, it returns a non-zero error code. Please refer to the definition of the error code in CameraStatus.h.
 MVSDK_API CameraSdkStatus CameraSetHardwareMirror(
-	CameraHandle    hCamera, 
-	int             iDir, 
-	BOOL            bEnable
-	);
+        CameraHandle    hCamera,
+        int             iDir,
+        BOOL            bEnable
+);
 
 /// @ingroup API_MIRROR
 /// \~chinese
@@ -2046,10 +2088,10 @@ MVSDK_API CameraSdkStatus CameraSetHardwareMirror(
 /// \param [out] pbEnable Returns TRUE, indicating that the direction mirror image of iDir is enabled.
 /// \return Returns CAMERA_STATUS_SUCCESS(0) successfully. Otherwise, it returns a non-zero error code. Please refer to the definition of the error code in CameraStatus.h.
 MVSDK_API CameraSdkStatus CameraGetHardwareMirror(
-	CameraHandle    hCamera, 
-	int             iDir, 
-	BOOL*           pbEnable
-	);
+        CameraHandle    hCamera,
+        int             iDir,
+        BOOL*           pbEnable
+);
 
 /// @ingroup API_MIRROR
 /// \~chinese
@@ -2063,9 +2105,9 @@ MVSDK_API CameraSdkStatus CameraGetHardwareMirror(
 /// \param [in] iRot rotation angle (counterclockwise) (0: no rotation 1:90 degrees 2:180 degrees 3:270 degrees)
 /// \return Returns CAMERA_STATUS_SUCCESS(0) successfully. Otherwise, it returns a non-zero error code. Please refer to the definition of the error code in CameraStatus.h.
 MVSDK_API CameraSdkStatus CameraSetRotate(
-	CameraHandle    hCamera,
-	int             iRot
-	);
+        CameraHandle    hCamera,
+        int             iRot
+);
 
 /// @ingroup API_MIRROR
 /// \~chinese
@@ -2079,9 +2121,9 @@ MVSDK_API CameraSdkStatus CameraSetRotate(
 /// \param [out] iRot Indicates the direction of rotation to get. (Counterclockwise) (0: Do not rotate 1:90 degree 2: 180 degree 3: 270 degree)
 /// \return Returns CAMERA_STATUS_SUCCESS(0) successfully. Otherwise, it returns a non-zero error code. Please refer to the definition of the error code in CameraStatus.h.
 MVSDK_API CameraSdkStatus CameraGetRotate(
-	CameraHandle    hCamera,
-	int*            iRot
-	);
+        CameraHandle    hCamera,
+        int*            iRot
+);
 
 /******************************************************/
 // 函数名   : CameraGetWbWindow
@@ -2096,11 +2138,11 @@ MVSDK_API CameraSdkStatus CameraGetRotate(
 //            中错误码的定义。
 /******************************************************/
 MVSDK_API CameraSdkStatus  CameraGetWbWindow(
-    CameraHandle    hCamera,
-    INT*            PiHOff,
-    INT*            PiVOff,
-    INT*            PiWidth,
-    INT*            PiHeight
+        CameraHandle    hCamera,
+        INT*            PiHOff,
+        INT*            PiVOff,
+        INT*            PiWidth,
+        INT*            PiHeight
 );
 
 /******************************************************/
@@ -2116,11 +2158,11 @@ MVSDK_API CameraSdkStatus  CameraGetWbWindow(
 //            中错误码的定义。
 /******************************************************/
 MVSDK_API CameraSdkStatus  CameraSetWbWindow(
-    CameraHandle    hCamera,
-    INT             iHOff,
-    INT             iVOff,
-    INT             iWidth,
-    INT             iHeight
+        CameraHandle    hCamera,
+        INT             iHOff,
+        INT             iVOff,
+        INT             iWidth,
+        INT             iHeight
 );
 
 /******************************************************/
@@ -2133,8 +2175,8 @@ MVSDK_API CameraSdkStatus  CameraSetWbWindow(
 //            中错误码的定义。
 /******************************************************/
 MVSDK_API CameraSdkStatus  CameraIsWbWinVisible(
-    CameraHandle    hCamera,
-    BOOL*           pbShow
+        CameraHandle    hCamera,
+        BOOL*           pbShow
 );
 
 /******************************************************/
@@ -2149,8 +2191,8 @@ MVSDK_API CameraSdkStatus  CameraIsWbWinVisible(
 //            中错误码的定义。
 /******************************************************/
 MVSDK_API CameraSdkStatus  CameraSetWbWinVisible(
-    CameraHandle    hCamera,
-    BOOL            bShow
+        CameraHandle    hCamera,
+        BOOL            bShow
 );
 
 /******************************************************/
@@ -2167,9 +2209,9 @@ MVSDK_API CameraSdkStatus  CameraSetWbWinVisible(
 //            中错误码的定义。
 /******************************************************/
 MVSDK_API CameraSdkStatus  CameraImageOverlay(
-    CameraHandle    hCamera,
-    BYTE*           pRgbBuffer,
-    tSdkFrameHead*  pFrInfo
+        CameraHandle    hCamera,
+        BYTE*           pRgbBuffer,
+        tSdkFrameHead*  pFrInfo
 );
 
 /******************************************************/
@@ -2188,12 +2230,12 @@ MVSDK_API CameraSdkStatus  CameraImageOverlay(
 //            中错误码的定义。
 /******************************************************/
 MVSDK_API CameraSdkStatus  CameraSetCrossLine(
-    CameraHandle    hCamera,
-    int             iLine,
-    INT             x,
-    INT             y,
-    UINT            uColor,
-    BOOL            bVisible
+        CameraHandle    hCamera,
+        int             iLine,
+        INT             x,
+        INT             y,
+        UINT            uColor,
+        BOOL            bVisible
 );
 
 /******************************************************/
@@ -2210,12 +2252,12 @@ MVSDK_API CameraSdkStatus  CameraSetCrossLine(
 //            中错误码的定义。
 /******************************************************/
 MVSDK_API CameraSdkStatus  CameraGetCrossLine(
-    CameraHandle    hCamera,
-    INT             iLine,
-    INT*            px,
-    INT*            py,
-    UINT*           pcolor,
-    BOOL*           pbVisible
+        CameraHandle    hCamera,
+        INT             iLine,
+        INT*            px,
+        INT*            py,
+        UINT*           pcolor,
+        BOOL*           pbVisible
 );
 
 /******************************************************/
@@ -2231,8 +2273,8 @@ MVSDK_API CameraSdkStatus  CameraGetCrossLine(
 //            中错误码的定义。
 /******************************************************/
 MVSDK_API CameraSdkStatus  CameraGetCapability(
-    CameraHandle            hCamera,
-    tSdkCameraCapbility*    pCameraInfo
+        CameraHandle            hCamera,
+        tSdkCameraCapbility*    pCameraInfo
 );
 
 /******************************************************/
@@ -2248,9 +2290,9 @@ MVSDK_API CameraSdkStatus  CameraGetCapability(
 //            中错误码的定义。
 /******************************************************/
 MVSDK_API CameraSdkStatus  CameraGetCapabilityEx(
-    char*                   sDeviceModel,
-    tSdkCameraCapbility*    pCameraInfo,
-    PVOID                   hCameraHandle
+        char*                   sDeviceModel,
+        tSdkCameraCapbility*    pCameraInfo,
+        PVOID                   hCameraHandle
 );
 
 
@@ -2268,9 +2310,9 @@ MVSDK_API CameraSdkStatus  CameraGetCapabilityEx(
 //            中错误码的定义。
 /******************************************************/
 MVSDK_API CameraSdkStatus  CameraWriteSN(
-    CameraHandle    hCamera,
-    BYTE*           pbySN,
-    INT             iLevel
+        CameraHandle    hCamera,
+        BYTE*           pbySN,
+        INT             iLevel
 );
 
 /******************************************************/
@@ -2285,9 +2327,9 @@ MVSDK_API CameraSdkStatus  CameraWriteSN(
 //            中错误码的定义。
 /******************************************************/
 MVSDK_API CameraSdkStatus  CameraReadSN(
-    CameraHandle        hCamera,
-    BYTE*               pbySN,
-    INT                 iLevel
+        CameraHandle        hCamera,
+        BYTE*               pbySN,
+        INT                 iLevel
 );
 /******************************************************/
 // 函数名   : CameraSetTriggerDelayTime
@@ -2302,8 +2344,8 @@ MVSDK_API CameraSdkStatus  CameraReadSN(
 //            中错误码的定义。
 /******************************************************/
 MVSDK_API CameraSdkStatus  CameraSetTriggerDelayTime(
-    CameraHandle    hCamera,
-    UINT            uDelayTimeUs
+        CameraHandle    hCamera,
+        UINT            uDelayTimeUs
 );
 
 /******************************************************/
@@ -2316,8 +2358,8 @@ MVSDK_API CameraSdkStatus  CameraSetTriggerDelayTime(
 //            中错误码的定义。
 /******************************************************/
 MVSDK_API CameraSdkStatus  CameraGetTriggerDelayTime(
-    CameraHandle    hCamera,
-    UINT*           puDelayTimeUs
+        CameraHandle    hCamera,
+        UINT*           puDelayTimeUs
 );
 
 /******************************************************/
@@ -2331,8 +2373,8 @@ MVSDK_API CameraSdkStatus  CameraGetTriggerDelayTime(
 //            中错误码的定义。
 /******************************************************/
 MVSDK_API CameraSdkStatus CameraSetTriggerPeriodTime(
-    CameraHandle hCamera,
-    UINT time
+        CameraHandle hCamera,
+        UINT time
 );
 
 /******************************************************/
@@ -2345,8 +2387,8 @@ MVSDK_API CameraSdkStatus CameraSetTriggerPeriodTime(
 //            中错误码的定义。
 /******************************************************/
 MVSDK_API CameraSdkStatus CameraGetTriggerPeriodTime(
-    CameraHandle hCamera,
-    UINT* time
+        CameraHandle hCamera,
+        UINT* time
 );
 
 /******************************************************/
@@ -2360,8 +2402,8 @@ MVSDK_API CameraSdkStatus CameraGetTriggerPeriodTime(
 //            中错误码的定义。
 /******************************************************/
 MVSDK_API CameraSdkStatus  CameraSetTriggerCount(
-    CameraHandle    hCamera,
-    INT             iCount
+        CameraHandle    hCamera,
+        INT             iCount
 );
 
 /******************************************************/
@@ -2374,8 +2416,8 @@ MVSDK_API CameraSdkStatus  CameraSetTriggerCount(
 //            中错误码的定义。
 /******************************************************/
 MVSDK_API CameraSdkStatus  CameraGetTriggerCount(
-    CameraHandle    hCamera,
-    INT*            piCount
+        CameraHandle    hCamera,
+        INT*            piCount
 );
 
 /******************************************************/
@@ -2388,7 +2430,7 @@ MVSDK_API CameraSdkStatus  CameraGetTriggerCount(
 //            中错误码的定义。
 /******************************************************/
 MVSDK_API CameraSdkStatus  CameraSoftTrigger(
-    CameraHandle    hCamera
+        CameraHandle    hCamera
 );
 
 /******************************************************/
@@ -2405,8 +2447,8 @@ MVSDK_API CameraSdkStatus  CameraSoftTrigger(
 //            中错误码的定义。
 /******************************************************/
 MVSDK_API CameraSdkStatus  CameraSetTriggerMode(
-    CameraHandle    hCamera,
-    int             iModeSel
+        CameraHandle    hCamera,
+        int             iModeSel
 );
 
 /******************************************************/
@@ -2419,8 +2461,8 @@ MVSDK_API CameraSdkStatus  CameraSetTriggerMode(
 //            中错误码的定义。
 /******************************************************/
 MVSDK_API CameraSdkStatus  CameraGetTriggerMode(
-    CameraHandle    hCamera,
-    INT*            piModeSel
+        CameraHandle    hCamera,
+        INT*            piModeSel
 );
 
 /******************************************************/
@@ -2440,8 +2482,8 @@ MVSDK_API CameraSdkStatus  CameraGetTriggerMode(
 //            中错误码的定义。
 /******************************************************/
 MVSDK_API CameraSdkStatus   CameraSetStrobeMode(
-    CameraHandle    hCamera,
-    INT             iMode
+        CameraHandle    hCamera,
+        INT             iMode
 );
 
 /******************************************************/
@@ -2454,8 +2496,8 @@ MVSDK_API CameraSdkStatus   CameraSetStrobeMode(
 //            中错误码的定义。
 /******************************************************/
 MVSDK_API CameraSdkStatus   CameraGetStrobeMode(
-    CameraHandle    hCamera,
-    INT*            piMode
+        CameraHandle    hCamera,
+        INT*            piMode
 );
 
 /******************************************************/
@@ -2468,8 +2510,8 @@ MVSDK_API CameraSdkStatus   CameraGetStrobeMode(
 //            中错误码的定义。
 /******************************************************/
 MVSDK_API CameraSdkStatus   CameraSetStrobeDelayTime(
-    CameraHandle    hCamera,
-    UINT            uDelayTimeUs
+        CameraHandle    hCamera,
+        UINT            uDelayTimeUs
 );
 
 /******************************************************/
@@ -2482,8 +2524,8 @@ MVSDK_API CameraSdkStatus   CameraSetStrobeDelayTime(
 //            中错误码的定义。
 /******************************************************/
 MVSDK_API CameraSdkStatus   CameraGetStrobeDelayTime(
-    CameraHandle    hCamera,
-    UINT*           upDelayTimeUs
+        CameraHandle    hCamera,
+        UINT*           upDelayTimeUs
 );
 
 /******************************************************/
@@ -2496,8 +2538,8 @@ MVSDK_API CameraSdkStatus   CameraGetStrobeDelayTime(
 //            中错误码的定义。
 /******************************************************/
 MVSDK_API CameraSdkStatus   CameraSetStrobePulseWidth(
-    CameraHandle    hCamera,
-    UINT            uTimeUs
+        CameraHandle    hCamera,
+        UINT            uTimeUs
 );
 
 /******************************************************/
@@ -2510,8 +2552,8 @@ MVSDK_API CameraSdkStatus   CameraSetStrobePulseWidth(
 //            中错误码的定义。
 /******************************************************/
 MVSDK_API CameraSdkStatus   CameraGetStrobePulseWidth(
-    CameraHandle    hCamera,
-    UINT*           upTimeUs
+        CameraHandle    hCamera,
+        UINT*           upTimeUs
 );
 
 /******************************************************/
@@ -2524,8 +2566,8 @@ MVSDK_API CameraSdkStatus   CameraGetStrobePulseWidth(
 //            中错误码的定义。
 /******************************************************/
 MVSDK_API CameraSdkStatus   CameraSetStrobePolarity(
-    CameraHandle    hCamera,
-    INT             uPolarity
+        CameraHandle    hCamera,
+        INT             uPolarity
 );
 
 /******************************************************/
@@ -2538,8 +2580,8 @@ MVSDK_API CameraSdkStatus   CameraSetStrobePolarity(
 //            中错误码的定义。
 /******************************************************/
 MVSDK_API CameraSdkStatus   CameraGetStrobePolarity(
-    CameraHandle    hCamera,
-    INT*            upPolarity
+        CameraHandle    hCamera,
+        INT*            upPolarity
 );
 
 /******************************************************/
@@ -2554,8 +2596,8 @@ MVSDK_API CameraSdkStatus   CameraGetStrobePolarity(
 //            中错误码的定义。
 /******************************************************/
 MVSDK_API CameraSdkStatus   CameraSetExtTrigSignalType(
-    CameraHandle    hCamera,
-    INT             iType
+        CameraHandle    hCamera,
+        INT             iType
 );
 
 /******************************************************/
@@ -2569,8 +2611,8 @@ MVSDK_API CameraSdkStatus   CameraSetExtTrigSignalType(
 //            中错误码的定义。
 /******************************************************/
 MVSDK_API CameraSdkStatus   CameraGetExtTrigSignalType(
-    CameraHandle    hCamera,
-    INT*            ipType
+        CameraHandle    hCamera,
+        INT*            ipType
 );
 
 /******************************************************/
@@ -2584,8 +2626,8 @@ MVSDK_API CameraSdkStatus   CameraGetExtTrigSignalType(
 //            中错误码的定义。
 /******************************************************/
 MVSDK_API CameraSdkStatus   CameraSetExtTrigShutterType(
-    CameraHandle    hCamera,
-    INT             iType
+        CameraHandle    hCamera,
+        INT             iType
 );
 
 /******************************************************/
@@ -2600,8 +2642,8 @@ MVSDK_API CameraSdkStatus   CameraSetExtTrigShutterType(
 //            中错误码的定义。
 /******************************************************/
 MVSDK_API CameraSdkStatus   CameraGetExtTrigShutterType(
-    CameraHandle    hCamera,
-    INT*            ipType
+        CameraHandle    hCamera,
+        INT*            ipType
 );
 
 /******************************************************/
@@ -2615,8 +2657,8 @@ MVSDK_API CameraSdkStatus   CameraGetExtTrigShutterType(
 //            中错误码的定义。
 /******************************************************/
 MVSDK_API CameraSdkStatus   CameraSetExtTrigDelayTime(
-    CameraHandle    hCamera,
-    UINT            uDelayTimeUs
+        CameraHandle    hCamera,
+        UINT            uDelayTimeUs
 );
 
 /******************************************************/
@@ -2629,8 +2671,8 @@ MVSDK_API CameraSdkStatus   CameraSetExtTrigDelayTime(
 //            中错误码的定义。
 /******************************************************/
 MVSDK_API CameraSdkStatus   CameraGetExtTrigDelayTime(
-    CameraHandle    hCamera,
-    UINT*           upDelayTimeUs
+        CameraHandle    hCamera,
+        UINT*           upDelayTimeUs
 );
 
 /******************************************************/
@@ -2645,8 +2687,8 @@ MVSDK_API CameraSdkStatus   CameraGetExtTrigDelayTime(
 //            中错误码的定义。
 /******************************************************/
 MVSDK_API CameraSdkStatus CameraSetExtTrigBufferedDelayTime(
-    CameraHandle    hCamera,
-    UINT            uDelayTimeUs
+        CameraHandle    hCamera,
+        UINT            uDelayTimeUs
 );
 
 /******************************************************/
@@ -2659,13 +2701,13 @@ MVSDK_API CameraSdkStatus CameraSetExtTrigBufferedDelayTime(
 //            中错误码的定义。
 /******************************************************/
 MVSDK_API CameraSdkStatus CameraGetExtTrigBufferedDelayTime(
-    CameraHandle    hCamera,
-    UINT*           puDelayTimeUs
+        CameraHandle    hCamera,
+        UINT*           puDelayTimeUs
 );
 
 /// @ingroup API_TRIGGER
 /// \~chinese
-/// \brief 设置外触发信号间隔时间，默认为0，单位为微秒。 
+/// \brief 设置外触发信号间隔时间，默认为0，单位为微秒。
 /// \param [in] hCamera 相机的句柄。
 /// \param [in] uTimeUs  间隔时间，单位为微秒，默认为0.
 /// \return 成功返回 CAMERA_STATUS_SUCCESS(0)。否则返回非0值的错误码, 请参考 CameraStatus.h 中错误码的定义。
@@ -2675,9 +2717,9 @@ MVSDK_API CameraSdkStatus CameraGetExtTrigBufferedDelayTime(
 /// \param [in] uTimeUs Interval time in microseconds. Default is 0.
 /// \return Returns CAMERA_STATUS_SUCCESS(0) successfully. Otherwise, it returns a non-zero error code. Please refer to the definition of the error code in CameraStatus.h.
 MVSDK_API CameraSdkStatus CameraSetExtTrigIntervalTime(
-	CameraHandle    hCamera, 
-	UINT            uTimeUs
-	);
+        CameraHandle    hCamera,
+        UINT            uTimeUs
+);
 
 /// @ingroup API_TRIGGER
 /// \~chinese
@@ -2691,9 +2733,9 @@ MVSDK_API CameraSdkStatus CameraSetExtTrigIntervalTime(
 /// \param [out] upTimeUs trigger interval
 /// \return Returns CAMERA_STATUS_SUCCESS(0) successfully. Otherwise, it returns a non-zero error code. Please refer to the definition of the error code in CameraStatus.h.
 MVSDK_API CameraSdkStatus CameraGetExtTrigIntervalTime(
-	CameraHandle    hCamera, 
-	UINT*           upTimeUs
-	);
+        CameraHandle    hCamera,
+        UINT*           upTimeUs
+);
 
 /******************************************************/
 // 函数名 	: CameraSetExtTrigJitterTime
@@ -2705,8 +2747,8 @@ MVSDK_API CameraSdkStatus CameraGetExtTrigIntervalTime(
 //            中错误码的定义。
 /******************************************************/
 MVSDK_API CameraSdkStatus   CameraSetExtTrigJitterTime(
-    CameraHandle    hCamera,
-    UINT            uTimeUs
+        CameraHandle    hCamera,
+        UINT            uTimeUs
 );
 
 /******************************************************/
@@ -2719,8 +2761,8 @@ MVSDK_API CameraSdkStatus   CameraSetExtTrigJitterTime(
 //            中错误码的定义。
 /******************************************************/
 MVSDK_API CameraSdkStatus   CameraGetExtTrigJitterTime(
-    CameraHandle    hCamera,
-    UINT*           upTimeUs
+        CameraHandle    hCamera,
+        UINT*           upTimeUs
 );
 
 /******************************************************/
@@ -2734,10 +2776,22 @@ MVSDK_API CameraSdkStatus   CameraGetExtTrigJitterTime(
 //            中错误码的定义。
 /******************************************************/
 MVSDK_API CameraSdkStatus   CameraGetExtTrigCapability(
-    CameraHandle    hCamera,
-    UINT*           puCapabilityMask
+        CameraHandle    hCamera,
+        UINT*           puCapabilityMask
 );
 
+/// @ingroup API_TRIGGER
+/// \~chinese
+/// \brief 当外触发信号为电平模式时，暂时停止触发相机，直到电平信号跳变后继续触发。
+/// \param [in] hCamera 相机的句柄。
+/// \return 成功返回 CAMERA_STATUS_SUCCESS(0)。否则返回非0值的错误码, 请参考 CameraStatus.h 中错误码的定义。
+/// \~english
+/// \brief When the external trigger signal is in level mode, it temporarily stops triggering the camera until the level signal jumps and continues to trigger.
+/// \param [in] hCamera Camera handle.
+/// \return Returns CAMERA_STATUS_SUCCESS(0) successfully. Otherwise, it returns a non-zero error code. Please refer to the definition of the error code in CameraStatus.h.
+MVSDK_API CameraSdkStatus  CameraPauseLevelTrigger(
+        CameraHandle    hCamera
+);
 
 /******************************************************/
 // 函数名   : CameraGetResolutionForSnap
@@ -2749,8 +2803,8 @@ MVSDK_API CameraSdkStatus   CameraGetExtTrigCapability(
 //            中错误码的定义。
 /******************************************************/
 MVSDK_API CameraSdkStatus  CameraGetResolutionForSnap(
-    CameraHandle            hCamera,
-    tSdkImageResolution*    pImageResolution
+        CameraHandle            hCamera,
+        tSdkImageResolution*    pImageResolution
 );
 
 /******************************************************/
@@ -2767,8 +2821,8 @@ MVSDK_API CameraSdkStatus  CameraGetResolutionForSnap(
 //            中错误码的定义。
 /******************************************************/
 MVSDK_API CameraSdkStatus  CameraSetResolutionForSnap(
-    CameraHandle            hCamera,
-    tSdkImageResolution*    pImageResolution
+        CameraHandle            hCamera,
+        tSdkImageResolution*    pImageResolution
 );
 
 /******************************************************/
@@ -2782,8 +2836,8 @@ MVSDK_API CameraSdkStatus  CameraSetResolutionForSnap(
 //            中错误码的定义。
 /******************************************************/
 MVSDK_API CameraSdkStatus  CameraCustomizeResolution(
-    CameraHandle            hCamera,
-    tSdkImageResolution*    pImageCustom
+        CameraHandle            hCamera,
+        tSdkImageResolution*    pImageCustom
 );
 
 /******************************************************/
@@ -2804,13 +2858,13 @@ MVSDK_API CameraSdkStatus  CameraCustomizeResolution(
 //            中错误码的定义。
 /******************************************************/
 MVSDK_API CameraSdkStatus  CameraCustomizeReferWin(
-    CameraHandle    hCamera,
-    INT             iWinType,
-    HWND            hParent,
-    INT*            piHOff,
-    INT*            piVOff,
-    INT*            piWidth,
-    INT*            piHeight
+        CameraHandle    hCamera,
+        INT             iWinType,
+        HWND            hParent,
+        INT*            piHOff,
+        INT*            piVOff,
+        INT*            piWidth,
+        INT*            piHeight
 );
 
 /******************************************************/
@@ -2825,8 +2879,8 @@ MVSDK_API CameraSdkStatus  CameraCustomizeReferWin(
 //            中错误码的定义。
 /******************************************************/
 MVSDK_API CameraSdkStatus  CameraShowSettingPage(
-    CameraHandle    hCamera,
-    BOOL            bShow
+        CameraHandle    hCamera,
+        BOOL            bShow
 );
 
 /******************************************************/
@@ -2853,12 +2907,12 @@ MVSDK_API CameraSdkStatus  CameraShowSettingPage(
 //            中错误码的定义。
 /******************************************************/
 MVSDK_API CameraSdkStatus  CameraCreateSettingPage(
-    CameraHandle            hCamera,
-    HWND                    hParent,
-    char*                   pWinText,
-    CAMERA_PAGE_MSG_PROC    pCallbackFunc,
-    PVOID                   pCallbackCtx,
-    UINT                    uReserved
+        CameraHandle            hCamera,
+        HWND                    hParent,
+        char*                   pWinText,
+        CAMERA_PAGE_MSG_PROC    pCallbackFunc,
+        PVOID                   pCallbackCtx,
+        UINT                    uReserved
 );
 
 /******************************************************/
@@ -2873,7 +2927,7 @@ MVSDK_API CameraSdkStatus  CameraCreateSettingPage(
 //            中错误码的定义。
 /******************************************************/
 MVSDK_API CameraSdkStatus  CameraCreateSettingPageEx(
-    CameraHandle            hCamera
+        CameraHandle            hCamera
 );
 
 
@@ -2890,8 +2944,8 @@ MVSDK_API CameraSdkStatus  CameraCreateSettingPageEx(
 //            中错误码的定义。
 /******************************************************/
 MVSDK_API CameraSdkStatus  CameraSetActiveSettingSubPage(
-    CameraHandle    hCamera,
-    INT             index
+        CameraHandle    hCamera,
+        INT             index
 );
 
 /******************************************************/
@@ -2907,10 +2961,10 @@ MVSDK_API CameraSdkStatus  CameraSetActiveSettingSubPage(
 //            中错误码的定义。
 /******************************************************/
 MVSDK_API CameraSdkStatus  CameraSpecialControl(
-    CameraHandle    hCamera,
-    DWORD           dwCtrlCode,
-    DWORD           dwParam,
-    LPVOID          lpData
+        CameraHandle    hCamera,
+        DWORD           dwCtrlCode,
+        DWORD           dwParam,
+        LPVOID          lpData
 );
 
 /******************************************************/
@@ -2923,8 +2977,8 @@ MVSDK_API CameraSdkStatus  CameraSpecialControl(
 //            中错误码的定义。
 /******************************************************/
 MVSDK_API CameraSdkStatus  CameraGetFrameStatistic(
-    CameraHandle            hCamera,
-    tSdkFrameStatistic*     psFrameStatistic
+        CameraHandle            hCamera,
+        tSdkFrameStatistic*     psFrameStatistic
 );
 
 /******************************************************/
@@ -2937,8 +2991,8 @@ MVSDK_API CameraSdkStatus  CameraGetFrameStatistic(
 //            中错误码的定义。
 /******************************************************/
 MVSDK_API CameraSdkStatus  CameraGetStatisticResend(
-    CameraHandle            hCamera,
-    UINT*                   pResendCount
+        CameraHandle            hCamera,
+        UINT*                   pResendCount
 );
 
 /******************************************************/
@@ -2951,8 +3005,8 @@ MVSDK_API CameraSdkStatus  CameraGetStatisticResend(
 //            中错误码的定义。
 /******************************************************/
 MVSDK_API CameraSdkStatus  CameraSetNoiseFilter(
-    CameraHandle    hCamera,
-    BOOL            bEnable
+        CameraHandle    hCamera,
+        BOOL            bEnable
 );
 
 /******************************************************/
@@ -2965,8 +3019,8 @@ MVSDK_API CameraSdkStatus  CameraSetNoiseFilter(
 //            中错误码的定义。
 /******************************************************/
 MVSDK_API CameraSdkStatus  CameraGetNoiseFilterState(
-    CameraHandle    hCamera,
-    BOOL*           pEnable
+        CameraHandle    hCamera,
+        BOOL*           pEnable
 );
 
 /******************************************************/
@@ -2978,7 +3032,7 @@ MVSDK_API CameraSdkStatus  CameraGetNoiseFilterState(
 //            中错误码的定义。
 /******************************************************/
 MVSDK_API CameraSdkStatus  CameraRstTimeStamp(
-    CameraHandle    hCamera
+        CameraHandle    hCamera
 );
 
 /******************************************************/
@@ -2996,10 +3050,10 @@ MVSDK_API CameraSdkStatus  CameraRstTimeStamp(
 //            中错误码的定义。
 /******************************************************/
 MVSDK_API CameraSdkStatus  CameraSaveUserData(
-    CameraHandle    hCamera,
-    UINT            uStartAddr,
-    BYTE            *pbData,
-    int             ilen
+        CameraHandle    hCamera,
+        UINT            uStartAddr,
+        BYTE            *pbData,
+        int             ilen
 );
 
 /******************************************************/
@@ -3017,10 +3071,10 @@ MVSDK_API CameraSdkStatus  CameraSaveUserData(
 //            中错误码的定义。
 /******************************************************/
 MVSDK_API CameraSdkStatus  CameraLoadUserData(
-    CameraHandle    hCamera,
-    UINT            uStartAddr,
-    BYTE            *pbData,
-    int             ilen
+        CameraHandle    hCamera,
+        UINT            uStartAddr,
+        BYTE            *pbData,
+        int             ilen
 );
 
 /******************************************************/
@@ -3035,8 +3089,8 @@ MVSDK_API CameraSdkStatus  CameraLoadUserData(
 //            中错误码的定义。
 /******************************************************/
 MVSDK_API CameraSdkStatus  CameraGetFriendlyName(
-  CameraHandle  hCamera,
-  char*     pName
+        CameraHandle  hCamera,
+        char*     pName
 );
 
 /******************************************************/
@@ -3051,8 +3105,8 @@ MVSDK_API CameraSdkStatus  CameraGetFriendlyName(
 //            中错误码的定义。
 /******************************************************/
 MVSDK_API CameraSdkStatus  CameraSetFriendlyName(
-  CameraHandle  hCamera,
-  char*       pName
+        CameraHandle  hCamera,
+        char*       pName
 );
 
 /******************************************************/
@@ -3066,7 +3120,7 @@ MVSDK_API CameraSdkStatus  CameraSetFriendlyName(
 //            中错误码的定义。
 /******************************************************/
 MVSDK_API CameraSdkStatus  CameraSdkGetVersionString(
-  char*       pVersionString
+        char*       pVersionString
 );
 
 /******************************************************/
@@ -3079,8 +3133,8 @@ MVSDK_API CameraSdkStatus  CameraSdkGetVersionString(
 //            中错误码的定义。
 /******************************************************/
 MVSDK_API CameraSdkStatus  CameraCheckFwUpdate(
-  CameraHandle  hCamera,
-  BOOL*     pNeedUpdate
+        CameraHandle  hCamera,
+        BOOL*     pNeedUpdate
 );
 
 /******************************************************/
@@ -3094,8 +3148,8 @@ MVSDK_API CameraSdkStatus  CameraCheckFwUpdate(
 //            中错误码的定义。
 /******************************************************/
 MVSDK_API CameraSdkStatus  CameraGetFirmwareVersion(
-  CameraHandle  hCamera,
-  char*     pVersion
+        CameraHandle  hCamera,
+        char*     pVersion
 );
 
 /******************************************************/
@@ -3108,8 +3162,8 @@ MVSDK_API CameraSdkStatus  CameraGetFirmwareVersion(
 //            中错误码的定义。
 /******************************************************/
 MVSDK_API CameraSdkStatus  CameraGetEnumInfo(
-  CameraHandle    hCamera,
-  tSdkCameraDevInfo*  pCameraInfo
+        CameraHandle    hCamera,
+        tSdkCameraDevInfo*  pCameraInfo
 );
 
 /******************************************************/
@@ -3122,8 +3176,8 @@ MVSDK_API CameraSdkStatus  CameraGetEnumInfo(
 //            中错误码的定义。
 /******************************************************/
 MVSDK_API CameraSdkStatus  CameraGetInerfaceVersion(
-  CameraHandle    hCamera,
-  char*       pVersion
+        CameraHandle    hCamera,
+        char*       pVersion
 );
 
 /// @ingroup API_GPIO
@@ -3142,9 +3196,9 @@ MVSDK_API CameraSdkStatus  CameraGetInerfaceVersion(
 /// \return Returns CAMERA_STATUS_SUCCESS(0) successfully. Otherwise, it returns a non-zero error code. Please refer to the definition of the error code in CameraStatus.h.
 /// \note Obsolete, use CameraSetIOStateEx, which has a unified output state value of 1 high and 0 low for all models of cameras
 MVSDK_API CameraSdkStatus CameraSetIOState(
-  CameraHandle    hCamera,
-  INT         iOutputIOIndex,
-  UINT        uState
+        CameraHandle    hCamera,
+        INT         iOutputIOIndex,
+        UINT        uState
 );
 
 /// @ingroup API_GPIO
@@ -3161,10 +3215,10 @@ MVSDK_API CameraSdkStatus CameraSetIOState(
 /// \param [in] uState The state to set, 1 is high, 0 is low
 /// \return Returns CAMERA_STATUS_SUCCESS(0) successfully. Otherwise, it returns a non-zero error code. Please refer to the definition of the error code in CameraStatus.h.
 MVSDK_API CameraSdkStatus CameraSetIOStateEx(
-	CameraHandle    hCamera,
-	INT         iOutputIOIndex,
-	UINT        uState
-	);
+        CameraHandle    hCamera,
+        INT         iOutputIOIndex,
+        UINT        uState
+);
 
 /// @ingroup API_GPIO
 /// \~chinese
@@ -3182,10 +3236,10 @@ MVSDK_API CameraSdkStatus CameraSetIOStateEx(
 /// \return Returns CAMERA_STATUS_SUCCESS(0) successfully. Otherwise, it returns a non-zero error code. Please refer to the definition of the error code in CameraStatus.h.
 /// \note Obsolete, use CameraGetOutPutIOStateEx, which has a unified output state value of 1 high and 0 low for all models of cameras
 MVSDK_API CameraSdkStatus CameraGetOutPutIOState(
-	CameraHandle    hCamera,
-	INT         iOutputIOIndex,
-	UINT*       puState
-	);
+        CameraHandle    hCamera,
+        INT         iOutputIOIndex,
+        UINT*       puState
+);
 
 /// @ingroup API_GPIO
 /// \~chinese
@@ -3201,10 +3255,10 @@ MVSDK_API CameraSdkStatus CameraGetOutPutIOState(
 /// \param [out] puState return IO state, 1 is high, 0 is low
 /// \return Returns CAMERA_STATUS_SUCCESS(0) successfully. Otherwise, it returns a non-zero error code. Please refer to the definition of the error code in CameraStatus.h.
 MVSDK_API CameraSdkStatus CameraGetOutPutIOStateEx(
-	CameraHandle    hCamera,
-	INT         iOutputIOIndex,
-	UINT*       puState
-	);
+        CameraHandle    hCamera,
+        INT         iOutputIOIndex,
+        UINT*       puState
+);
 
 /// @ingroup API_GPIO
 /// \~chinese
@@ -3222,9 +3276,9 @@ MVSDK_API CameraSdkStatus CameraGetOutPutIOStateEx(
 /// \return Returns CAMERA_STATUS_SUCCESS(0) successfully. Otherwise, it returns a non-zero error code. Please refer to the definition of the error code in CameraStatus.h.
 /// \note Obsolete, use CameraGetIOStateEx, which has a unified input state value of 1 high and 0 low for all models of cameras
 MVSDK_API CameraSdkStatus CameraGetIOState(
-  CameraHandle    hCamera,
-  INT         iInputIOIndex,
-  UINT*         puState
+        CameraHandle    hCamera,
+        INT         iInputIOIndex,
+        UINT*         puState
 );
 
 /// @ingroup API_GPIO
@@ -3241,10 +3295,10 @@ MVSDK_API CameraSdkStatus CameraGetIOState(
 /// \param [out] puState returns IO state, 1 is high, 0 is low
 /// \return Returns CAMERA_STATUS_SUCCESS(0) successfully. Otherwise, it returns a non-zero error code. Please refer to the definition of the error code in CameraStatus.h.
 MVSDK_API CameraSdkStatus CameraGetIOStateEx(
-	CameraHandle    hCamera,
-	INT         iInputIOIndex,
-	UINT*         puState
-	);
+        CameraHandle    hCamera,
+        INT         iInputIOIndex,
+        UINT*         puState
+);
 
 /******************************************************/
 // 函数名   : CameraSetInPutIOMode
@@ -3259,11 +3313,11 @@ MVSDK_API CameraSdkStatus CameraGetIOStateEx(
 //            中错误码的定义。
 /******************************************************/
 MVSDK_API CameraSdkStatus  CameraSetInPutIOMode(
-	CameraHandle    hCamera,
-	INT         iInputIOIndex,
-	INT			iMode
-	);
-	
+        CameraHandle    hCamera,
+        INT         iInputIOIndex,
+        INT			iMode
+);
+
 /// @ingroup API_GPIO
 /// \~chinese
 /// \brief 获取输入IO的模式
@@ -3278,10 +3332,10 @@ MVSDK_API CameraSdkStatus  CameraSetInPutIOMode(
 /// \param [out] piMode IO mode, reference @link #emCameraGPIOMode @endlink
 /// \return Returns CAMERA_STATUS_SUCCESS(0) successfully. Otherwise, it returns a non-zero error code. Please refer to the definition of the error code in CameraStatus.h.
 MVSDK_API CameraSdkStatus CameraGetInPutIOMode(
-	CameraHandle    hCamera,
-	INT				iInputIOIndex,
-	INT*			piMode
-	);
+        CameraHandle    hCamera,
+        INT				iInputIOIndex,
+        INT*			piMode
+);
 
 /******************************************************/
 // 函数名   : CameraSetOutPutIOMode
@@ -3296,11 +3350,11 @@ MVSDK_API CameraSdkStatus CameraGetInPutIOMode(
 //            中错误码的定义。
 /******************************************************/
 MVSDK_API CameraSdkStatus  CameraSetOutPutIOMode(
-	CameraHandle    hCamera,
-	INT         iOutputIOIndex,
-	INT			iMode
-	);
-	
+        CameraHandle    hCamera,
+        INT         iOutputIOIndex,
+        INT			iMode
+);
+
 /// @ingroup API_GPIO
 /// \~chinese
 /// \brief 获取输出IO的模式
@@ -3315,10 +3369,10 @@ MVSDK_API CameraSdkStatus  CameraSetOutPutIOMode(
 /// \param [out] piMode IO mode, reference @link #emCameraGPIOMode @endlink
 /// \return Returns CAMERA_STATUS_SUCCESS(0) successfully. Otherwise, it returns a non-zero error code. Please refer to the definition of the error code in CameraStatus.h.
 MVSDK_API CameraSdkStatus CameraGetOutPutIOMode(
-	CameraHandle    hCamera,
-	INT         iOutputIOIndex,
-	INT*		piMode
-	);
+        CameraHandle    hCamera,
+        INT         iOutputIOIndex,
+        INT*		piMode
+);
 
 /// @ingroup API_GPIO
 /// \~chinese
@@ -3334,10 +3388,10 @@ MVSDK_API CameraSdkStatus CameraGetOutPutIOMode(
 /// \param [out] piCapbility IO mode support bit mask
 /// \return Returns CAMERA_STATUS_SUCCESS(0) successfully. Otherwise, it returns a non-zero error code. Please refer to the definition of the error code in CameraStatus.h.
 MVSDK_API CameraSdkStatus CameraGetInPutIOModeCapbility(
-	CameraHandle    hCamera,
-	INT				iInputIOIndex,
-	UINT*			piCapbility
-	);
+        CameraHandle    hCamera,
+        INT				iInputIOIndex,
+        UINT*			piCapbility
+);
 
 /// @ingroup API_GPIO
 /// \~chinese
@@ -3353,10 +3407,10 @@ MVSDK_API CameraSdkStatus CameraGetInPutIOModeCapbility(
 /// \param [out] piCapbility IO mode support bit mask
 /// \return Returns CAMERA_STATUS_SUCCESS(0) successfully. Otherwise, it returns a non-zero error code. Please refer to the definition of the error code in CameraStatus.h.
 MVSDK_API CameraSdkStatus CameraGetOutPutIOModeCapbility(
-	CameraHandle    hCamera,
-	INT				iOutputIOIndex,
-	UINT*			piCapbility
-	);
+        CameraHandle    hCamera,
+        INT				iOutputIOIndex,
+        UINT*			piCapbility
+);
 
 /******************************************************/
 // 函数名   : CameraSetOutPutPWM
@@ -3372,11 +3426,11 @@ MVSDK_API CameraSdkStatus CameraGetOutPutIOModeCapbility(
 //            中错误码的定义。
 /******************************************************/
 MVSDK_API CameraSdkStatus  CameraSetOutPutPWM(
-	CameraHandle    hCamera,
-	INT         iOutputIOIndex,
-	UINT		iCycle,
-	UINT		uDuty
-	);
+        CameraHandle    hCamera,
+        INT         iOutputIOIndex,
+        UINT		iCycle,
+        UINT		uDuty
+);
 
 /// @ingroup API_GPIO
 /// \~chinese
@@ -3390,9 +3444,9 @@ MVSDK_API CameraSdkStatus  CameraSetOutPutPWM(
 /// \param [in] dir Valid direction (0: Both positive and negative are valid    1: Clockwise (A phase leads B)    2: Counterclockwise)
 /// \return Returns CAMERA_STATUS_SUCCESS(0) successfully. Otherwise, it returns a non-zero error code. Please refer to the definition of the error code in CameraStatus.h.
 MVSDK_API CameraSdkStatus CameraSetRotaryEncDir(
-	CameraHandle    hCamera,
-	INT				dir
-	);
+        CameraHandle    hCamera,
+        INT				dir
+);
 
 /// @ingroup API_GPIO
 /// \~chinese
@@ -3406,9 +3460,9 @@ MVSDK_API CameraSdkStatus CameraSetRotaryEncDir(
 /// \param [out] dir Valid direction (0: Both positive and negative are valid    1: Clockwise (A phase leads B)    2: Counterclockwise)
 /// \return Returns CAMERA_STATUS_SUCCESS(0) successfully. Otherwise, it returns a non-zero error code. Please refer to the definition of the error code in CameraStatus.h.
 MVSDK_API CameraSdkStatus CameraGetRotaryEncDir(
-	CameraHandle    hCamera,
-	INT*			dir
-	);
+        CameraHandle    hCamera,
+        INT*			dir
+);
 
 /// @ingroup API_GPIO
 /// \~chinese
@@ -3424,10 +3478,10 @@ MVSDK_API CameraSdkStatus CameraGetRotaryEncDir(
 /// \param [in] div frequency division
 /// \return Returns CAMERA_STATUS_SUCCESS(0) successfully. Otherwise, it returns a non-zero error code. Please refer to the definition of the error code in CameraStatus.h.
 MVSDK_API CameraSdkStatus CameraSetRotaryEncFreq(
-	CameraHandle hCamera,
-	INT			mul,
-	INT			div
-	);
+        CameraHandle hCamera,
+        INT			mul,
+        INT			div
+);
 
 /// @ingroup API_GPIO
 /// \~chinese
@@ -3443,11 +3497,11 @@ MVSDK_API CameraSdkStatus CameraSetRotaryEncFreq(
 /// \param [out] div frequency division
 /// \return Returns CAMERA_STATUS_SUCCESS(0) successfully. Otherwise, it returns a non-zero error code. Please refer to the definition of the error code in CameraStatus.h.
 MVSDK_API CameraSdkStatus CameraGetRotaryEncFreq(
-	CameraHandle hCamera,
-	INT*		mul,
-	INT*		div
-	);
-	
+        CameraHandle hCamera,
+        INT*		mul,
+        INT*		div
+);
+
 /// @ingroup API_GPIO
 /// \~chinese
 /// \brief 设置输入IO的格式
@@ -3462,10 +3516,10 @@ MVSDK_API CameraSdkStatus CameraGetRotaryEncFreq(
 /// \param [in] iFormat IO format, reference @link #emCameraGPIOFormat @endlink
 /// \return Returns CAMERA_STATUS_SUCCESS(0) successfully. Otherwise, it returns a non-zero error code. Please refer to the definition of the error code in CameraStatus.h.
 MVSDK_API CameraSdkStatus CameraSetInPutIOFormat(
-	CameraHandle    hCamera,
-	INT         iInputIOIndex,
-	INT			iFormat
-	);
+        CameraHandle    hCamera,
+        INT         iInputIOIndex,
+        INT			iFormat
+);
 
 /// @ingroup API_GPIO
 /// \~chinese
@@ -3481,10 +3535,10 @@ MVSDK_API CameraSdkStatus CameraSetInPutIOFormat(
 /// \param [out] piFormat IO format, reference @link #emCameraGPIOFormat @endlink
 /// \return Returns CAMERA_STATUS_SUCCESS(0) successfully. Otherwise, it returns a non-zero error code. Please refer to the definition of the error code in CameraStatus.h.
 MVSDK_API CameraSdkStatus CameraGetInPutIOFormat(
-	CameraHandle    hCamera,
-	INT				iInputIOIndex,
-	INT*			piFormat
-	);
+        CameraHandle    hCamera,
+        INT				iInputIOIndex,
+        INT*			piFormat
+);
 
 /// @ingroup API_GPIO
 /// \~chinese
@@ -3500,10 +3554,10 @@ MVSDK_API CameraSdkStatus CameraGetInPutIOFormat(
 /// \param [in] iFormat IO format, reference @link #emCameraGPIOFormat @endlink
 /// \return Returns CAMERA_STATUS_SUCCESS(0) successfully. Otherwise, it returns a non-zero error code. Please refer to the definition of the error code in CameraStatus.h.
 MVSDK_API CameraSdkStatus CameraSetOutPutIOFormat(
-	CameraHandle    hCamera,
-	INT         iOutputIOIndex,
-	INT			iFormat
-	);
+        CameraHandle    hCamera,
+        INT         iOutputIOIndex,
+        INT			iFormat
+);
 
 /// @ingroup API_GPIO
 /// \~chinese
@@ -3519,10 +3573,10 @@ MVSDK_API CameraSdkStatus CameraSetOutPutIOFormat(
 /// \param [out] piFormat IO format, reference @link #emCameraGPIOFormat @endlink
 /// \return Returns CAMERA_STATUS_SUCCESS(0) successfully. Otherwise, it returns a non-zero error code. Please refer to the definition of the error code in CameraStatus.h.
 MVSDK_API CameraSdkStatus CameraGetOutPutIOFormat(
-	CameraHandle    hCamera,
-	INT				iOutputIOIndex,
-	INT*			piFormat
-	);
+        CameraHandle    hCamera,
+        INT				iOutputIOIndex,
+        INT*			piFormat
+);
 
 /// @ingroup API_GPIO
 /// \~chinese
@@ -3538,10 +3592,10 @@ MVSDK_API CameraSdkStatus CameraGetOutPutIOFormat(
 /// \param [out] piCapbility IO format support bit mask
 /// \return Returns CAMERA_STATUS_SUCCESS(0) successfully. Otherwise, it returns a non-zero error code. Please refer to the definition of the error code in CameraStatus.h.
 MVSDK_API CameraSdkStatus CameraGetInPutIOFormatCapbility(
-	CameraHandle    hCamera,
-	INT				iInputIOIndex,
-	UINT*			piCapbility
-	);
+        CameraHandle    hCamera,
+        INT				iInputIOIndex,
+        UINT*			piCapbility
+);
 
 /// @ingroup API_GPIO
 /// \~chinese
@@ -3557,10 +3611,10 @@ MVSDK_API CameraSdkStatus CameraGetInPutIOFormatCapbility(
 /// \param [out] piCapbility IO format support bit mask
 /// \return Returns CAMERA_STATUS_SUCCESS(0) successfully. Otherwise, it returns a non-zero error code. Please refer to the definition of the error code in CameraStatus.h.
 MVSDK_API CameraSdkStatus CameraGetOutPutIOFormatCapbility(
-	CameraHandle    hCamera,
-	INT				iOutputIOIndex,
-	UINT*			piCapbility
-	);
+        CameraHandle    hCamera,
+        INT				iOutputIOIndex,
+        UINT*			piCapbility
+);
 
 /******************************************************/
 // 函数名   : CameraSetOutPutDelayTime
@@ -3575,10 +3629,10 @@ MVSDK_API CameraSdkStatus CameraGetOutPutIOFormatCapbility(
 //            中错误码的定义。
 /******************************************************/
 MVSDK_API CameraSdkStatus CameraSetOutPutDelayTime(
-	CameraHandle    hCamera,
-	INT             iOutputIOIndex,
-	UINT            uDelayTimeUs
-	);
+        CameraHandle    hCamera,
+        INT             iOutputIOIndex,
+        UINT            uDelayTimeUs
+);
 
 /******************************************************/
 // 函数名   : CameraSetOutPutPulseWidth
@@ -3593,10 +3647,10 @@ MVSDK_API CameraSdkStatus CameraSetOutPutDelayTime(
 //            中错误码的定义。
 /******************************************************/
 MVSDK_API CameraSdkStatus CameraSetOutPutPulseWidth(
-	CameraHandle    hCamera,
-	INT             iOutputIOIndex,
-	UINT            uTimeUs
-	);
+        CameraHandle    hCamera,
+        INT             iOutputIOIndex,
+        UINT            uTimeUs
+);
 
 /******************************************************/
 // 函数名   : CameraSetOutPutPolarity
@@ -3611,10 +3665,10 @@ MVSDK_API CameraSdkStatus CameraSetOutPutPulseWidth(
 //            中错误码的定义。
 /******************************************************/
 MVSDK_API CameraSdkStatus CameraSetOutPutPolarity(
-	CameraHandle    hCamera,
-	INT             iOutputIOIndex,
-	UINT            uPolarity
-	);
+        CameraHandle    hCamera,
+        INT             iOutputIOIndex,
+        UINT            uPolarity
+);
 
 /******************************************************/
 // 函数名   : CameraSetAeAlgorithm
@@ -3630,9 +3684,9 @@ MVSDK_API CameraSdkStatus CameraSetOutPutPolarity(
 //            中错误码的定义。
 /******************************************************/
 MVSDK_API CameraSdkStatus  CameraSetAeAlgorithm(
-    CameraHandle    hCamera,
-    INT             iIspProcessor,
-    INT             iAeAlgorithmSel
+        CameraHandle    hCamera,
+        INT             iIspProcessor,
+        INT             iAeAlgorithmSel
 );
 
 /******************************************************/
@@ -3648,9 +3702,9 @@ MVSDK_API CameraSdkStatus  CameraSetAeAlgorithm(
 //            中错误码的定义。
 /******************************************************/
 MVSDK_API CameraSdkStatus  CameraGetAeAlgorithm(
-    CameraHandle    hCamera,
-    INT             iIspProcessor,
-    INT*            piAlgorithmSel
+        CameraHandle    hCamera,
+        INT             iIspProcessor,
+        INT*            piAlgorithmSel
 );
 
 /******************************************************/
@@ -3666,9 +3720,9 @@ MVSDK_API CameraSdkStatus  CameraGetAeAlgorithm(
 //            中错误码的定义。
 /******************************************************/
 MVSDK_API CameraSdkStatus  CameraSetBayerDecAlgorithm(
-    CameraHandle    hCamera,
-    INT             iIspProcessor,
-    INT             iAlgorithmSel
+        CameraHandle    hCamera,
+        INT             iIspProcessor,
+        INT             iAlgorithmSel
 );
 
 /******************************************************/
@@ -3684,9 +3738,9 @@ MVSDK_API CameraSdkStatus  CameraSetBayerDecAlgorithm(
 //            中错误码的定义。
 /******************************************************/
 MVSDK_API CameraSdkStatus  CameraGetBayerDecAlgorithm(
-    CameraHandle    hCamera,
-    INT             iIspProcessor,
-    INT*            piAlgorithmSel
+        CameraHandle    hCamera,
+        INT             iIspProcessor,
+        INT*            piAlgorithmSel
 );
 
 /******************************************************/
@@ -3701,8 +3755,8 @@ MVSDK_API CameraSdkStatus  CameraGetBayerDecAlgorithm(
 //            中错误码的定义。
 /******************************************************/
 MVSDK_API CameraSdkStatus  CameraSetIspProcessor(
-    CameraHandle    hCamera,
-    INT             iIspProcessor
+        CameraHandle    hCamera,
+        INT             iIspProcessor
 );
 
 /******************************************************/
@@ -3716,8 +3770,8 @@ MVSDK_API CameraSdkStatus  CameraSetIspProcessor(
 //            中错误码的定义。
 /******************************************************/
 MVSDK_API CameraSdkStatus  CameraGetIspProcessor(
-    CameraHandle    hCamera,
-    INT*            piIspProcessor
+        CameraHandle    hCamera,
+        INT*            piIspProcessor
 );
 
 /******************************************************/
@@ -3730,8 +3784,8 @@ MVSDK_API CameraSdkStatus  CameraGetIspProcessor(
 //            中错误码的定义。
 /******************************************************/
 MVSDK_API CameraSdkStatus  CameraSetBlackLevel(
-  CameraHandle    hCamera,
-  INT         iBlackLevel
+        CameraHandle    hCamera,
+        INT         iBlackLevel
 );
 
 /******************************************************/
@@ -3744,8 +3798,8 @@ MVSDK_API CameraSdkStatus  CameraSetBlackLevel(
 //            中错误码的定义。
 /******************************************************/
 MVSDK_API CameraSdkStatus  CameraGetBlackLevel(
-  CameraHandle    hCamera,
-  INT*        piBlackLevel
+        CameraHandle    hCamera,
+        INT*        piBlackLevel
 );
 
 /******************************************************/
@@ -3758,8 +3812,8 @@ MVSDK_API CameraSdkStatus  CameraGetBlackLevel(
 //            中错误码的定义。
 /******************************************************/
 MVSDK_API CameraSdkStatus  CameraSetWhiteLevel(
-  CameraHandle    hCamera,
-  INT         iWhiteLevel
+        CameraHandle    hCamera,
+        INT         iWhiteLevel
 );
 
 /******************************************************/
@@ -3772,8 +3826,8 @@ MVSDK_API CameraSdkStatus  CameraSetWhiteLevel(
 //            中错误码的定义。
 /******************************************************/
 MVSDK_API CameraSdkStatus  CameraGetWhiteLevel(
-  CameraHandle    hCamera,
-  INT*        piWhiteLevel
+        CameraHandle    hCamera,
+        INT*        piWhiteLevel
 );
 
 /******************************************************/
@@ -3788,8 +3842,8 @@ MVSDK_API CameraSdkStatus  CameraGetWhiteLevel(
 //            中错误码的定义。
 /******************************************************/
 MVSDK_API CameraSdkStatus  CameraSetIspOutFormat(
-    CameraHandle    hCamera,
-    UINT            uFormat
+        CameraHandle    hCamera,
+        UINT            uFormat
 );
 
 /******************************************************/
@@ -3804,8 +3858,8 @@ MVSDK_API CameraSdkStatus  CameraSetIspOutFormat(
 //            中错误码的定义。
 /******************************************************/
 MVSDK_API CameraSdkStatus  CameraGetIspOutFormat(
-    CameraHandle    hCamera,
-    UINT*           puFormat
+        CameraHandle    hCamera,
+        UINT*           puFormat
 );
 
 /******************************************************/
@@ -3816,7 +3870,7 @@ MVSDK_API CameraSdkStatus  CameraGetIspOutFormat(
 //            否则返回NULL。
 /******************************************************/
 MVSDK_API char*  CameraGetErrorString(
-    CameraSdkStatus     iStatusCode
+        CameraSdkStatus     iStatusCode
 );
 
 
@@ -3829,7 +3883,7 @@ MVSDK_API char*  CameraGetErrorString(
 //            中错误码的定义。
 /******************************************************/
 MVSDK_API CameraSdkStatus CameraReConnect(
-    CameraHandle    hCamera
+        CameraHandle    hCamera
 );
 
 
@@ -3842,7 +3896,7 @@ MVSDK_API CameraSdkStatus CameraReConnect(
 //            中错误码的定义。
 /******************************************************/
 MVSDK_API CameraSdkStatus CameraConnectTest(
-    CameraHandle    hCamera
+        CameraHandle    hCamera
 );
 
 /// @ingroup API_ADVANCE
@@ -3859,10 +3913,10 @@ MVSDK_API CameraSdkStatus CameraConnectTest(
 /// \param [in] enable enable state
 /// \return Returns CAMERA_STATUS_SUCCESS(0) successfully. Otherwise, it returns a non-zero error code. Please refer to the definition of the error code in CameraStatus.h.
 MVSDK_API CameraSdkStatus CameraSetLedEnable(
-	CameraHandle    hCamera,
-	int             index,
-	BOOL            enable
-	);
+        CameraHandle    hCamera,
+        int             index,
+        BOOL            enable
+);
 
 /// @ingroup API_ADVANCE
 /// \~chinese
@@ -3878,10 +3932,10 @@ MVSDK_API CameraSdkStatus CameraSetLedEnable(
 /// \param [out] enable Return LED enable status
 /// \return Returns CAMERA_STATUS_SUCCESS(0) successfully. Otherwise, it returns a non-zero error code. Please refer to the definition of the error code in CameraStatus.h.
 MVSDK_API CameraSdkStatus CameraGetLedEnable(
-	CameraHandle    hCamera,
-	int             index,
-	BOOL*           enable
-	);
+        CameraHandle    hCamera,
+        int             index,
+        BOOL*           enable
+);
 
 /// @ingroup API_ADVANCE
 /// \~chinese
@@ -3897,10 +3951,10 @@ MVSDK_API CameraSdkStatus CameraGetLedEnable(
 /// \param [in] onoff LED on/off status
 /// \return Returns CAMERA_STATUS_SUCCESS(0) successfully. Otherwise, it returns a non-zero error code. Please refer to the definition of the error code in CameraStatus.h.
 MVSDK_API CameraSdkStatus CameraSetLedOnOff(
-	CameraHandle    hCamera,
-	int             index,
-	BOOL            onoff
-	);
+        CameraHandle    hCamera,
+        int             index,
+        BOOL            onoff
+);
 
 /// @ingroup API_ADVANCE
 /// \~chinese
@@ -3916,10 +3970,10 @@ MVSDK_API CameraSdkStatus CameraSetLedOnOff(
 /// \param [out] onoff Returns LED switch status
 /// \return Returns CAMERA_STATUS_SUCCESS(0) successfully. Otherwise, it returns a non-zero error code. Please refer to the definition of the error code in CameraStatus.h.
 MVSDK_API CameraSdkStatus CameraGetLedOnOff(
-	CameraHandle    hCamera,
-	int             index,
-	BOOL*           onoff
-	);
+        CameraHandle    hCamera,
+        int             index,
+        BOOL*           onoff
+);
 
 /// @ingroup API_ADVANCE
 /// \~chinese
@@ -3935,10 +3989,10 @@ MVSDK_API CameraSdkStatus CameraGetLedOnOff(
 /// \param [in] duration LED duration in milliseconds
 /// \return Returns CAMERA_STATUS_SUCCESS(0) successfully. Otherwise, it returns a non-zero error code. Please refer to the definition of the error code in CameraStatus.h.
 MVSDK_API CameraSdkStatus CameraSetLedDuration(
-	CameraHandle    hCamera,
-	int             index,
-	UINT            duration
-	);
+        CameraHandle    hCamera,
+        int             index,
+        UINT            duration
+);
 
 /// @ingroup API_ADVANCE
 /// \~chinese
@@ -3954,10 +4008,10 @@ MVSDK_API CameraSdkStatus CameraSetLedDuration(
 /// \param [out] duration Returns the LED duration in milliseconds
 /// \return Returns CAMERA_STATUS_SUCCESS(0) successfully. Otherwise, it returns a non-zero error code. Please refer to the definition of the error code in CameraStatus.h.
 MVSDK_API CameraSdkStatus CameraGetLedDuration(
-	CameraHandle    hCamera,
-	int             index,
-	UINT*           duration
-	);
+        CameraHandle    hCamera,
+        int             index,
+        UINT*           duration
+);
 
 /// @ingroup API_ADVANCE
 /// \~chinese
@@ -3973,9 +4027,9 @@ MVSDK_API CameraSdkStatus CameraGetLedDuration(
 /// \param [in] uBrightness LED brightness value, range 0 to 255. 0 means off, 255 brightest.
 /// \return Returns CAMERA_STATUS_SUCCESS(0) successfully. Otherwise, it returns a non-zero error code. Please refer to the definition of the error code in CameraStatus.h.
 MVSDK_API CameraSdkStatus CameraSetLedBrightness(
-    CameraHandle    hCamera,
-    int             index,
-    UINT            uBrightness
+        CameraHandle    hCamera,
+        int             index,
+        UINT            uBrightness
 );
 
 /// @ingroup API_ADVANCE
@@ -3992,9 +4046,99 @@ MVSDK_API CameraSdkStatus CameraSetLedBrightness(
 /// \param [out] uBrightness Returns the LED brightness value in the range 0 to 255. 0 means off, 255 is the brightest.
 /// \return Returns CAMERA_STATUS_SUCCESS(0) successfully. Otherwise, it returns a non-zero error code. Please refer to the definition of the error code in CameraStatus.h.
 MVSDK_API CameraSdkStatus CameraGetLedBrightness(
+        CameraHandle    hCamera,
+        int             index,
+        UINT*           uBrightness
+);
+
+/// @ingroup API_ADVANCE
+/// \~chinese
+/// \brief 使能或者禁止相机的多区域传输功能，不带该功能的型号，此函数返回错误代码，表示不支持。
+/// \param [in] hCamera 相机的句柄。
+/// \param [in] uEnableMask 区域使能状态掩码，对应的比特位为1表示使能。0为禁止。目前SDK支持4个可编辑区域，index范围为0到3，即bit0 ，bit1，bit2，bit3控制4个区域的使能状态。
+/// \return 成功返回 CAMERA_STATUS_SUCCESS(0)。否则返回非0值的错误码, 请参考 CameraStatus.h 中错误码的定义。
+/// \note 该功能主要用于在相机端将采集的整幅画面切分，只传输指定的多个区域，以提高传输帧率。多个区域传输到PC上后，会自动拼接成整幅画面，没有被传输的部分，会用黑色填充。
+/// \~english
+/// \brief Enables or disables the camera's multi-zone transfer function. For models without this function, this function returns an error code indicating that it is not supported.
+/// \param [in] hCamera Camera handle.
+/// \param [in] uEnableMask Area enable mask. The corresponding bit is 1 to enable. 0 is prohibited. Currently, the SDK supports four editable regions. The index range is 0 to 3, that is, bit0, bit1, bit2, and bit3 control the enabling status of the four regions.
+/// \return Returns CAMERA_STATUS_SUCCESS(0) successfully. Otherwise, it returns a non-zero error code. Please refer to the definition of the error code in CameraStatus.h.
+/// \note This function is mainly used to split the entire picture collected on the camera side and only transmit specified multiple areas to increase the transmission frame rate. After multiple areas are transferred to the PC, they will be automatically spliced into an entire frame. Parts that have not been transmitted will be filled with black.
+MVSDK_API CameraSdkStatus CameraEnableTransferRoi(
+    CameraHandle    hCamera,
+    UINT            uEnableMask
+);
+
+/// @ingroup API_ADVANCE
+/// \~chinese
+/// \brief 获取相机的多区域传输使能状态
+/// \param [in] hCamera 相机的句柄。
+/// \param [out] puEnableMask 返回区域使能状态掩码，对应的比特位为1表示使能。0为禁止。目前SDK支持4个可编辑区域，index范围为0到3，即bit0 ，bit1，bit2，bit3控制4个区域的使能状态。
+/// \return 成功返回 CAMERA_STATUS_SUCCESS(0)。否则返回非0值的错误码, 请参考 CameraStatus.h 中错误码的定义。
+/// \~english
+/// \brief Get the multi-region transmission enable status of the camera
+/// \param [in] hCamera Camera handle.
+/// \param [out] puEnableMask Get area enable mask. The corresponding bit is 1 to enable. 0 is prohibited. Currently, the SDK supports four editable regions. The index range is 0 to 3, that is, bit0, bit1, bit2, and bit3 control the enabling status of the four regions.
+/// \return Returns CAMERA_STATUS_SUCCESS(0) successfully. Otherwise, it returns a non-zero error code. Please refer to the definition of the error code in CameraStatus.h.
+MVSDK_API CameraSdkStatus CameraGetTransferRoiEnable(
+	CameraHandle    hCamera,
+	UINT*           puEnableMask
+	);
+
+/// @ingroup API_ADVANCE
+/// \~chinese
+/// \brief 设置相机传输的裁剪区域。在相机端，图像从传感器上被采集后，将会被裁剪成指定的区域来传送，此函数返回错误代码，表示不支持。
+/// \param [in] hCamera		相机的句柄。
+/// \param [in] index		ROI区域的索引号，从0开始。
+/// \param [in] X1			ROI区域的左上角X坐标
+/// \param [in] Y1			ROI区域的左上角Y坐标
+/// \param [in] X2			ROI区域的右下角X坐标
+/// \param [in] Y2			ROI区域的右下角Y坐标
+/// \return 成功返回 CAMERA_STATUS_SUCCESS(0)。否则返回非0值的错误码, 请参考 CameraStatus.h 中错误码的定义。
+/// \~english
+/// \brief Sets the clipping area for camera transmission. On the camera side, after the image is captured from the sensor, it will be cropped to the specified area for transmission. This function returns an error code indicating that it is not supported.
+/// \param [in] hCamera Camera handle.
+/// \param [in] index The index number of the ROI region, starting at 0.
+/// \param [in] X1 The X coordinate of the upper left corner of ROI area
+/// \param [in] Y1 The Y coordinate of the upper left corner of ROI area
+/// \param [in] X2 The X coordinate of the lower right corner of ROI area
+/// \param [in] Y2 The Y coordinate of the lower right corner of ROI area
+/// \return Returns CAMERA_STATUS_SUCCESS(0) successfully. Otherwise, it returns a non-zero error code. Please refer to the definition of the error code in CameraStatus.h.
+MVSDK_API CameraSdkStatus CameraSetTransferRoi(
     CameraHandle    hCamera,
     int             index,
-    UINT*           uBrightness
+    UINT            X1,
+    UINT            Y1,
+    UINT            X2,
+    UINT            Y2
+);
+
+/// @ingroup API_ADVANCE
+/// \~chinese
+/// \brief 获取相机传输的裁剪区域。在相机端，图像从传感器上被采集后，将会被裁剪成指定的区域来传送，此函数返回错误代码，表示不支持。
+/// \param [in] hCamera		相机的句柄。
+/// \param [in] index		ROI区域的索引号，从0开始。
+/// \param [out] pX1		ROI区域的左上角X坐标
+/// \param [out] pY1		ROI区域的左上角Y坐标
+/// \param [out] pX2		ROI区域的右下角X坐标
+/// \param [out] pY2		ROI区域的右下角Y坐标
+/// \return 成功返回 CAMERA_STATUS_SUCCESS(0)。否则返回非0值的错误码, 请参考 CameraStatus.h 中错误码的定义。
+/// \~english
+/// \brief Get the cropped area of the camera transmission. On the camera side, after the image is captured from the sensor, it will be cropped to the specified area for transmission. This function returns an error code indicating that it is not supported.
+/// \param [in] hCamera Camera handle.
+/// \param [in] index The index number of the ROI region, starting at 0.
+/// \param [out] pX1 Returns the X coordinate of the upper left corner of the ROI area
+/// \param [out] pY1 Returns the Y coordinate of the upper left corner of the ROI area
+/// \param [out] pX2 Returns the X coordinate of the lower right corner of the ROI area
+/// \param [out] pY2 Returns the Y coordinate of the lower right corner of the ROI area
+/// \return Returns CAMERA_STATUS_SUCCESS(0) successfully. Otherwise, it returns a non-zero error code. Please refer to the definition of the error code in CameraStatus.h.
+MVSDK_API CameraSdkStatus CameraGetTransferRoi(
+    CameraHandle    hCamera,
+    int             index,
+    UINT*           pX1,
+    UINT*           pY1,
+    UINT*           pX2,
+    UINT*           pY2
 );
 
 // 申请一段对齐的内存空间。功能和malloc类似，但是返回的内存是以align指定的字节数对齐的
@@ -4015,10 +4159,10 @@ MVSDK_API void CameraAlignFree(BYTE* membuffer);
 //            中错误码的定义。
 /******************************************************/
 MVSDK_API CameraSdkStatus  CameraCommonCall(
-	CameraHandle    hCamera,
-	char const*		pszCall,
-	char*			pszResult,
-	UINT			uResultBufSize
+        CameraHandle    hCamera,
+        char const*		pszCall,
+        char*			pszResult,
+        UINT			uResultBufSize
 );
 
 /******************************************************/
@@ -4030,8 +4174,8 @@ MVSDK_API CameraSdkStatus  CameraCommonCall(
 //            中错误码的定义。
 /******************************************************/
 MVSDK_API CameraSdkStatus CameraGetEyeCount(
-    CameraHandle hCamera,
-    int *eyecount
+        CameraHandle hCamera,
+        int *eyecount
 );
 
 /// @ingroup API_MULTI_EYE
@@ -4039,10 +4183,10 @@ MVSDK_API CameraSdkStatus CameraGetEyeCount(
 /// \brief 对多目相机帧内的某个单目图做ISP
 /// \param [in] hCamera 相机的句柄。
 /// \param [in] iEyeIndex 单目索引。
-/// \param [in] pbyIn 输入图像数据的缓冲区地址，不能为NULL。 
-/// \param [in] pInFrInfo 输入图像数据的帧头，不能为NULL。 
+/// \param [in] pbyIn 输入图像数据的缓冲区地址，不能为NULL。
+/// \param [in] pInFrInfo 输入图像数据的帧头，不能为NULL。
 /// \param [out] pbyOut 处理后图像输出的缓冲区地址，不能为NULL。
-/// \param [out] pOutFrInfo 处理后图像的帧头信息，不能为NULL。 
+/// \param [out] pOutFrInfo 处理后图像的帧头信息，不能为NULL。
 /// \param [in] uOutFormat 处理完后图像的输出格式。
 /// \param [in] uReserved 预留参数，必须设置为0。
 /// \return 成功返回 CAMERA_STATUS_SUCCESS(0)。否则返回非0值的错误码, 请参考 CameraStatus.h 中错误码的定义。
@@ -4058,15 +4202,15 @@ MVSDK_API CameraSdkStatus CameraGetEyeCount(
 /// \param [in] uReserved Reservation parameters must be set to 0.
 /// \return Returns CAMERA_STATUS_SUCCESS(0) successfully. Otherwise, it returns a non-zero error code. Please refer to the definition of the error code in CameraStatus.h.
 MVSDK_API CameraSdkStatus CameraMultiEyeImageProcess(
-	CameraHandle        hCamera, 
-	int					iEyeIndex,
-	BYTE*               pbyIn, 
-	tSdkFrameHead*		pInFrInfo,
-	BYTE*               pbyOut,
-	tSdkFrameHead*      pOutFrInfo,
-	UINT                uOutFormat,
-	UINT                uReserved
-	);
+        CameraHandle        hCamera,
+        int					iEyeIndex,
+        BYTE*               pbyIn,
+        tSdkFrameHead*		pInFrInfo,
+        BYTE*               pbyOut,
+        tSdkFrameHead*      pOutFrInfo,
+        UINT                uOutFormat,
+        UINT                uReserved
+);
 
 /// @ingroup API_ADVANCE
 /// \~chinese
@@ -4082,10 +4226,10 @@ MVSDK_API CameraSdkStatus CameraMultiEyeImageProcess(
 /// \param [in] mode output mode (0: follow strobe 1: manual)
 /// \return Returns CAMERA_STATUS_SUCCESS(0) successfully. Otherwise, it returns a non-zero error code. Please refer to the definition of the error code in CameraStatus.h.
 MVSDK_API CameraSdkStatus CameraSetLightingControllerMode(
-	CameraHandle        hCamera,
-	int					index,
-	int					mode
-	);
+        CameraHandle        hCamera,
+        int					index,
+        int					mode
+);
 
 /// @ingroup API_ADVANCE
 /// \~chinese
@@ -4101,10 +4245,10 @@ MVSDK_API CameraSdkStatus CameraSetLightingControllerMode(
 /// \param [in] state output state (0: off 1: on)
 /// \return Returns CAMERA_STATUS_SUCCESS(0) successfully. Otherwise, it returns a non-zero error code. Please refer to the definition of the error code in CameraStatus.h.
 MVSDK_API CameraSdkStatus CameraSetLightingControllerState(
-	CameraHandle        hCamera,
-	int					index,
-	int					state
-	);
+        CameraHandle        hCamera,
+        int					index,
+        int					state
+);
 
 /// @ingroup API_UTIL
 /// \~chinese
@@ -4120,10 +4264,10 @@ MVSDK_API CameraSdkStatus CameraSetLightingControllerState(
 /// \param [in] Flags 1: Up and down 2: Around 3: Up and down, left and right are all flipped (equivalent to 180 degrees rotation)
 /// \return Returns CAMERA_STATUS_SUCCESS(0) successfully. Otherwise, it returns a non-zero error code. Please refer to the definition of the error code in CameraStatus.h.
 MVSDK_API CameraSdkStatus CameraFlipFrameBuffer(
-	BYTE *pFrameBuffer,
-	tSdkFrameHead* pFrameHead,
-	int Flags
-	);
+        BYTE *pFrameBuffer,
+        tSdkFrameHead* pFrameHead,
+        int Flags
+);
 
 /// @ingroup API_UTIL
 /// \~chinese
@@ -4147,14 +4291,14 @@ MVSDK_API CameraSdkStatus CameraFlipFrameBuffer(
 /// \param [inout] pFrameHead frame header information (after successful conversion, the information inside will be modified to output frame information)
 /// \return Returns CAMERA_STATUS_SUCCESS(0) successfully. Otherwise, it returns a non-zero error code. Please refer to the definition of the error code in CameraStatus.h.
 MVSDK_API CameraSdkStatus CameraConvertFrameBufferFormat(
-	CameraHandle hCamera,
-	BYTE *pInFrameBuffer,
-	BYTE *pOutFrameBuffer,
-	int outWidth,
-	int outHeight,
-	UINT outMediaType,
-	tSdkFrameHead* pFrameHead
-	);
+        CameraHandle hCamera,
+        BYTE *pInFrameBuffer,
+        BYTE *pOutFrameBuffer,
+        int outWidth,
+        int outHeight,
+        UINT outMediaType,
+        tSdkFrameHead* pFrameHead
+);
 
 /// @ingroup API_ADVANCE
 /// \~chinese
@@ -4168,9 +4312,9 @@ MVSDK_API CameraSdkStatus CameraConvertFrameBufferFormat(
 /// \param [out] id Frame ID
 /// \return Returns CAMERA_STATUS_SUCCESS(0) successfully. Otherwise, it returns a non-zero error code. Please refer to the definition of the error code in CameraStatus.h.
 MVSDK_API CameraSdkStatus CameraGetFrameID(
-	CameraHandle    hCamera,
-	UINT*           id
-	);
+        CameraHandle    hCamera,
+        UINT*           id
+);
 
 /// @ingroup API_ADVANCE
 /// \~chinese
@@ -4186,14 +4330,14 @@ MVSDK_API CameraSdkStatus CameraGetFrameID(
 /// \param [out] TimeStampH Timestamp high 32 bits
 /// \return Returns CAMERA_STATUS_SUCCESS(0) successfully. Otherwise, it returns a non-zero error code. Please refer to the definition of the error code in CameraStatus.h.
 MVSDK_API CameraSdkStatus CameraGetFrameTimeStamp(
-	CameraHandle    hCamera,
-	UINT*           TimeStampL,
-	UINT*			TimeStampH
-	);
+        CameraHandle    hCamera,
+        UINT*           TimeStampL,
+        UINT*			TimeStampH
+);
 
 /// @ingroup API_RECONNECT
 /// \~chinese
-/// \brief 设置相机连接状态改变的回调通知函数。当相机掉线、重连时，pCallBack所指向的回调函数就会被调用。 
+/// \brief 设置相机连接状态改变的回调通知函数。当相机掉线、重连时，pCallBack所指向的回调函数就会被调用。
 /// \param [in] hCamera 相机的句柄。
 /// \param [in] pCallBack 回调函数指针。
 /// \param [in] pContext  回调函数的附加参数，在回调函数被调用时该附加参数会被传入，可以为NULL。
@@ -4205,10 +4349,10 @@ MVSDK_API CameraSdkStatus CameraGetFrameTimeStamp(
 /// \param [in] pContext Additional parameter of the callback function. This additional parameter will be passed in when the callback function is called. It can be NULL.
 /// \return Returns CAMERA_STATUS_SUCCESS(0) successfully. Otherwise, it returns a non-zero error code. Please refer to the definition of the error code in CameraStatus.h.
 MVSDK_API CameraSdkStatus CameraSetConnectionStatusCallback(
-	CameraHandle        hCamera,
-	CAMERA_CONNECTION_STATUS_CALLBACK pCallBack,
-	PVOID               pContext
-	);
+        CameraHandle        hCamera,
+        CAMERA_CONNECTION_STATUS_CALLBACK pCallBack,
+        PVOID               pContext
+);
 
 /// @ingroup API_ENUM
 /// \~chinese
@@ -4230,10 +4374,10 @@ MVSDK_API CameraSdkStatus CameraSetConnectionStatusCallback(
 /// \warning piNums The value pointed to must be initialized and does not exceed the number of pCameraList array elements, otherwise it may cause memory overflow
 /// \note The list of returned camera information will be sorted according to acFriendlyName. For example, after changing the two cameras to the names of "Camera1" and "Camera2," the camera named "Camera1" will be in front, and the camera named "Camera2" will be behind the row.
 MVSDK_API CameraSdkStatus CameraGigeEnumerateDevice(
-    char const**        ppIpList,
-    int                 numIp,
-    tSdkCameraDevInfo*  pCameraList, 
-    INT*                piNums
+        char const**        ppIpList,
+        int                 numIp,
+        tSdkCameraDevInfo*  pCameraList,
+        INT*                piNums
 );
 
 /// @ingroup API_UTIL
@@ -4248,14 +4392,14 @@ MVSDK_API CameraSdkStatus CameraGigeEnumerateDevice(
 /// \param [in] value setting value
 /// \return Returns CAMERA_STATUS_SUCCESS(0) successfully. Otherwise, it returns a non-zero error code. Please refer to the definition of the error code in CameraStatus.h.
 MVSDK_API CameraSdkStatus CameraGigeSetOption(
-	char const* optionName,
-	char const* value
-	);
+        char const* optionName,
+        char const* value
+);
 
 /// @ingroup API_UTIL
 /// \~chinese
 /// \brief 获取GIGE相机的IP地址
-/// \param [in] pCameraInfo 相机的设备描述信息，可由@link #CameraEnumerateDevice @endlink函数获得。 
+/// \param [in] pCameraInfo 相机的设备描述信息，可由@link #CameraEnumerateDevice @endlink函数获得。
 /// \param [out] CamIp 相机IP(注意：必须保证传入的缓冲区大于等于16字节)
 /// \param [out] CamMask 相机子网掩码(注意：必须保证传入的缓冲区大于等于16字节)
 /// \param [out] CamGateWay 相机网关(注意：必须保证传入的缓冲区大于等于16字节)
@@ -4274,19 +4418,19 @@ MVSDK_API CameraSdkStatus CameraGigeSetOption(
 /// \param [out] EtGateWay NIC Gateway (Note: must ensure that the incoming buffer is greater than or equal to 16 bytes)
 /// \return Returns CAMERA_STATUS_SUCCESS(0) successfully. Otherwise, it returns a non-zero error code. Please refer to the definition of the error code in CameraStatus.h.
 MVSDK_API CameraSdkStatus CameraGigeGetIp(
-		tSdkCameraDevInfo* pCameraInfo,
-		char* CamIp,
-		char* CamMask,
-		char* CamGateWay,
-		char* EtIp,
-		char* EtMask,
-		char* EtGateWay
-	);
+        tSdkCameraDevInfo* pCameraInfo,
+        char* CamIp,
+        char* CamMask,
+        char* CamGateWay,
+        char* EtIp,
+        char* EtMask,
+        char* EtGateWay
+);
 
 /// @ingroup API_UTIL
 /// \~chinese
 /// \brief 设置GIGE相机的IP地址
-/// \param [in] pCameraInfo 相机的设备描述信息，可由@link #CameraEnumerateDevice @endlink函数获得。 
+/// \param [in] pCameraInfo 相机的设备描述信息，可由@link #CameraEnumerateDevice @endlink函数获得。
 /// \param [in] Ip 相机IP(如：192.168.1.100)
 /// \param [in] SubMask 相机子网掩码(如：255.255.255.0)
 /// \param [in] GateWay 相机网关(如：192.168.1.1)
@@ -4301,17 +4445,17 @@ MVSDK_API CameraSdkStatus CameraGigeGetIp(
 /// \param [in] bPersistent TRUE: Set camera to fixed IP, FALSE: Set camera to assign IP automatically (ignoring parameters Ip, SubMask, GateWay)
 /// \return Returns CAMERA_STATUS_SUCCESS(0) successfully. Otherwise, it returns a non-zero error code. Please refer to the definition of the error code in CameraStatus.h.
 MVSDK_API CameraSdkStatus CameraGigeSetIp(
-	tSdkCameraDevInfo* pCameraInfo,
-	char const* Ip,
-	char const* SubMask,
-	char const* GateWay,
-	BOOL bPersistent
-	);
+        tSdkCameraDevInfo* pCameraInfo,
+        char const* Ip,
+        char const* SubMask,
+        char const* GateWay,
+        BOOL bPersistent
+);
 
 /// @ingroup API_UTIL
 /// \~chinese
 /// \brief 获取GIGE相机的MAC地址
-/// \param [in] pCameraInfo 相机的设备描述信息，可由@link #CameraEnumerateDevice @endlink函数获得。 
+/// \param [in] pCameraInfo 相机的设备描述信息，可由@link #CameraEnumerateDevice @endlink函数获得。
 /// \param [out] CamMac 相机MAC(注意：必须保证传入的缓冲区大于等于18字节)
 /// \param [out] EtMac 网卡MAC(注意：必须保证传入的缓冲区大于等于18字节)
 /// \return 成功返回 CAMERA_STATUS_SUCCESS(0)。否则返回非0值的错误码, 请参考 CameraStatus.h 中错误码的定义。
@@ -4322,10 +4466,10 @@ MVSDK_API CameraSdkStatus CameraGigeSetIp(
 /// \param [out] EtMac network card MAC (Note: must ensure that the incoming buffer is greater than or equal to 18 bytes)
 /// \return Returns CAMERA_STATUS_SUCCESS(0) successfully. Otherwise, it returns a non-zero error code. Please refer to the definition of the error code in CameraStatus.h.
 MVSDK_API CameraSdkStatus CameraGigeGetMac(
-	tSdkCameraDevInfo* pCameraInfo,
-	char* CamMac,
-	char* EtMac
-	);
+        tSdkCameraDevInfo* pCameraInfo,
+        char* CamMac,
+        char* EtMac
+);
 
 /// @ingroup API_GRAB
 /// \~chinese
@@ -4337,8 +4481,8 @@ MVSDK_API CameraSdkStatus CameraGigeGetMac(
 /// \param [in] hCamera Camera handle.
 /// \return Returns CAMERA_STATUS_SUCCESS(0) successfully. Otherwise, it returns a non-zero error code. Please refer to the definition of the error code in CameraStatus.h.
 MVSDK_API CameraSdkStatus CameraClearBuffer(
-	CameraHandle hCamera
-	);
+        CameraHandle hCamera
+);
 
 /// @ingroup API_GRAB
 /// \~chinese
@@ -4360,12 +4504,12 @@ MVSDK_API CameraSdkStatus CameraClearBuffer(
 /// \return Returns CAMERA_STATUS_SUCCESS(0) successfully. Otherwise, it returns a non-zero error code. Please refer to the definition of the error code in CameraStatus.h.
 /// \note Same as @link #CameraGetImageBuffer @endlink except one more priority parameter
 MVSDK_API CameraSdkStatus CameraGetImageBufferPriority(
-	CameraHandle        hCamera, 
-	tSdkFrameHead*      pFrameInfo, 
-	BYTE**              pbyBuffer,
-	UINT                wTimes,
-	UINT				Priority
-	);
+        CameraHandle        hCamera,
+        tSdkFrameHead*      pFrameInfo,
+        BYTE**              pbyBuffer,
+        UINT                wTimes,
+        UINT				Priority
+);
 
 /// @ingroup API_GRAB
 /// \~chinese
@@ -4387,12 +4531,12 @@ MVSDK_API CameraSdkStatus CameraGetImageBufferPriority(
 /// \return Returns the first address of the RGB data buffer when successful; otherwise returns 0.
 /// \note Same as @link #CameraGetImageBufferEx @endlink except one more priority parameter
 MVSDK_API unsigned char* CameraGetImageBufferPriorityEx(
-	CameraHandle        hCamera, 
-	INT*                piWidth,
-	INT*                piHeight,
-	UINT                wTimes,
-	UINT				Priority
-	);
+        CameraHandle        hCamera,
+        INT*                piWidth,
+        INT*                piHeight,
+        UINT                wTimes,
+        UINT				Priority
+);
 
 /// @ingroup API_TRIGGER
 /// \~chinese
@@ -4408,9 +4552,9 @@ MVSDK_API unsigned char* CameraGetImageBufferPriorityEx(
 /// \return Returns CAMERA_STATUS_SUCCESS(0) successfully. Otherwise, it returns a non-zero error code. Please refer to the definition of the error code in CameraStatus.h.
 /// \see CameraSoftTrigger
 MVSDK_API CameraSdkStatus CameraSoftTriggerEx(
-	CameraHandle hCamera,
-	UINT uFlags
-	);
+        CameraHandle hCamera,
+        UINT uFlags
+);
 
 /// @ingroup API_ADVANCE
 /// \~chinese
@@ -4424,9 +4568,9 @@ MVSDK_API CameraSdkStatus CameraSoftTriggerEx(
 /// \param [in] count number of resends (<=0 means disable resends)
 /// \return Returns CAMERA_STATUS_SUCCESS(0) successfully. Otherwise, it returns a non-zero error code. Please refer to the definition of the error code in CameraStatus.h.
 MVSDK_API CameraSdkStatus CameraSetFrameResendCount(
-	CameraHandle        hCamera,
-	int					count
-	);
+        CameraHandle        hCamera,
+        int					count
+);
 
 /// @ingroup API_BASIC
 /// \~chinese
@@ -4440,9 +4584,9 @@ MVSDK_API CameraSdkStatus CameraSetFrameResendCount(
 /// \param [in] value setting value
 /// \return Returns CAMERA_STATUS_SUCCESS(0) successfully. Otherwise, it returns a non-zero error code. Please refer to the definition of the error code in CameraStatus.h.
 MVSDK_API CameraSdkStatus CameraSetSysOption(
-	char const* optionName,
-	char const* value
-	);
+        char const* optionName,
+        char const* value
+);
 
 /// @ingroup API_DEAD_PIXEL
 /// \~chinese
@@ -4456,9 +4600,9 @@ MVSDK_API CameraSdkStatus CameraSetSysOption(
 /// \param [in] bEnable TRUE: Enable dead pixel correction FALSE: Turn off dead pixel correction
 /// \return Returns CAMERA_STATUS_SUCCESS(0) successfully. Otherwise, it returns a non-zero error code. Please refer to the definition of the error code in CameraStatus.h.
 MVSDK_API CameraSdkStatus CameraSetCorrectDeadPixel(
-	CameraHandle hCamera,
-	BOOL bEnable
-	);
+        CameraHandle hCamera,
+        BOOL bEnable
+);
 
 /// @ingroup API_DEAD_PIXEL
 /// \~chinese
@@ -4472,107 +4616,9 @@ MVSDK_API CameraSdkStatus CameraSetCorrectDeadPixel(
 /// \param [out] pbEnable Returns enable state
 /// \return Returns CAMERA_STATUS_SUCCESS(0) successfully. Otherwise, it returns a non-zero error code. Please refer to the definition of the error code in CameraStatus.h.
 MVSDK_API CameraSdkStatus CameraGetCorrectDeadPixel(
-	CameraHandle hCamera,
-	BOOL* pbEnable
-	);
-
-/// @ingroup API_UNDISTORT
-/// \~chinese
-/// \brief 设置校正参数
-/// \param [in] hCamera 相机的句柄。
-/// \param [in] width 图片宽度
-/// \param [in] height 图片高度
-/// \param [in] cameraMatrix 内参(fx, fy, cx, cy)
-/// \param [in] distCoeffs 畸变系数(k1,k2,p1,p2,k3)
-/// \return 成功返回 CAMERA_STATUS_SUCCESS(0)。否则返回非0值的错误码, 请参考 CameraStatus.h 中错误码的定义。
-/// \~english
-/// \brief Set undistort parameters
-/// \param [in] hCamera Camera handle.
-/// \param [in] width image width
-/// \param [in] height image height
-/// \param [in] cameraMatrix internal matrix(fx, fy, cx, cy)
-/// \param [in] distCoeffs distortion coefficient (k1, k2, p1, p2, k3)
-/// \return Returns CAMERA_STATUS_SUCCESS(0) successfully. Otherwise, it returns a non-zero error code. Please refer to the definition of the error code in CameraStatus.h.
-MVSDK_API CameraSdkStatus CameraSetUndistortParams(
-	CameraHandle	hCamera,
-	int				width,
-	int				height,
-	double			cameraMatrix[4],
-	double			distCoeffs[5]
-	);
-
-/// @ingroup API_UNDISTORT
-/// \~chinese
-/// \brief 获取校正参数
-/// \param [in] hCamera 相机的句柄。
-/// \param [out] width 图片宽度
-/// \param [out] height 图片高度
-/// \param [out] cameraMatrix 内参(fx, fy, cx, cy)
-/// \param [out] distCoeffs 畸变系数(k1,k2,p1,p2,k3)
-/// \return 成功返回 CAMERA_STATUS_SUCCESS(0)。否则返回非0值的错误码, 请参考 CameraStatus.h 中错误码的定义。
-/// \~english
-/// \brief Get undistort parameters
-/// \param [in] hCamera Camera handle.
-/// \param [out] width image width
-/// \param [out] height image height
-/// \param [out] cameraMatrix internal matrix(fx, fy, cx, cy)
-/// \param [out] distCoeffs distortion coefficient (k1, k2, p1, p2, k3)
-/// \return Returns CAMERA_STATUS_SUCCESS(0) successfully. Otherwise, it returns a non-zero error code. Please refer to the definition of the error code in CameraStatus.h.
-MVSDK_API CameraSdkStatus CameraGetUndistortParams(
-	CameraHandle	hCamera,
-	int				*width,
-	int				*height,
-	double			cameraMatrix[4],
-	double			distCoeffs[5]
-	);
-
-/// @ingroup API_UNDISTORT
-/// \~chinese
-/// \brief 使能镜头校正
-/// \param [in] hCamera 相机的句柄。
-/// \param [in] bEnable 使能校正
-/// \return 成功返回 CAMERA_STATUS_SUCCESS(0)。否则返回非0值的错误码, 请参考 CameraStatus.h 中错误码的定义。
-/// \~english
-/// \brief Set undistort enable status
-/// \param [in] hCamera Camera handle.
-/// \param [in] bEnable enable status
-/// \return Returns CAMERA_STATUS_SUCCESS(0) successfully. Otherwise, it returns a non-zero error code. Please refer to the definition of the error code in CameraStatus.h.
-MVSDK_API CameraSdkStatus CameraSetUndistortEnable(
-	CameraHandle	hCamera,
-	BOOL			bEnable
-	);
-
-/// @ingroup API_UNDISTORT
-/// \~chinese
-/// \brief 获取镜头校正使能状态
-/// \param [in] hCamera 相机的句柄。
-/// \param [out] bEnable 使能校正
-/// \return 成功返回 CAMERA_STATUS_SUCCESS(0)。否则返回非0值的错误码, 请参考 CameraStatus.h 中错误码的定义。
-/// \~english
-/// \brief Get undistort enable status
-/// \param [in] hCamera Camera handle.
-/// \param [out] bEnable enable status
-/// \return Returns CAMERA_STATUS_SUCCESS(0) successfully. Otherwise, it returns a non-zero error code. Please refer to the definition of the error code in CameraStatus.h.
-MVSDK_API CameraSdkStatus CameraGetUndistortEnable(
-	CameraHandle	hCamera,
-	BOOL*			bEnable
-	);
-
-/// @ingroup API_UNDISTORT
-/// \~chinese
-/// \brief 打开校正编辑面板
-/// \param [in] hCamera 相机的句柄。
-/// \param [in] hParent    调用该函数的窗口的句柄。可以为NULL。
-/// \return 成功返回 CAMERA_STATUS_SUCCESS(0)。否则返回非0值的错误码, 请参考 CameraStatus.h 中错误码的定义。
-/// \~english
-/// \brief Open the undistort editing panel
-/// \param [in] hCamera Camera handle.
-/// \param [in] hParent The handle of the window that called the function. Can be NULL.
-/// \return Returns CAMERA_STATUS_SUCCESS(0) successfully. Otherwise, it returns a non-zero error code. Please refer to the definition of the error code in CameraStatus.h.
-MVSDK_API CameraSdkStatus CameraCustomizeUndistort(
-	CameraHandle	hCamera,
-	HWND			hParent
-	);
+        CameraHandle hCamera,
+        BOOL* pbEnable
+);
 
 /// @ingroup API_ENHANCE
 /// \~chinese
@@ -4633,6 +4679,37 @@ MVSDK_API CameraSdkStatus CameraFlatFieldingCorrectSetParameter(
 
 /// @ingroup API_ENHANCE
 /// \~chinese
+/// \brief 设置平场校正参数
+/// \param [in] hCamera 相机的句柄。
+/// \param [in] pDarkFieldingImage 暗场图片
+/// \param [in] pDarkFieldingFrInfo 暗场图片信息
+/// \param [in] pLightFieldingImage 明场图片
+/// \param [in] pLightFieldingFrInfo 明场图片信息
+/// \param [in] pRefRegion 参考区域（亮度均值作为平场的目标亮度，NULL表示参考图像的中心区域）
+/// \param [in] pActRegion 作用区域（平场作用在此区域，NULL表示整图）
+/// \return 成功返回 CAMERA_STATUS_SUCCESS(0)。否则返回非0值的错误码, 请参考 CameraStatus.h 中错误码的定义。
+/// \~english
+/// \brief Set flat field correction parameters
+/// \param [in] hCamera Camera handle.
+/// \param [in] pDarkFieldingImage dark field image
+/// \param [in] pDarkFieldingFrInfo dark field image information
+/// \param [in] pLightFieldingImage Brightfield image
+/// \param [in] pLightFieldingFrInfo Brightfield image information
+/// \param [in] pRefRegion reference region (the brightness average is used as the target brightness of the flat field, NULL represents the center region of the reference image)
+/// \param [in] pActRegion Action area (the flat field acts on this area, NULL means the whole picture)
+/// \return Returns CAMERA_STATUS_SUCCESS(0) successfully. Otherwise, it returns a non-zero error code. Please refer to the definition of the error code in CameraStatus.h.
+MVSDK_API CameraSdkStatus CameraFlatFieldingCorrectSetParameterEx(
+	CameraHandle hCamera,
+	BYTE const* pDarkFieldingImage,
+	tSdkFrameHead const* pDarkFieldingFrInfo,
+	BYTE const* pLightFieldingImage,
+	tSdkFrameHead const* pLightFieldingFrInfo,
+	tSdkRect const* pRefRegion,
+	tSdkRect const* pActRegion
+	);
+
+/// @ingroup API_ENHANCE
+/// \~chinese
 /// \brief 获取平场校正参数的状态
 /// \param [in] hCamera 相机的句柄。
 /// \param [out] pbValid 返回参数是否有效
@@ -4684,6 +4761,250 @@ MVSDK_API CameraSdkStatus CameraFlatFieldingCorrectLoadParameterFromFile(
 
 /// @ingroup API_ENHANCE
 /// \~chinese
+/// \brief 获取平场的校正系数
+/// \param [in] hCamera 相机的句柄。
+/// \param [out] pCoefficients 系数（仅获取系数个数时可传入NULL）
+/// \param [inout] pNumCoefficient 系数个数（传入时表示pCoefficients的大小，返回后表示获取到的系数个数）
+/// \return 成功返回 CAMERA_STATUS_SUCCESS(0)。否则返回非0值的错误码, 请参考 CameraStatus.h 中错误码的定义。
+/// \~english
+/// \brief Get the correction coefficient of the flat field
+/// \param [in] hCamera The handle of the camera.
+/// \param [out] pCoefficients coefficients (NULL can be passed in when only getting the number of coefficients)
+/// \param [inout] pNumCoefficient number of coefficients (when passed in, it represents the size of pCoefficients, and when returned, it represents the number of coefficients obtained)
+/// \return Returns CAMERA_STATUS_SUCCESS(0) successfully. Otherwise, it returns a non-zero error code. Please refer to the definition of the error code in CameraStatus.h.
+MVSDK_API CameraSdkStatus CameraFlatFieldingCorrectGetCoefficients(
+	CameraHandle hCamera,
+	float* pCoefficients,
+	int* pNumCoefficient
+	);
+
+/// @ingroup API_ENHANCE
+/// \~chinese
+/// \brief 设置平场的校正系数
+/// \param [in] hCamera 相机的句柄。
+/// \param [in] pCoefficients 系数
+/// \param [in] iNumCoefficient 系数个数
+/// \return 成功返回 CAMERA_STATUS_SUCCESS(0)。否则返回非0值的错误码, 请参考 CameraStatus.h 中错误码的定义。
+/// \~english
+/// \brief Set the correction coefficient of the flat field
+/// \param [in] hCamera The handle of the camera.
+/// \param [in] pCoefficients coefficients
+/// \param [in] iNumCoefficient number of coefficients
+/// \return Returns CAMERA_STATUS_SUCCESS(0) successfully. Otherwise, it returns a non-zero error code. Please refer to the definition of the error code in CameraStatus.h.
+MVSDK_API CameraSdkStatus CameraFlatFieldingCorrectSetCoefficients(
+	CameraHandle hCamera,
+	float* pCoefficients,
+	int iNumCoefficient
+	);
+
+/// @ingroup API_UNDISTORT
+/// \~chinese
+/// \brief 设置校正参数
+/// \param [in] hCamera 相机的句柄。
+/// \param [in] width 图片宽度
+/// \param [in] height 图片高度
+/// \param [in] cameraMatrix 内参(fx, fy, cx, cy)
+/// \param [in] distCoeffs 畸变系数(k1,k2,p1,p2,k3)
+/// \return 成功返回 CAMERA_STATUS_SUCCESS(0)。否则返回非0值的错误码, 请参考 CameraStatus.h 中错误码的定义。
+/// \~english
+/// \brief Set undistort parameters
+/// \param [in] hCamera Camera handle.
+/// \param [in] width image width
+/// \param [in] height image height
+/// \param [in] cameraMatrix internal matrix(fx, fy, cx, cy)
+/// \param [in] distCoeffs distortion coefficient (k1, k2, p1, p2, k3)
+/// \return Returns CAMERA_STATUS_SUCCESS(0) successfully. Otherwise, it returns a non-zero error code. Please refer to the definition of the error code in CameraStatus.h.
+MVSDK_API CameraSdkStatus CameraSetUndistortParams(
+        CameraHandle	hCamera,
+        int				width,
+        int				height,
+        double			cameraMatrix[4],
+        double			distCoeffs[5]
+);
+
+/// @ingroup API_UNDISTORT
+/// \~chinese
+/// \brief 获取校正参数
+/// \param [in] hCamera 相机的句柄。
+/// \param [out] width 图片宽度
+/// \param [out] height 图片高度
+/// \param [out] cameraMatrix 内参(fx, fy, cx, cy)
+/// \param [out] distCoeffs 畸变系数(k1,k2,p1,p2,k3)
+/// \return 成功返回 CAMERA_STATUS_SUCCESS(0)。否则返回非0值的错误码, 请参考 CameraStatus.h 中错误码的定义。
+/// \~english
+/// \brief Get undistort parameters
+/// \param [in] hCamera Camera handle.
+/// \param [out] width image width
+/// \param [out] height image height
+/// \param [out] cameraMatrix internal matrix(fx, fy, cx, cy)
+/// \param [out] distCoeffs distortion coefficient (k1, k2, p1, p2, k3)
+/// \return Returns CAMERA_STATUS_SUCCESS(0) successfully. Otherwise, it returns a non-zero error code. Please refer to the definition of the error code in CameraStatus.h.
+MVSDK_API CameraSdkStatus CameraGetUndistortParams(
+        CameraHandle	hCamera,
+        int				*width,
+        int				*height,
+        double			cameraMatrix[4],
+        double			distCoeffs[5]
+);
+
+/// @ingroup API_UNDISTORT
+/// \~chinese
+/// \brief 使能镜头校正
+/// \param [in] hCamera 相机的句柄。
+/// \param [in] bEnable 使能校正
+/// \return 成功返回 CAMERA_STATUS_SUCCESS(0)。否则返回非0值的错误码, 请参考 CameraStatus.h 中错误码的定义。
+/// \~english
+/// \brief Set undistort enable status
+/// \param [in] hCamera Camera handle.
+/// \param [in] bEnable enable status
+/// \return Returns CAMERA_STATUS_SUCCESS(0) successfully. Otherwise, it returns a non-zero error code. Please refer to the definition of the error code in CameraStatus.h.
+MVSDK_API CameraSdkStatus CameraSetUndistortEnable(
+        CameraHandle	hCamera,
+        BOOL			bEnable
+);
+
+/// @ingroup API_UNDISTORT
+/// \~chinese
+/// \brief 获取镜头校正使能状态
+/// \param [in] hCamera 相机的句柄。
+/// \param [out] bEnable 使能校正
+/// \return 成功返回 CAMERA_STATUS_SUCCESS(0)。否则返回非0值的错误码, 请参考 CameraStatus.h 中错误码的定义。
+/// \~english
+/// \brief Get undistort enable status
+/// \param [in] hCamera Camera handle.
+/// \param [out] bEnable enable status
+/// \return Returns CAMERA_STATUS_SUCCESS(0) successfully. Otherwise, it returns a non-zero error code. Please refer to the definition of the error code in CameraStatus.h.
+MVSDK_API CameraSdkStatus CameraGetUndistortEnable(
+        CameraHandle	hCamera,
+        BOOL*			bEnable
+);
+
+/// @ingroup API_UNDISTORT
+/// \~chinese
+/// \brief 打开校正编辑面板
+/// \param [in] hCamera 相机的句柄。
+/// \param [in] hParent    调用该函数的窗口的句柄。可以为NULL。
+/// \return 成功返回 CAMERA_STATUS_SUCCESS(0)。否则返回非0值的错误码, 请参考 CameraStatus.h 中错误码的定义。
+/// \~english
+/// \brief Open the undistort editing panel
+/// \param [in] hCamera Camera handle.
+/// \param [in] hParent The handle of the window that called the function. Can be NULL.
+/// \return Returns CAMERA_STATUS_SUCCESS(0) successfully. Otherwise, it returns a non-zero error code. Please refer to the definition of the error code in CameraStatus.h.
+MVSDK_API CameraSdkStatus CameraCustomizeUndistort(
+        CameraHandle	hCamera,
+        HWND			hParent
+);
+
+/// @ingroup API_ENHANCE
+/// \~chinese
+/// \brief 使能平场校正
+/// \param [in] hCamera 相机的句柄。
+/// \param [in] bEnable     TRUE: 使能平场校正   FALSE: 关闭平场校正
+/// \return 成功返回 CAMERA_STATUS_SUCCESS(0)。否则返回非0值的错误码, 请参考 CameraStatus.h 中错误码的定义。
+/// \~english
+/// \brief Enable flat field correction
+/// \param [in] hCamera Camera handle.
+/// \param [in] bEnable TRUE: Enable flat field correction FALSE: Turn off flat field correction
+/// \return Returns CAMERA_STATUS_SUCCESS(0) successfully. Otherwise, it returns a non-zero error code. Please refer to the definition of the error code in CameraStatus.h.
+MVSDK_API CameraSdkStatus CameraFlatFieldingCorrectSetEnable(
+        CameraHandle hCamera,
+        BOOL bEnable
+);
+
+/// @ingroup API_ENHANCE
+/// \~chinese
+/// \brief 获取平场校正使能状态
+/// \param [in] hCamera 相机的句柄。
+/// \param [out] pbEnable 返回使能状态
+/// \return 成功返回 CAMERA_STATUS_SUCCESS(0)。否则返回非0值的错误码, 请参考 CameraStatus.h 中错误码的定义。
+/// \~english
+/// \brief Get Plane Correction Enable Status
+/// \param [in] hCamera Camera handle.
+/// \param [out] pbEnable Returns enable state
+/// \return Returns CAMERA_STATUS_SUCCESS(0) successfully. Otherwise, it returns a non-zero error code. Please refer to the definition of the error code in CameraStatus.h.
+MVSDK_API CameraSdkStatus CameraFlatFieldingCorrectGetEnable(
+        CameraHandle hCamera,
+        BOOL* pbEnable
+);
+
+/// @ingroup API_ENHANCE
+/// \~chinese
+/// \brief 设置平场校正参数
+/// \param [in] hCamera 相机的句柄。
+/// \param [in] pDarkFieldingImage 暗场图片
+/// \param [in] pDarkFieldingFrInfo 暗场图片信息
+/// \param [in] pLightFieldingImage 明场图片
+/// \param [in] pLightFieldingFrInfo 明场图片信息
+/// \return 成功返回 CAMERA_STATUS_SUCCESS(0)。否则返回非0值的错误码, 请参考 CameraStatus.h 中错误码的定义。
+/// \~english
+/// \brief Set flat field correction parameters
+/// \param [in] hCamera Camera handle.
+/// \param [in] pDarkFieldingImage dark field image
+/// \param [in] pDarkFieldingFrInfo dark field image information
+/// \param [in] pLightFieldingImage Brightfield image
+/// \param [in] pLightFieldingFrInfo Brightfield image information
+/// \return Returns CAMERA_STATUS_SUCCESS(0) successfully. Otherwise, it returns a non-zero error code. Please refer to the definition of the error code in CameraStatus.h.
+MVSDK_API CameraSdkStatus CameraFlatFieldingCorrectSetParameter(
+        CameraHandle hCamera,
+        BYTE const* pDarkFieldingImage,
+        tSdkFrameHead const* pDarkFieldingFrInfo,
+        BYTE const* pLightFieldingImage,
+        tSdkFrameHead const* pLightFieldingFrInfo
+);
+
+/// @ingroup API_ENHANCE
+/// \~chinese
+/// \brief 获取平场校正参数的状态
+/// \param [in] hCamera 相机的句柄。
+/// \param [out] pbValid 返回参数是否有效
+/// \param [out] pFilePath 返回参数文件的路径
+/// \return 成功返回 CAMERA_STATUS_SUCCESS(0)。否则返回非0值的错误码, 请参考 CameraStatus.h 中错误码的定义。
+/// \~english
+/// \brief Get status of flat field correction parameters
+/// \param [in] hCamera Camera handle.
+/// \param [out] pbValid Return whether the parameter is valid
+/// \param [out] pFilePath Returns the path of the parameter file
+/// \return Returns CAMERA_STATUS_SUCCESS(0) successfully. Otherwise, it returns a non-zero error code. Please refer to the definition of the error code in CameraStatus.h.
+MVSDK_API CameraSdkStatus CameraFlatFieldingCorrectGetParameterState(
+        CameraHandle hCamera,
+        BOOL *pbValid,
+        char *pFilePath
+);
+
+/// @ingroup API_ENHANCE
+/// \~chinese
+/// \brief 保存平场校正参数到文件
+/// \param [in] hCamera 相机的句柄。
+/// \param [in] pszFileName 文件路径
+/// \return 成功返回 CAMERA_STATUS_SUCCESS(0)。否则返回非0值的错误码, 请参考 CameraStatus.h 中错误码的定义。
+/// \~english
+/// \brief Save flat correction parameters to file
+/// \param [in] hCamera Camera handle.
+/// \param [in] pszFileName file path
+/// \return Returns CAMERA_STATUS_SUCCESS(0) successfully. Otherwise, it returns a non-zero error code. Please refer to the definition of the error code in CameraStatus.h.
+MVSDK_API CameraSdkStatus CameraFlatFieldingCorrectSaveParameterToFile(
+        CameraHandle hCamera,
+        char const* pszFileName
+);
+
+/// @ingroup API_ENHANCE
+/// \~chinese
+/// \brief 从文件中加载平场校正参数
+/// \param [in] hCamera 相机的句柄。
+/// \param [in] pszFileName 文件路径
+/// \return 成功返回 CAMERA_STATUS_SUCCESS(0)。否则返回非0值的错误码, 请参考 CameraStatus.h 中错误码的定义。
+/// \~english
+/// \brief Load flat field correction parameters from file
+/// \param [in] hCamera Camera handle.
+/// \param [in] pszFileName file path
+/// \return Returns CAMERA_STATUS_SUCCESS(0) successfully. Otherwise, it returns a non-zero error code. Please refer to the definition of the error code in CameraStatus.h.
+MVSDK_API CameraSdkStatus CameraFlatFieldingCorrectLoadParameterFromFile(
+        CameraHandle hCamera,
+        char const* pszFileName
+);
+
+/// @ingroup API_ENHANCE
+/// \~chinese
 /// \brief 设置3D降噪参数
 /// \param [in] hCamera 相机的句柄。
 /// \param [in] bEnable  启用或禁用
@@ -4698,11 +5019,11 @@ MVSDK_API CameraSdkStatus CameraFlatFieldingCorrectLoadParameterFromFile(
 /// \param [in] Weights Noise reduction weight, such as when using 3 pictures for noise reduction, this parameter can be passed in 3 floating points (0.3, 0.3, 0.4). The weight of the last picture is larger than the first 2 pictures. . If you do not need to use weights, then pass this parameter to 0, indicating that all images have the same weight (0.33, 0.33, 0.33)
 /// \return Returns CAMERA_STATUS_SUCCESS(0) successfully. Otherwise, it returns a non-zero error code. Please refer to the definition of the error code in CameraStatus.h.
 MVSDK_API CameraSdkStatus CameraSetDenoise3DParams(
-	CameraHandle    hCamera, 
-	BOOL			bEnable,
-	int				nCount,
-	float			*Weights
-	);
+        CameraHandle    hCamera,
+        BOOL			bEnable,
+        int				nCount,
+        float			*Weights
+);
 
 /// @ingroup API_ENHANCE
 /// \~chinese
@@ -4722,12 +5043,12 @@ MVSDK_API CameraSdkStatus CameraSetDenoise3DParams(
 /// \param [out] Weights Noise Reduction Weights
 /// \return Returns CAMERA_STATUS_SUCCESS(0) successfully. Otherwise, it returns a non-zero error code. Please refer to the definition of the error code in CameraStatus.h.
 MVSDK_API CameraSdkStatus CameraGetDenoise3DParams(
-	CameraHandle    hCamera, 
-	BOOL			*bEnable,
-	int				*nCount,
-	BOOL			*bUseWeight,
-	float			*Weights
-	);
+        CameraHandle    hCamera,
+        BOOL			*bEnable,
+        int				*nCount,
+        BOOL			*bUseWeight,
+        float			*Weights
+);
 
 /// @ingroup API_ENHANCE
 /// \~chinese
@@ -4749,13 +5070,13 @@ MVSDK_API CameraSdkStatus CameraGetDenoise3DParams(
 /// \param [out] OutFrameData output frame data
 /// \return Returns CAMERA_STATUS_SUCCESS(0) successfully. Otherwise, it returns a non-zero error code. Please refer to the definition of the error code in CameraStatus.h.
 MVSDK_API CameraSdkStatus CameraManualDenoise3D(
-	tSdkFrameHead	*InFramesHead,
-	BYTE			**InFramesData,
-	int				nCount,
-	float			*Weights,
-	tSdkFrameHead	*OutFrameHead,
-	BYTE			*OutFrameData
-	);
+        tSdkFrameHead	*InFramesHead,
+        BYTE			**InFramesData,
+        int				nCount,
+        float			*Weights,
+        tSdkFrameHead	*OutFrameHead,
+        BYTE			*OutFrameData
+);
 
 /// @ingroup API_ADVANCE
 /// \~chinese
@@ -4771,10 +5092,10 @@ MVSDK_API CameraSdkStatus CameraManualDenoise3D(
 /// \param [out] uCap feature support
 /// \return Returns CAMERA_STATUS_SUCCESS(0) successfully. Otherwise, it returns a non-zero error code. Please refer to the definition of the error code in CameraStatus.h.
 MVSDK_API CameraSdkStatus CameraGetMediaCapability(
-	CameraHandle    hCamera, 
-	int				iMediaType,
-	UINT			*uCap
-	);
+        CameraHandle    hCamera,
+        int				iMediaType,
+        UINT			*uCap
+);
 
 /// @ingroup API_ADVANCE
 /// \~chinese
@@ -4790,10 +5111,10 @@ MVSDK_API CameraSdkStatus CameraGetMediaCapability(
 /// \param [in] uRate bit rate
 /// \return Returns CAMERA_STATUS_SUCCESS(0) successfully. Otherwise, it returns a non-zero error code. Please refer to the definition of the error code in CameraStatus.h.
 MVSDK_API CameraSdkStatus CameraSetMediaBitRate(
-	CameraHandle    hCamera, 
-	int				iMediaType,
-	UINT			uRate
-	);
+        CameraHandle    hCamera,
+        int				iMediaType,
+        UINT			uRate
+);
 
 /// @ingroup API_ADVANCE
 /// \~chinese
@@ -4809,14 +5130,14 @@ MVSDK_API CameraSdkStatus CameraSetMediaBitRate(
 /// \param [out] uRate bit rate
 /// \return Returns CAMERA_STATUS_SUCCESS(0) successfully. Otherwise, it returns a non-zero error code. Please refer to the definition of the error code in CameraStatus.h.
 MVSDK_API CameraSdkStatus CameraGetMediaBitRate(
-	CameraHandle    hCamera, 
-	int				iMediaType,
-	UINT			*uRate
-	);
+        CameraHandle    hCamera,
+        int				iMediaType,
+        UINT			*uRate
+);
 
 /// @ingroup API_ADVANCE
 /// \~chinese
-/// \brief 设置相机帧事件回调函数。当帧开始以及帧完成时，pCallBack所指向的回调函数就会被调用。 
+/// \brief 设置相机帧事件回调函数。当帧开始以及帧完成时，pCallBack所指向的回调函数就会被调用。
 /// \param [in] hCamera 相机的句柄。
 /// \param [in] pCallBack 回调函数指针。
 /// \param [in] pContext  回调函数的附加参数，在回调函数被调用时该附加参数会被传入，可以为NULL。
@@ -4830,10 +5151,10 @@ MVSDK_API CameraSdkStatus CameraGetMediaBitRate(
 /// \return Returns CAMERA_STATUS_SUCCESS(0) successfully. Otherwise, it returns a non-zero error code. Please refer to the definition of the error code in CameraStatus.h.
 /// \note For the start of the global shutter camera frame, it means the end of a frame exposure
 MVSDK_API CameraSdkStatus CameraSetFrameEventCallback(
-	CameraHandle        hCamera,
-	CAMERA_FRAME_EVENT_CALLBACK pCallBack,
-	PVOID               pContext
-	);
+        CameraHandle        hCamera,
+        CAMERA_FRAME_EVENT_CALLBACK pCallBack,
+        PVOID               pContext
+);
 
 /// @ingroup API_ENHANCE
 /// \~chinese
@@ -4847,9 +5168,9 @@ MVSDK_API CameraSdkStatus CameraSetFrameEventCallback(
 /// \param [in] value   [0,7]
 /// \return Returns CAMERA_STATUS_SUCCESS(0) successfully. Otherwise, it returns a non-zero error code. Please refer to the definition of the error code in CameraStatus.h.
 MVSDK_API CameraSdkStatus CameraSetNoiseReductionValue(
-	CameraHandle    hCamera,
-	int				value
-	);
+        CameraHandle    hCamera,
+        int				value
+);
 
 /// @ingroup API_ENHANCE
 /// \~chinese
@@ -4863,9 +5184,9 @@ MVSDK_API CameraSdkStatus CameraSetNoiseReductionValue(
 /// \param [out] value  [0,7]
 /// \return Returns CAMERA_STATUS_SUCCESS(0) successfully. Otherwise, it returns a non-zero error code. Please refer to the definition of the error code in CameraStatus.h.
 MVSDK_API CameraSdkStatus CameraGetNoiseReductionValue(
-	CameraHandle    hCamera,
-	int*			value
-	);
+        CameraHandle    hCamera,
+        int*			value
+);
 
 /// @ingroup API_ENHANCE
 /// \~chinese
@@ -4879,9 +5200,9 @@ MVSDK_API CameraSdkStatus CameraGetNoiseReductionValue(
 /// \param [in] value   [0,255]
 /// \return Returns CAMERA_STATUS_SUCCESS(0) successfully. Otherwise, it returns a non-zero error code. Please refer to the definition of the error code in CameraStatus.h.
 MVSDK_API CameraSdkStatus CameraSetLogarithmicCurveValue(
-	CameraHandle    hCamera,
-	int				value
-	);
+        CameraHandle    hCamera,
+        int				value
+);
 
 /// @ingroup API_ENHANCE
 /// \~chinese
@@ -4895,9 +5216,9 @@ MVSDK_API CameraSdkStatus CameraSetLogarithmicCurveValue(
 /// \param [out] value  [0,255]
 /// \return Returns CAMERA_STATUS_SUCCESS(0) successfully. Otherwise, it returns a non-zero error code. Please refer to the definition of the error code in CameraStatus.h.
 MVSDK_API CameraSdkStatus CameraGetLogarithmicCurveValue(
-	CameraHandle    hCamera,
-	int*			value
-	);
+        CameraHandle    hCamera,
+        int*			value
+);
 
 /// @ingroup API_ADVANCE
 /// \~chinese
@@ -4911,9 +5232,9 @@ MVSDK_API CameraSdkStatus CameraGetLogarithmicCurveValue(
 /// \param [in] numLines Number of splicing lines (default is 0, 0 means no splicing processing)
 /// \return Returns CAMERA_STATUS_SUCCESS(0) successfully. Otherwise, it returns a non-zero error code. Please refer to the definition of the error code in CameraStatus.h.
 MVSDK_API CameraSdkStatus CameraSetSpliceLines(
-	CameraHandle    hCamera,
-	int             numLines
-	);
+        CameraHandle    hCamera,
+        int             numLines
+);
 
 /// @ingroup API_ADVANCE
 /// \~chinese
@@ -4927,9 +5248,9 @@ MVSDK_API CameraSdkStatus CameraSetSpliceLines(
 /// \param [in] numLines Number of splicing lines (default is 0, 0 means no splicing processing)
 /// \return Returns CAMERA_STATUS_SUCCESS(0) successfully. Otherwise, it returns a non-zero error code. Please refer to the definition of the error code in CameraStatus.h.
 MVSDK_API CameraSdkStatus CameraGetSpliceLines(
-	CameraHandle    hCamera,
-	int*            numLines
-	);
+        CameraHandle    hCamera,
+        int*            numLines
+);
 
 /// @ingroup API_GRAB
 /// \~chinese
@@ -4949,12 +5270,12 @@ MVSDK_API CameraSdkStatus CameraGetSpliceLines(
 /// \param [in] wTimes Timeout for grabbing an image in milliseconds. The function returns a timeout error if no image has been obtained within wTimes.
 /// \return Returns CAMERA_STATUS_SUCCESS(0) successfully. Otherwise, it returns a non-zero error code. Please refer to the definition of the error code in CameraStatus.h.
 MVSDK_API CameraSdkStatus CameraSnapChannelBuffer(
-	CameraHandle	hCamera,
-	char const*		pszChannelName,
-	tSdkFrameHead*	pFrameInfo,
-	BYTE**			pbyBuffer,
-	UINT			wTimes
-	);
+        CameraHandle	hCamera,
+        char const*		pszChannelName,
+        tSdkFrameHead*	pFrameInfo,
+        BYTE**			pbyBuffer,
+        UINT			wTimes
+);
 
 /// @ingroup API_GRAB
 /// \~chinese
@@ -4970,17 +5291,17 @@ MVSDK_API CameraSdkStatus CameraSnapChannelBuffer(
 /// \param [in] pbyBuffer Frame buffer address.
 /// \return Returns CAMERA_STATUS_SUCCESS(0) successfully. Otherwise, it returns a non-zero error code. Please refer to the definition of the error code in CameraStatus.h.
 MVSDK_API CameraSdkStatus CameraReleaseChannelBuffer(
-	CameraHandle    hCamera, 
-	char const*		pszChannelName,
-	BYTE*           pbyBuffer
-	);
+        CameraHandle    hCamera,
+        char const*		pszChannelName,
+        BYTE*           pbyBuffer
+);
 
 /// @ingroup API_UTIL
 /// \~chinese
 /// \brief 图片清晰度评估
 /// \param [in] hCamera 相机的句柄。
 /// \param [in] iAlgorithSel 使用的评估算法,参考@link emEvaluateDefinitionAlgorith @endlink的定义
-/// \param [in] pbyIn    输入图像数据的缓冲区地址，不能为NULL。 
+/// \param [in] pbyIn    输入图像数据的缓冲区地址，不能为NULL。
 /// \param [in] pFrInfo  输入图像的帧头信息
 /// \param [out] DefinitionValue 返回的清晰度估值（越大越清晰）
 /// \return 成功返回 CAMERA_STATUS_SUCCESS(0)。否则返回非0值的错误码, 请参考 CameraStatus.h 中错误码的定义。
@@ -4993,154 +5314,12 @@ MVSDK_API CameraSdkStatus CameraReleaseChannelBuffer(
 /// \param [out] DefinitionValue Returns the sharpness value (greater the clearer)
 /// \return Returns CAMERA_STATUS_SUCCESS(0) successfully. Otherwise, it returns a non-zero error code. Please refer to the definition of the error code in CameraStatus.h.
 MVSDK_API CameraSdkStatus CameraEvaluateImageDefinition(
-	CameraHandle        hCamera,
-	INT					iAlgorithSel,
-	BYTE*               pbyIn, 
-	tSdkFrameHead*      pFrInfo,
-	double*				DefinitionValue
-	);
-
-/// @ingroup API_DEAD_PIXEL
-/// \~chinese
-/// \brief 打开坏点编辑面板
-/// \param [in] hCamera 相机的句柄。
-/// \param [in] hParent    调用该函数的窗口的句柄。可以为NULL。
-/// \return 成功返回 CAMERA_STATUS_SUCCESS(0)。否则返回非0值的错误码, 请参考 CameraStatus.h 中错误码的定义。
-/// \~english
-/// \brief Open the dead pixels editing panel
-/// \param [in] hCamera Camera handle.
-/// \param [in] hParent The handle of the window that called the function. Can be NULL.
-/// \return Returns CAMERA_STATUS_SUCCESS(0) successfully. Otherwise, it returns a non-zero error code. Please refer to the definition of the error code in CameraStatus.h.
-MVSDK_API CameraSdkStatus CameraCustomizeDeadPixels(
-	CameraHandle	hCamera,
-	HWND			hParent
-	);
-
-/// @ingroup API_DEAD_PIXEL
-/// \~chinese
-/// \brief 读取相机坏点
-/// \param [in] hCamera 相机的句柄。
-/// \param [out] pRows 坏点y坐标
-/// \param [out] pCols 坏点x坐标
-/// \param [out] pNumPixel 输入时表示行列缓冲区的大小，返回时表示行列缓冲区中返回的坏点数量。
-/// \return 成功返回 CAMERA_STATUS_SUCCESS(0)。否则返回非0值的错误码, 请参考 CameraStatus.h 中错误码的定义。
-/// \note 当pRows或者pCols为NULL时函数会把相机当前的坏点个数通过pNumPixel返回
-/// \~english
-/// \brief Reading camera dead pixels
-/// \param [in] hCamera Camera handle.
-/// \param [out] pRows dead pixels y coordinates
-/// \param [out] pCols bad x coordinate
-/// \param [out] pNumPixel Inputs the size of the row and column buffers. When returned, it indicates the number of bad pixels returned in the row and column buffers.
-/// \return Returns CAMERA_STATUS_SUCCESS(0) successfully. Otherwise, it returns a non-zero error code. Please refer to the definition of the error code in CameraStatus.h.
-/// \note When pRows or pCols is NULL, the function will return the camera's current number of dead pixels through pNumPixel.
-MVSDK_API CameraSdkStatus CameraReadDeadPixels(
-	CameraHandle    hCamera,
-	USHORT*			pRows,
-	USHORT*			pCols,
-	UINT*			pNumPixel
-	);
-
-/// @ingroup API_DEAD_PIXEL
-/// \~chinese
-/// \brief 添加相机坏点
-/// \param [in] hCamera 相机的句柄。
-/// \param [in] pRows 坏点y坐标
-/// \param [in] pCols 坏点x坐标
-/// \param [in] NumPixel 行列缓冲区中的坏点个数
-/// \return 成功返回 CAMERA_STATUS_SUCCESS(0)。否则返回非0值的错误码, 请参考 CameraStatus.h 中错误码的定义。
-/// \~english
-/// \brief Add camera dead pixels
-/// \param [in] hCamera Camera handle.
-/// \param [in] pRows dead point y coordinates
-/// \param [in] pCols bad x coordinate
-/// \param [in] NumPixel Number of dead pixels in row buffer
-/// \return Returns CAMERA_STATUS_SUCCESS(0) successfully. Otherwise, it returns a non-zero error code. Please refer to the definition of the error code in CameraStatus.h.
-MVSDK_API CameraSdkStatus CameraAddDeadPixels(
-	CameraHandle    hCamera,
-	USHORT*			pRows,
-	USHORT*			pCols,
-	UINT			NumPixel
-	);
-
-/// @ingroup API_DEAD_PIXEL
-/// \~chinese
-/// \brief 删除相机指定坏点
-/// \param [in] hCamera 相机的句柄。
-/// \param [in] pRows 坏点y坐标
-/// \param [in] pCols 坏点x坐标
-/// \param [in] NumPixel 行列缓冲区中的坏点个数
-/// \return 成功返回 CAMERA_STATUS_SUCCESS(0)。否则返回非0值的错误码, 请参考 CameraStatus.h 中错误码的定义。
-/// \~english
-/// \brief Delete camera specified dead pixels
-/// \param [in] hCamera Camera handle.
-/// \param [in] pRows dead point y coordinates
-/// \param [in] pCols bad x coordinate
-/// \param [in] NumPixel Number of dead pixels in row buffer
-/// \return Returns CAMERA_STATUS_SUCCESS(0) successfully. Otherwise, it returns a non-zero error code. Please refer to the definition of the error code in CameraStatus.h.
-MVSDK_API CameraSdkStatus CameraRemoveDeadPixels(
-	CameraHandle    hCamera,
-	USHORT*			pRows,
-	USHORT*			pCols,
-	UINT			NumPixel
-	);
-
-/// @ingroup API_DEAD_PIXEL
-/// \~chinese
-/// \brief 删除相机的所有坏点
-/// \param [in] hCamera 相机的句柄。
-/// \return 成功返回 CAMERA_STATUS_SUCCESS(0)。否则返回非0值的错误码, 请参考 CameraStatus.h 中错误码的定义。
-/// \~english
-/// \brief Remove all camera's dead pixels
-/// \param [in] hCamera Camera handle.
-/// \return Returns CAMERA_STATUS_SUCCESS(0) successfully. Otherwise, it returns a non-zero error code. Please refer to the definition of the error code in CameraStatus.h.
-MVSDK_API CameraSdkStatus CameraRemoveAllDeadPixels(
-	CameraHandle    hCamera
-	);
-
-/// @ingroup API_DEAD_PIXEL
-/// \~chinese
-/// \brief 保存相机坏点到相机存储中
-/// \param [in] hCamera 相机的句柄。
-/// \return 成功返回 CAMERA_STATUS_SUCCESS(0)。否则返回非0值的错误码, 请参考 CameraStatus.h 中错误码的定义。
-/// \~english
-/// \brief Save camera dead pixels to camera memory
-/// \param [in] hCamera Camera handle.
-/// \return Returns CAMERA_STATUS_SUCCESS(0) successfully. Otherwise, it returns a non-zero error code. Please refer to the definition of the error code in CameraStatus.h.
-MVSDK_API CameraSdkStatus CameraSaveDeadPixels(
-	CameraHandle    hCamera
-	);
-
-/// @ingroup API_DEAD_PIXEL
-/// \~chinese
-/// \brief 保存相机坏点到文件中
-/// \param [in] hCamera 相机的句柄。
-/// \param [in] sFileName  文件的完整路径。
-/// \return 成功返回 CAMERA_STATUS_SUCCESS(0)。否则返回非0值的错误码, 请参考 CameraStatus.h 中错误码的定义。
-/// \~english
-/// \brief Save Camera Dead Points to File
-/// \param [in] hCamera Camera handle.
-/// \param [in] sFileName Full path to the file.
-/// \return Returns CAMERA_STATUS_SUCCESS(0) successfully. Otherwise, it returns a non-zero error code. Please refer to the definition of the error code in CameraStatus.h.
-MVSDK_API CameraSdkStatus CameraSaveDeadPixelsToFile(
-	CameraHandle    hCamera,
-	char const*		sFileName
-	);
-
-/// @ingroup API_DEAD_PIXEL
-/// \~chinese
-/// \brief 从文件加载相机坏点
-/// \param [in] hCamera 相机的句柄。
-/// \param [in] sFileName  文件的完整路径。
-/// \return 成功返回 CAMERA_STATUS_SUCCESS(0)。否则返回非0值的错误码, 请参考 CameraStatus.h 中错误码的定义。
-/// \~english
-/// \brief Loading camera dead pixels from file
-/// \param [in] hCamera Camera handle.
-/// \param [in] sFileName Full path to the file.
-/// \return Returns CAMERA_STATUS_SUCCESS(0) successfully. Otherwise, it returns a non-zero error code. Please refer to the definition of the error code in CameraStatus.h.
-MVSDK_API CameraSdkStatus CameraLoadDeadPixelsFromFile(
-	CameraHandle    hCamera,
-	char const*		sFileName
-	);
+        CameraHandle        hCamera,
+        INT					iAlgorithSel,
+        BYTE*               pbyIn,
+        tSdkFrameHead*      pFrInfo,
+        double*				DefinitionValue
+);
 
 #ifdef __cplusplus
 }

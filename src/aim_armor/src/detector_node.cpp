@@ -1,4 +1,5 @@
 #include <sys/types.h>
+#include <opencv2/core/mat.hpp>
 #include <opencv2/highgui.hpp>
 #include <opencv2/opencv.hpp>
 #include <rclcpp/rclcpp.hpp>
@@ -8,6 +9,7 @@
 #include <interfaces/msg/armors.hpp>
 #include <geometry_msgs/msg/pose.hpp>
 #include <interfaces/msg/aim_mode.hpp>
+#include <utility>
 
 #ifdef ROS_HUMBLE
 #include <cv_bridge/cv_bridge.h>
@@ -42,14 +44,15 @@ public:
 	~Detector(){};
 
 	cv::Mat frame;
+	cv::Mat output_img;
 	std::vector<Armor> armors;
 
-	std::vector<Armor> get_armors() {
+	std::pair<std::vector<Armor>, cv::Mat> get_armors() {
 		armors.clear();
 		if(!frame.empty()) {
-			ad.match_armors(armors, frame, runmode.color);
+			ad.match_armors(armors, frame, runmode.color, output_img);
 		}
-		return armors;
+		return std::make_pair(armors, output_img);
 	}
 
 private:
@@ -67,6 +70,8 @@ public:
 		              std::placeholders::_1));
 		armors_publisher_ =
 		    this->create_publisher<ArmorsMsg>("/detector/armors", 10);
+		image_publisher_ =
+		    this->create_publisher<ImageMsg>("/detector/armors_image", 10);
 	}
 
 private:
@@ -82,7 +87,10 @@ private:
 			             msg->encoding.c_str());
 			return;
 		}
-		for(auto armor: detector_.get_armors()) {
+
+		auto result = detector_.get_armors();
+
+		for(auto armor: result.first) {
 			armor_msg.classes = armor.classes;
 			armor_msg.pos.x = armor.pos[0];
 			armor_msg.pos.y = armor.pos[1];
@@ -95,6 +103,12 @@ private:
 		armors_msg.header.frame_id = "1";
 		armors_msg.header.stamp = this->get_clock()->now();
 		armors_publisher_->publish(armors_msg);
+
+
+		ImageMsg::SharedPtr image_msg =
+		    cv_bridge::CvImage(std_msgs::msg::Header(), "bgr8", result.second)
+		        .toImageMsg();
+		image_publisher_->publish(*image_msg);
 	}
 
 	Detector detector_;
@@ -103,6 +117,7 @@ private:
 	cv_bridge::CvImagePtr cv_ptr;
 	rclcpp::Subscription<ImageMsg>::SharedPtr subscription_;
 	rclcpp::Publisher<ArmorsMsg>::SharedPtr armors_publisher_;
+	rclcpp::Publisher<ImageMsg>::SharedPtr image_publisher_;
 };
 
 

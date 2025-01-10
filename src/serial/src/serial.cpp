@@ -1,4 +1,3 @@
-#include <termios.h>
 #include <serial.hpp>
 
 
@@ -17,8 +16,10 @@ int Serial::init() {
 	// 读取配置文件
 	toml::table config = toml::parse_file("./assets/config.toml");
 	const char* serial_port = config["serial"]["port"].value_or("/dev/ttyUSB0");
-	int in_baud = config["serial"]["in_baud_rate"].value_or(B115200);
-	int out_baud = config["serial"]["in_baud_rate"].value_or(B115200);
+	int in_baud = config["serial"]["in_baud_rate"].value_or(B2000000);
+	int out_baud = config["serial"]["out_baud_rate"].value_or(B2000000);
+
+	std::cout << serial_port << std::endl;
 
 	// 打开串口
 	fd = open(serial_port, O_RDWR | O_NOCTTY | O_NDELAY);
@@ -27,53 +28,65 @@ int Serial::init() {
 		return -1;
 	}
 
-	if(tcgetattr(fd, &options) < 0) {
-		perror("获取串口配置失败");
-		close(fd);
-		return -2;
-	}
+	system("stty -F /dev/ttyCH341USB1 2000000 cs8 -cstopb -parenb");
+	// 获取当前串口设置
+	tcgetattr(fd, &options);
 
-	// 设置输入输出波特率
+
+	// 设置波特率
 	cfsetispeed(&options, in_baud);
 	cfsetospeed(&options, out_baud);
 
-	// 设置数据位、停止位、校验位
-	options.c_cflag &= ~PARENB; // 无校验位
-	options.c_cflag &= ~CSTOPB; // 1个停止位
-	options.c_cflag &= ~CSIZE;
-	options.c_cflag |= CS8;            // 8个数据位
-	options.c_cflag |= CLOCAL | CREAD; // 使能接收，忽略调制解调器状态线
-	options.c_cc[VMIN] = 1;            // 至少读取1个字节
-	options.c_cc[VTIME] = 0;           // 设置超时
+	// 配置串口数据位、停止位、校验位
+	options.c_cflag &= ~PARENB;  // 无奇偶校验
+	options.c_cflag &= ~CSTOPB;  // 一个停止位
+	options.c_cflag &= ~CSIZE;   // 清除数据位大小掩码
+	options.c_cflag |= CS8;      // 8 数据位
+	options.c_cflag &= ~CRTSCTS; // 禁用硬件流控
+	options.c_cflag |= CREAD | CLOCAL; // 启用接收器，并且忽略 modem 控制线
+	options.c_iflag &= ~ICANON; // 禁用规范模式
+	options.c_iflag &= ~ECHO;   // 禁用回显
+	options.c_iflag &= ~ECHOE;  // 禁用回显擦除
+	options.c_iflag &= ~ISIG;   // 禁用信号处理
 
-	// 应用设置
-	if(tcsetattr(fd, TCSANOW, &options) < 0) {
-		perror("应用串口配置失败");
-		close(fd);
-		return -3;
-	}
+	options.c_oflag &= ~OPOST; // 禁用输出处理
+
+	// 设置最小读取字符数和读取超时
+	options.c_cc[VMIN] = 1;  // 至少读取一个字符
+	options.c_cc[VTIME] = 0; // 无超时
+
+	// 应用串口配置
+	tcsetattr(fd, TCSANOW, &options);
+
+
+	tcflush(fd, TCIFLUSH); // 清空串口的输入缓冲区
 
 	return 0;
 }
 
-void Serial::sendData(Data& data) {
-	write(fd, reinterpret_cast<uint8_t*>(&data), sizeof(Data));
+
+void Serial::sendData(Send_Data& data) {
+	// std::cout << data.mode << std::endl;
+	// std::cout << data.pitch_angle << std::endl;
+	// std::cout << data.yaw_angle << std::endl;
+	// std::cout << data.distance << std::endl;
+	// std::cout << "----------" << std::endl;
+	write(fd, reinterpret_cast<uint8_t*>(&data), sizeof(data));
 }
 
-
-bool Serial::receiveData(Data& data) {
-	uint8_t buffer[sizeof(Data)];
-
-	// 从串口读取数据
-	ssize_t bytes_read = read(fd, buffer, sizeof(Data));
-
-	if(bytes_read == -1) {
-		return false;
-	} else if(bytes_read != sizeof(Data)) {
-		return false;
-	} else {
-		// 将接收到的字节流转换回结构体
-		std::memcpy(&data, buffer, sizeof(Data));
-		return true;
+bool Serial::receiveData(Receive_Data& data) {
+	uint8_t buffer[sizeof(data)];
+	while(rclcpp::ok()) {
+		ssize_t bytes_read = read(fd, buffer, sizeof(data));
+		if(buffer[0] == data.header && buffer[sizeof(data) - 1] == data.tail) {
+			// if(buffer[0] == 0x7E && buffer[sizeof(data)-1] == 0x7F) {
+			for(size_t i = 0; i < sizeof(data); ++i) {
+				printf("%02X ", buffer[i]);
+			}
+			std::cout << std::endl;
+			// 将接收到的字节流转换回结构体
+			std::memcpy(&data, buffer, sizeof(data));
+			return true;
+		}
 	}
 }

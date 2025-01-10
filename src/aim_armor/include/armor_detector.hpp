@@ -35,7 +35,7 @@ public:
 	 * @return 返回匹配到的装甲板数量
 	 */
 	size_t match_armors(std::vector<Armor>& armors, const cv::Mat& img,
-	                    ArmorColor color);
+	                    ArmorColor color, cv::Mat& output_img);
 
 private:
 	/**
@@ -121,6 +121,7 @@ private:
 	std::optional<std::pair<cv::Vec3f, cv::Vec3f>> pnp_solver(
 	    const std::vector<cv::Point2f>& kpnts, ArmorSize armor_size,
 	    const cv::Matx33f& camera, const cv::Matx<float, 1, 5>& dist);
+
 
 private:
 	LightCriterion light_cri[2];

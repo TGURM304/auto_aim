@@ -4,6 +4,7 @@ install/
 log/
 Camera/
 testsets/
+camera_params/
 
 .cache/
 .vscode/

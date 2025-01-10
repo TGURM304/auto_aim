@@ -1,5 +1,8 @@
+#include <chrono>
 #include <opencv2/highgui.hpp>
+#include <opencv2/imgproc.hpp>
 #include <rclcpp/rclcpp.hpp>
+#include <rclcpp/utilities.hpp>
 #include <sensor_msgs/msg/image.hpp>
 #include <opencv2/opencv.hpp>
 
@@ -15,7 +18,6 @@
 #include "hikvision.hpp"
 #include "toml.hpp"
 
-
 class StreamNode: public rclcpp::Node {
 public:
 	StreamNode(): Node("stream_node") {
@@ -29,8 +31,10 @@ public:
 				} else if(camera_version == "HK") {
 					nRet = camera_hk.init();
 					if(nRet != MV_OK) {
-						RCLCPP_ERROR(this->get_logger(), "Error code: 0x%x",
-						             nRet);
+						while(rclcpp::ok()) {
+							RCLCPP_ERROR(this->get_logger(), "Error code: 0x%x",
+							             nRet);
+						}
 					}
 					break;
 				} else {
@@ -47,13 +51,15 @@ public:
 
 		// 创建发布器和定时器
 		publisher_ = this->create_publisher<sensor_msgs::msg::Image>(
-		    "camera/stream", 10);
+		    "camera/stream", 1);
 		timer_ = this->create_wall_timer(std::chrono::milliseconds(0),
 		                                 std::bind(&StreamNode::publish, this));
 	}
 
 private:
 	void publish() {
+		auto st = std::chrono::system_clock::now();
+
 		if(camera_version == "MV") {
 			frame = camera_mv.getFrame();
 		} else if(camera_version == "HK") {
@@ -76,6 +82,11 @@ private:
 		} else {
 			std::cout << "+++" << std::endl;
 		}
+
+		std::cout << frame.size() << std::endl;
+
+		auto ed = std::chrono::system_clock::now();
+		std::cout << std::chrono::duration_cast <std::chrono::milliseconds> (ed - st).count() << "ms" << std::endl;
 	}
 
 	toml::table config;

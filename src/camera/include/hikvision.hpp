@@ -1,3 +1,4 @@
+#include "CameraParams.h"
 #include "toml.hpp"
 #include "MvCameraControl.h"
 
@@ -38,11 +39,15 @@ private:
     /// @brief 相机信息
     MV_IMAGE_BASIC_INFO img_info;
     /// @brief 图像帧相关信息
-    MV_FRAME_OUT_INFO_EX stImageInfo;
+    // MV_FRAME_OUT_INFO_EX stImageInfo;
     /// @brief 图像数据接收指针
     // unsigned char* pData = NULL;
     /// @brief 图像结构体，图像地址及图像信息
     MV_FRAME_OUT frameOut;
+    /// @brief 像素格式转换参数结构体
+    MV_CC_PIXEL_CONVERT_PARAM_EX pstCvtParam;
+    unsigned char * pData = NULL;
+    unsigned char *pDataForRGB = NULL;
 private:
     /// @brief 配置文件
     toml::table config = toml::parse_file("./assets/config.toml");

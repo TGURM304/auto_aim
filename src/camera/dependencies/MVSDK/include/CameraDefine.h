@@ -334,6 +334,14 @@ typedef enum
 	CAMERA_ST_CLEAR_BUFFER_BEFORE	= 0x1,	///< \~chinese 在软触发之前先清空相机已缓存的帧 \~english Empty camera-cached frames before soft triggering
 }emCameraSoftTriggerExFlags;
 
+/// \~chinese 矩形
+/// \~english rect
+typedef struct
+{
+	int iLeft, iTop;
+	int iWidth, iHeight;
+}tSdkRect;
+
 //相机的设备信息
 typedef struct
 {
@@ -838,5 +846,12 @@ typedef void (*CAMERA_FRAME_EVENT_CALLBACK)(CameraHandle hCamera, tSdkFrameEvent
 
 /* JPEG */
 #define CAMERA_MEDIA_TYPE_JPEG_MV				(CAMERA_MEDIA_TYPE_COLOR | CAMERA_MEDIA_TYPE_OCCUPY8BIT | 0x0069)
+
+/* CXP 12bit packed */
+#define CAMERA_MEDIA_TYPE_BAYGR12_PACKED_CXP    (CAMERA_MEDIA_TYPE_MONO | CAMERA_MEDIA_TYPE_OCCUPY12BIT | 0x006A)
+#define CAMERA_MEDIA_TYPE_BAYRG12_PACKED_CXP    (CAMERA_MEDIA_TYPE_MONO | CAMERA_MEDIA_TYPE_OCCUPY12BIT | 0x006B)
+#define CAMERA_MEDIA_TYPE_BAYGB12_PACKED_CXP    (CAMERA_MEDIA_TYPE_MONO | CAMERA_MEDIA_TYPE_OCCUPY12BIT | 0x006C)
+#define CAMERA_MEDIA_TYPE_BAYBG12_PACKED_CXP    (CAMERA_MEDIA_TYPE_MONO | CAMERA_MEDIA_TYPE_OCCUPY12BIT | 0x006D)
+#define CAMERA_MEDIA_TYPE_MONO12_PACKED_CXP		(CAMERA_MEDIA_TYPE_MONO | CAMERA_MEDIA_TYPE_OCCUPY12BIT | 0x006E)
 
 #endif
