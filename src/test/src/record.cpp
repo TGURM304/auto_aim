@@ -8,7 +8,7 @@ public:
 	ImageRecorder(): Node("image_recorder") {
 		image_subscription_ =
 		    this->create_subscription<sensor_msgs::msg::Image>(
-		        "/detector/armors_image", 10,
+		        "/armors_image", 10,
 		        std::bind(&ImageRecorder::image_callback, this,
 		                  std::placeholders::_1));
 		video_writer_initialized_ = false;
@@ -20,7 +20,7 @@ private:
 
 		if(!video_writer_initialized_) {
 			int fourcc = cv::VideoWriter::fourcc('M', 'J', 'P', 'G');
-			video_writer_.open("./tmp/output.avi", fourcc, 100,
+			video_writer_.open("./tmp/output.avi", fourcc, 110,
 			                   cv::Size(frame.cols, frame.rows), true);
 
 			if(!video_writer_.isOpened()) {
