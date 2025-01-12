@@ -58,7 +58,7 @@ public:
 
 private:
 	void publish() {
-		auto st = std::chrono::system_clock::now();
+		// auto st = std::chrono::system_clock::now();
 
 		if(camera_version == "MV") {
 			frame = camera_mv.getFrame();
@@ -83,10 +83,10 @@ private:
 			std::cout << "+++" << std::endl;
 		}
 
-		std::cout << frame.size() << std::endl;
+		// std::cout << frame.size() << std::endl;
 
-		auto ed = std::chrono::system_clock::now();
-		std::cout << std::chrono::duration_cast <std::chrono::milliseconds> (ed - st).count() << "ms" << std::endl;
+		// auto ed = std::chrono::system_clock::now();
+		// std::cout << std::chrono::duration_cast <std::chrono::milliseconds> (ed - st).count() << "ms" << std::endl;
 	}
 
 	toml::table config;

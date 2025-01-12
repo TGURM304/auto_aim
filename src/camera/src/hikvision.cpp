@@ -20,9 +20,8 @@ static std::string decimalTohex(int num) {
 
 HikVision::HikVision() {
 	auto hk_config = config["hikvision"];
-	exposuretime = hk_config["exposure_time"].value_or(30);
+	exposuretime = hk_config["exposure_time"].value_or(500);
 	autoexposure = hk_config["auto_exposure"].value_or(false);
-	brightness = hk_config["brightness"].value_or(100);
 	autobalance = hk_config["auto_whitebalance"].value_or(true);
 	printf("HikVision Start\n");
 }
@@ -130,7 +129,7 @@ int HikVision::init() {
 
 	if(autoexposure ? 1 : 0) { // 设置曝光
 		nRet = MV_CC_SetFloatValue(camera_handle, "ExposureTime",
-		                           1000 * exposuretime);
+		                           exposuretime);
 		if(nRet != MV_OK) {
 			printf("MV_CC_SetExposureTime fail! nRet [0x%x]\n", nRet);
 			return nRet;
@@ -210,7 +209,6 @@ std::pair<cv::Mat, int> HikVision::getFrame() {
 		showText(frame, decimalTohex(nRet));
 		return std::make_pair(frame, nRet);
 	}
-
 
 	cv::Mat frame =
 	    cv::Mat(frameOut.stFrameInfo.nHeight, frameOut.stFrameInfo.nWidth,

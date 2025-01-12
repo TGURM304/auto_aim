@@ -2,15 +2,14 @@ title = "auto_aim"
 version = 1.0
 
 [camera]
-version = "MV" # MV: MindVision; HK: Hikvision
-# focal = [1079.252773, 1087.934656]
-focal = [1080, 1080]
-center = [320.000000, 240.000000]
+version = "HK" # MV: MindVision; HK: Hikvision
+focal = [1857, 1857]
+center = [709.98, 539]
 dist = [
-  -0.100173,
-  0.216010,
-  -0.027498,
-  -0.002229,
+  -0.062620,
+  0.098177,
+  -0.009045,
+  0.000700,
   0.000000
 ]
 
@@ -23,8 +22,8 @@ exposure_time = 12   # 曝光时间 (ms)
 
 [hikvision]
 auto_whitebalance = true # 是否开启自动白平衡
-auto_exposure = false    # 是否开启自动曝光
-exposure_time = 12       # 曝光时间 (ms)
+auto_exposure = true    # 是否开启自动曝光
+exposure_time = 5000       # 曝光时间
 
 [aim_armor]
 model_path = "assets/model/best-8.onnx"
