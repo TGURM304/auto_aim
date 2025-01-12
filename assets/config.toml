@@ -34,11 +34,11 @@ model_path = "assets/model/best-8.onnx"
 
 [aim_armor.light]
 aspect_ratio = [-inf, inf]
-area = [120, inf]
+area = [40, inf]
 
 [aim_armor.armor]
 aspect_ratio = [-inf, inf]   # FIXME
-edge_angle = [70, 108]
+edge_angle = [40, 150]
 original_angle = [-inf, inf]
 
 [serial]

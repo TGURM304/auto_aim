@@ -37,8 +37,6 @@ endif()
 
 
 add_executable(detector_node "src/detector_node.cpp" "src/armor_detector.cpp" "src/lights.cpp")
-add_executable(tracker_node "src/tracker_node.cpp")
-
 
 ament_target_dependencies(
   detector_node
@@ -50,21 +48,9 @@ ament_target_dependencies(
   "interfaces"
 )
 
-ament_target_dependencies(
-  tracker_node
-  "rclcpp"
-  "sensor_msgs"
-  "interfaces"
-  "OpenCV"
-)
-
 target_link_libraries(detector_node openvino)
 
 target_include_directories(detector_node PUBLIC
-  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-  $<INSTALL_INTERFACE:include/${PROJECT_NAME}>)
-
-target_include_directories(tracker_node PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
   $<INSTALL_INTERFACE:include/${PROJECT_NAME}>)
 
@@ -75,7 +61,6 @@ target_include_directories(tracker_node PUBLIC
 
 install(TARGETS
   detector_node
-  tracker_node
   DESTINATION lib/${PROJECT_NAME})
 
 if(BUILD_TESTING)

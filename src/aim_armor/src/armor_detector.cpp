@@ -444,9 +444,13 @@ size_t ArmorDetector::match_armors(std::vector<Armor>& armors,
 			         cv::Scalar(255, 0, 0), 2);
 			cv::line(output_img, kpnts_pnp[2], kpnts_pnp[3],
 			         cv::Scalar(255, 0, 0), 2);
-			cv::putText(output_img, std::to_string(classes),
-			            cv::Point2f(kpnts_pnp[1].x + 5, kpnts_pnp[1].y + 5),
-			            cv::FONT_HERSHEY_SIMPLEX, 1, cv::Scalar(255, 255, 255),
+
+
+			cv::Point text_origin(kpnts_pnp[1].x + 5, kpnts_pnp[1].y + 5);
+
+			// 绘制文本
+			cv::putText(output_img, std::to_string(classes), text_origin,
+			            cv::FONT_HERSHEY_SIMPLEX, 2, cv::Scalar(255, 255, 255),
 			            2);
 
 			armors.emplace_back(classes, tmp.value().first, tmp.value().second);
