@@ -1,92 +1,91 @@
+#include <regex>
 #include <serial.hpp>
+#include <string>
+#include <vector>
 
 
-Serial::Serial() {
-	std::cout << "Serial()" << std::endl;
-};
+std::vector<std::string> expand_ports(const std::string& port_pattern) {
+	std::vector<std::string> expanded_ports;
 
-Serial::~Serial() {
-	if(fd != -1) {
-		close(fd);
+	if(port_pattern.find('*') != std::string::npos) {
+		std::string prefix = port_pattern.substr(0, port_pattern.find('*'));
+		std::string suffix = port_pattern.substr(port_pattern.find('*') + 1);
+		for(int i = 0; i <= 5; ++i) {
+			std::stringstream ss;
+			ss << prefix << i << suffix;
+			expanded_ports.push_back(ss.str());
+		}
+	} else {
+		expanded_ports.push_back(port_pattern);
 	}
-	std::cout << "~Serial()" << std::endl;
-};
+
+	return expanded_ports;
+}
+
 
 int Serial::init() {
-	// 读取配置文件
-	toml::table config = toml::parse_file("./assets/config.toml");
-	const char* serial_port = config["serial"]["port"].value_or("/dev/ttyUSB0");
-	int in_baud = config["serial"]["in_baud_rate"].value_or(B2000000);
-	int out_baud = config["serial"]["out_baud_rate"].value_or(B2000000);
+	toml::table config_file = toml::parse_file("./assets/config.toml");
+	auto ports = config_file["serial"]["port"].as_array();
+	int baud_rate = config_file["serial"]["baud_rate"].value_or(B2000000);
+	SerialPortConfig serial_config(baud_rate, FlowControl::NONE, Parity::NONE,
+	                               StopBits::ONE);
 
-	std::cout << serial_port << std::endl;
-
-	// 打开串口
-	fd = open(serial_port, O_RDWR | O_NOCTTY | O_NDELAY);
-	if(fd == -1) {
-		perror("打开串口失败");
-		return -1;
+	std::vector<std::string> portlist;
+	for(const auto& port: *ports) {
+		auto expanded_ports = expand_ports(port.as_string()->get());
+		portlist.insert(portlist.end(), expanded_ports.begin(),
+		                expanded_ports.end());
 	}
-
-	system("stty -F /dev/ttyCH341USB1 2000000 cs8 -cstopb -parenb");
-	// 获取当前串口设置
-	tcgetattr(fd, &options);
-
-
-	// 设置波特率
-	cfsetispeed(&options, in_baud);
-	cfsetospeed(&options, out_baud);
-
-	// 配置串口数据位、停止位、校验位
-	options.c_cflag &= ~PARENB;  // 无奇偶校验
-	options.c_cflag &= ~CSTOPB;  // 一个停止位
-	options.c_cflag &= ~CSIZE;   // 清除数据位大小掩码
-	options.c_cflag |= CS8;      // 8 数据位
-	options.c_cflag &= ~CRTSCTS; // 禁用硬件流控
-	options.c_cflag |= CREAD | CLOCAL; // 启用接收器，并且忽略 modem 控制线
-	options.c_iflag &= ~ICANON; // 禁用规范模式
-	options.c_iflag &= ~ECHO;   // 禁用回显
-	options.c_iflag &= ~ECHOE;  // 禁用回显擦除
-	options.c_iflag &= ~ISIG;   // 禁用信号处理
-
-	options.c_oflag &= ~OPOST; // 禁用输出处理
-
-	// 设置最小读取字符数和读取超时
-	options.c_cc[VMIN] = 1;  // 至少读取一个字符
-	options.c_cc[VTIME] = 0; // 无超时
-
-	// 应用串口配置
-	tcsetattr(fd, TCSANOW, &options);
-
-
-	tcflush(fd, TCIFLUSH); // 清空串口的输入缓冲区
-
+	bool is_ok = false;
+	do {
+		for(auto serial_port: portlist) {
+			try {
+				serial_driver.init_port(serial_port, serial_config);
+				serial_driver.port()->open();
+				std::cout << serial_port << "已打开" << std::endl;
+				is_ok = true;
+				break;
+			} catch(const std::exception& e) {
+				std::cerr << "初始化" << serial_port << "失败: " << e.what()
+				          << std::endl;
+			}
+		}
+	} while(!is_ok);
 	return 0;
 }
 
 
-void Serial::sendData(Send_Data& data) {
-	// std::cout << data.mode << std::endl;
-	// std::cout << data.pitch_angle << std::endl;
-	// std::cout << data.yaw_angle << std::endl;
-	// std::cout << data.distance << std::endl;
-	// std::cout << "----------" << std::endl;
-	write(fd, reinterpret_cast<uint8_t*>(&data), sizeof(data));
+size_t Serial::send_target(Data4Send& data) {
+	size_t data_size = sizeof(data);
+
+	std::vector<uint8_t> buffer(data_size);
+	std::memcpy(buffer.data(), &data, data_size);
+
+	return serial_driver.port()->send(buffer);
 }
 
-bool Serial::receiveData(Receive_Data& data) {
-	uint8_t buffer[sizeof(data)];
-	while(rclcpp::ok()) {
-		ssize_t bytes_read = read(fd, buffer, sizeof(data));
-		if(buffer[0] == data.header && buffer[sizeof(data) - 1] == data.tail) {
-			// if(buffer[0] == 0x7E && buffer[sizeof(data)-1] == 0x7F) {
-			for(size_t i = 0; i < sizeof(data); ++i) {
-				printf("%02X ", buffer[i]);
-			}
-			std::cout << std::endl;
-			// 将接收到的字节流转换回结构体
-			std::memcpy(&data, buffer, sizeof(data));
-			return true;
-		}
+// TODO:这真的对吗
+size_t Serial::receiver(Data4Receive& data) {
+	std::vector<uint8_t> buffer(sizeof(data));
+
+	size_t bytes_read = serial_driver.port()->receive(buffer);
+
+	if(bytes_read == 0) {
+		return -1;
 	}
+
+	uint8_t head = buffer.front();
+	uint8_t tail = buffer.back();
+
+	if(head != data.header || tail != data.tail) {
+		return -2;
+	}
+
+	if(bytes_read == sizeof(data)) {
+		std::memcpy(&data, buffer.data(), sizeof(data));
+	} else {
+		return -3;
+	}
+	
+	return bytes_read;
 }

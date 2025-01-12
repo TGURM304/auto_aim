@@ -43,9 +43,8 @@ edge_angle = [70, 108]
 original_angle = [-inf, inf]
 
 [serial]
-port = "/dev/ttyCH341USB1"
-in_baud_rate = 2000000
-out_baud_rate = 2000000
+port = ["/dev/ttyUSB*", "/dev/ttyCH341USB*"]
+baud_rate = 2000000
 
 [test]
 test_video = "./1.avi"

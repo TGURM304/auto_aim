@@ -22,6 +22,7 @@ ament_target_dependencies(
   serial_node
   "rclcpp"
   "interfaces"
+  "serial_driver"
 )
 
 target_include_directories(serial_node PUBLIC
