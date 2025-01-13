@@ -1,7 +1,8 @@
 #include <regex>
-#include <serial.hpp>
 #include <string>
 #include <vector>
+
+#include "serial.hpp"
 
 
 std::vector<std::string> expand_ports(const std::string& port_pattern) {
@@ -64,8 +65,7 @@ size_t Serial::send_target(Data4Send& data) {
 	return serial_driver.port()->send(buffer);
 }
 
-// TODO:这真的对吗
-size_t Serial::receiver(Data4Receive& data) {
+int Serial::receiver(Data4Receive& data) {
 	std::vector<uint8_t> buffer(sizeof(data));
 
 	size_t bytes_read = serial_driver.port()->receive(buffer);
@@ -86,6 +86,6 @@ size_t Serial::receiver(Data4Receive& data) {
 	} else {
 		return -3;
 	}
-	
+
 	return bytes_read;
 }

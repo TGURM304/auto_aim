@@ -5,10 +5,13 @@
 #include <interfaces/msg/target.hpp>
 #include <interfaces/msg/aim_mode.hpp>
 #include <chrono>
+
 #include "serial.hpp"
+
 
 using TargetMsg = interfaces::msg::Target;
 using AimModeMsg = interfaces::msg::AimMode;
+
 
 class SerialReceiver: public rclcpp::Node {
 public:
@@ -22,9 +25,8 @@ public:
 
 private:
 	void reveriver() {
-		do {
-			receive_size = serial_.receiver(rdata);
-		} while(!receive_size);
+		while(serial_.receiver(rdata) < 0)
+			/* nothing */;
 		std::cout << rdata.detect_color << std::endl;
 		aimmodemsg.color = rdata.detect_color;
 		publisher->publish(aimmodemsg);
@@ -32,11 +34,11 @@ private:
 
 	Serial &serial_;
 	AimModeMsg aimmodemsg;
-	size_t receive_size;
 	Data4Receive rdata;
 	rclcpp::Publisher<AimModeMsg>::SharedPtr publisher;
 	rclcpp::TimerBase::SharedPtr timer;
 };
+
 
 class SerialSender: public rclcpp::Node {
 public:
