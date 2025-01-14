@@ -1,12 +1,12 @@
 #include <regex>
 #include <string>
-#include <vector>
+#include <list>
 
 #include "serial.hpp"
 
 
-std::vector<std::string> expand_ports(const std::string& port_pattern) {
-	std::vector<std::string> expanded_ports;
+std::list<std::string> expand_ports(const std::string& port_pattern) {
+	std::list<std::string> expanded_ports;
 
 	if(port_pattern.find('*') != std::string::npos) {
 		std::string prefix = port_pattern.substr(0, port_pattern.find('*'));
@@ -27,36 +27,34 @@ std::vector<std::string> expand_ports(const std::string& port_pattern) {
 int Serial::init() {
 	toml::table config_file = toml::parse_file("./assets/config.toml");
 	auto ports = config_file["serial"]["port"].as_array();
-	int baud_rate = config_file["serial"]["baud_rate"].value_or(B2000000);
+	int baud_rate = config_file["serial"]["baud_rate"].value_or(B115200);
 	SerialPortConfig serial_config(baud_rate, FlowControl::NONE, Parity::NONE,
 	                               StopBits::ONE);
 
-	std::vector<std::string> portlist;
+	std::list<std::string> portlist;
 	for(const auto& port: *ports) {
 		auto expanded_ports = expand_ports(port.as_string()->get());
-		portlist.insert(portlist.end(), expanded_ports.begin(),
-		                expanded_ports.end());
+		portlist.splice(portlist.end(), expanded_ports);
 	}
-	bool is_ok = false;
-	do {
-		for(auto serial_port: portlist) {
+
+	while(1) {
+		for(auto& serial_port: portlist) {
 			try {
 				serial_driver.init_port(serial_port, serial_config);
 				serial_driver.port()->open();
 				std::cout << serial_port << "已打开" << std::endl;
-				is_ok = true;
 				break;
 			} catch(const std::exception& e) {
 				std::cerr << "初始化" << serial_port << "失败: " << e.what()
 				          << std::endl;
 			}
 		}
-	} while(!is_ok);
+	}
+
 	return 0;
 }
 
-
-size_t Serial::send_target(Data4Send& data) {
+size_t Serial::send_target(const SendData& data) {
 	size_t data_size = sizeof(data);
 
 	std::vector<uint8_t> buffer(data_size);
@@ -65,7 +63,7 @@ size_t Serial::send_target(Data4Send& data) {
 	return serial_driver.port()->send(buffer);
 }
 
-int Serial::receiver(Data4Receive& data) {
+int Serial::receiver(ReceiveData& data) {
 	std::vector<uint8_t> buffer(sizeof(data));
 
 	size_t bytes_read = serial_driver.port()->receive(buffer);

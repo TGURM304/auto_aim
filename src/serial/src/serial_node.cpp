@@ -11,42 +11,41 @@
 
 using TargetMsg = interfaces::msg::Target;
 using AimModeMsg = interfaces::msg::AimMode;
+using namespace std::chrono_literals;
 
 
 class SerialReceiver: public rclcpp::Node {
 public:
 	SerialReceiver(Serial &serial):
 	Node("serial_receiver_node"), serial_(serial) {
-		publisher = this->create_publisher<AimModeMsg>("/serial/mode", 10);
-		timer = this->create_wall_timer(
-		    std::chrono::microseconds(10),
-		    std::bind(&SerialReceiver::reveriver, this));
+		publisher_ = this->create_publisher<AimModeMsg>("/serial/mode", 10);
+		timer_ = this->create_wall_timer(
+		    10ms, std::bind(&SerialReceiver::reveriver, this));
 	}
 
 private:
 	void reveriver() {
-		while(serial_.receiver(rdata) < 0)
+		ReceiveData data;
+		while(serial_.receiver(data) < 0)
 			/* nothing */;
-		std::cout << rdata.detect_color << std::endl;
-		aimmodemsg.color = rdata.detect_color;
-		publisher->publish(aimmodemsg);
+		aim_mode_msg_.color = data.detect_color;
+		publisher_->publish(aim_mode_msg_);
 	}
 
+private:
 	Serial &serial_;
-	AimModeMsg aimmodemsg;
-	Data4Receive rdata;
-	rclcpp::Publisher<AimModeMsg>::SharedPtr publisher;
-	rclcpp::TimerBase::SharedPtr timer;
+	AimModeMsg aim_mode_msg_;
+
+	rclcpp::Publisher<AimModeMsg>::SharedPtr publisher_;
+	rclcpp::TimerBase::SharedPtr timer_;
 };
 
 
 class SerialSender: public rclcpp::Node {
 public:
 	SerialSender(Serial &serial): Node("serial_sender_node"), serial_(serial) {
-
-		timer_ =
-		    this->create_wall_timer(std::chrono::milliseconds(1),
-		                            std::bind(&SerialSender::sendData, this));
+		timer_ = this->create_wall_timer(
+		    2ms, std::bind(&SerialSender::send_data, this));
 
 		subscription_ = this->create_subscription<TargetMsg>(
 		    "/target/armor", 10,
@@ -55,8 +54,8 @@ public:
 	}
 
 private:
-	void sendData() {
-		serial_.send_target(sdata);
+	void send_data() {
+		serial_.send_target(data_);
 	}
 	void targetCallback(const TargetMsg::SharedPtr msg) {
 		sdata.mode = msg->aim_mode;
@@ -66,7 +65,7 @@ private:
 	}
 
 	Serial &serial_;
-	Data4Send sdata;
+	SendData data_;
 	rclcpp::Subscription<TargetMsg>::SharedPtr subscription_;
 	rclcpp::TimerBase::SharedPtr timer_;
 };
@@ -86,7 +85,7 @@ int main(int argc, char **argv) {
 	// 使用多线程执行器来管理节点
 	rclcpp::executors::MultiThreadedExecutor executor;
 	// 添加节点到执行器
-	executor.add_node(serial_receive_node);
+	//executor.add_node(serial_receive_node);
 	executor.add_node(serial_send_node);
 	// 启动执行器
 	executor.spin();

@@ -2,7 +2,7 @@
 
 
 /// @brief 发送数据结构体
-struct __attribute__((packed)) Data4Send {
+struct __attribute__((packed)) SendData {
 	uint8_t head = 0xFE;
 	uint8_t mode = 'a';
 	float pitch_angle = 0.0;
@@ -12,8 +12,8 @@ struct __attribute__((packed)) Data4Send {
 };
 
 /// @brief 接收数据结构体
-struct __attribute__((packed)) Data4Receive {
-	uint8_t header = 0xFF;
+struct __attribute__((packed)) ReceiveData {
+	uint8_t header = 0x5A;
 	uint8_t detect_color = 'r';
-	uint8_t tail = 0xFE;
+	uint8_t tail = 0xA5;
 };

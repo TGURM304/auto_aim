@@ -43,7 +43,7 @@ original_angle = [-inf, inf]
 
 [serial]
 port = ["/dev/ttyUSB*", "/dev/ttyCH341USB*"]
-baud_rate = 2000000
+baud_rate = 115200
 
 [test]
 test_video = "./1.avi"
