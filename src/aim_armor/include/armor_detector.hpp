@@ -10,6 +10,10 @@
 #include "lights.hpp"
 #include "armors.hpp"
 
+#define debug(var) std::cout << "[debug] " #var ": " << var << std::endl;
+
+#define RAD2DEG(rad) ((rad) / std::numbers::pi * 180.)
+
 
 class ArmorDetector {
 public:
@@ -35,7 +39,7 @@ public:
 	 * @return 返回匹配到的装甲板数量
 	 */
 	size_t match_armors(std::vector<Armor>& armors, const cv::Mat& img,
-	                    ArmorColor color, cv::Mat& output_img);
+	                    ArmorColor color, cv::Mat* drawed);
 
 private:
 	/**

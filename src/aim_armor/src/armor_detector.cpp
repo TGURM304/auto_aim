@@ -15,11 +15,6 @@
 #include "lights.hpp"
 
 
-#define debug(var) std::cout << "[debug] " #var ": " << var << std::endl;
-
-#define RAD2DEG(rad) ((rad) / std::numbers::pi * 180.)
-
-
 void save_image_with_time(const cv::Mat& img, const ArmorClasses category) {
 	auto now = std::chrono::system_clock::now();
 	auto timeval = std::chrono::time_point_cast<std::chrono::microseconds>(now)
@@ -357,13 +352,20 @@ void ArmorDetector::preprocess(cv::Mat& out, const cv::Mat& in) {
 	                 cv::Mat::ones(kernel_size, kernel_size, CV_8U));
 }
 
+void draw_rect_and_diag(cv::Mat& img, const std::vector<cv::Point2f>& kpnts,
+                        int num) {
+	cv::line(img, kpnts[0], kpnts[2], cv::Scalar(255, 0, 0), 2);
+	cv::line(img, kpnts[1], kpnts[3], cv::Scalar(255, 0, 0), 2);
+	cv::line(img, kpnts[0], kpnts[1], cv::Scalar(255, 0, 0), 2);
+	cv::line(img, kpnts[2], kpnts[3], cv::Scalar(255, 0, 0), 2);
+	cv::putText(img, std::to_string(num), kpnts[1] + cv::Point2f(5., 5.),
+	            cv::FONT_HERSHEY_SIMPLEX, 2, cv::Scalar(255, 255, 255), 2);
+}
 
 size_t ArmorDetector::match_armors(std::vector<Armor>& armors,
                                    const cv::Mat& img, ArmorColor color,
-                                   cv::Mat& output_img) {
+                                   cv::Mat* drawed) {
 	using namespace std::placeholders;
-
-	output_img = img.clone();
 
 	cv::Mat bin_img;
 	preprocess(bin_img, img);
@@ -390,6 +392,10 @@ size_t ArmorDetector::match_armors(std::vector<Armor>& armors,
 	size_t cnt = 0;
 	std::vector<bool> matched(lights.size(), false);
 
+	if(drawed != nullptr)
+		*drawed = img.clone();
+
+	// TODO: 检查必要性
 	std::sort(lights.begin(), lights.end(), compareLights);
 
 	for(size_t i = 0; i < lights.size(); i++) {
@@ -436,27 +442,12 @@ size_t ArmorDetector::match_armors(std::vector<Armor>& armors,
 			if(!tmp.has_value())
 				continue;
 
-			cv::line(output_img, kpnts_pnp[0], kpnts_pnp[2],
-			         cv::Scalar(255, 0, 0), 2);
-			cv::line(output_img, kpnts_pnp[1], kpnts_pnp[3],
-			         cv::Scalar(255, 0, 0), 2);
-			cv::line(output_img, kpnts_pnp[0], kpnts_pnp[1],
-			         cv::Scalar(255, 0, 0), 2);
-			cv::line(output_img, kpnts_pnp[2], kpnts_pnp[3],
-			         cv::Scalar(255, 0, 0), 2);
-
-
-			cv::Point text_origin(kpnts_pnp[1].x + 5, kpnts_pnp[1].y + 5);
-
-			// 绘制文本
-			cv::putText(output_img, std::to_string(classes), text_origin,
-			            cv::FONT_HERSHEY_SIMPLEX, 2, cv::Scalar(255, 255, 255),
-			            2);
-
 			armors.emplace_back(classes, tmp.value().first, tmp.value().second);
 			cnt++;
 
-			// 标记这两个灯条为已匹配
+			if(drawed != nullptr)
+				draw_rect_and_diag(*drawed, kpnts_pnp, (int)classes);
+
 			matched[i] = true;
 			matched[j] = true;
 		}
