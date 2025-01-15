@@ -18,17 +18,25 @@ class SerialReceiver: public rclcpp::Node {
 public:
 	SerialReceiver(Serial &serial):
 	Node("serial_receiver_node"), serial_(serial) {
+		aim_mode_msg_.mode = 'a';
+
 		publisher_ = this->create_publisher<AimModeMsg>("/serial/mode", 10);
 		timer_ = this->create_wall_timer(
-		    10ms, std::bind(&SerialReceiver::reveriver, this));
+		    1ms, std::bind(&SerialReceiver::reveriver, this));
 	}
 
 private:
 	void reveriver() {
 		ReceiveData data;
-		while(serial_.receiver(data) < 0)
-			/* nothing */;
+		// while(serial_.receiver(data) < 0)
+		// 	/* nothing */ std::cout << serial_.receiver(data) << std::endl;
+		if(serial_.receiver(data) <= 0) {
+			// std::cout << serial_.receiver(data) << std::endl;
+			return;
+		}
 		aim_mode_msg_.color = data.detect_color;
+		std::cout << data.detect_color << ' ' << data.pitch << ' ' << data.yaw
+		          << std::endl;
 		publisher_->publish(aim_mode_msg_);
 	}
 
@@ -58,10 +66,10 @@ private:
 		serial_.send_target(data_);
 	}
 	void targetCallback(const TargetMsg::SharedPtr msg) {
-		sdata.mode = msg->aim_mode;
-		sdata.pitch_angle = msg->pitch_angle;
-		sdata.yaw_angle = msg->yaw_angle;
-		sdata.distance = msg->distance;
+		data_.mode = msg->aim_mode;
+		data_.pitch_angle = msg->pitch_angle;
+		data_.yaw_angle = msg->yaw_angle;
+		data_.distance = msg->distance;
 	}
 
 	Serial &serial_;
@@ -85,7 +93,7 @@ int main(int argc, char **argv) {
 	// 使用多线程执行器来管理节点
 	rclcpp::executors::MultiThreadedExecutor executor;
 	// 添加节点到执行器
-	//executor.add_node(serial_receive_node);
+	executor.add_node(serial_receive_node);
 	executor.add_node(serial_send_node);
 	// 启动执行器
 	executor.spin();

@@ -47,4 +47,5 @@ private:
 	std::shared_ptr<SerialPort> port;
 	IoContext io_context;
 	SerialDriver serial_driver;
+	std::vector <uint8_t> _buffer;
 };

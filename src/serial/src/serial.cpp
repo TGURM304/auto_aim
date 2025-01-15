@@ -1,3 +1,4 @@
+#include <cstdint>
 #include <regex>
 #include <string>
 #include <list>
@@ -43,15 +44,13 @@ int Serial::init() {
 				serial_driver.init_port(serial_port, serial_config);
 				serial_driver.port()->open();
 				std::cout << serial_port << "已打开" << std::endl;
-				break;
+				return 0;
 			} catch(const std::exception& e) {
 				std::cerr << "初始化" << serial_port << "失败: " << e.what()
 				          << std::endl;
 			}
 		}
 	}
-
-	return 0;
 }
 
 size_t Serial::send_target(const SendData& data) {
@@ -64,26 +63,37 @@ size_t Serial::send_target(const SendData& data) {
 }
 
 int Serial::receiver(ReceiveData& data) {
-	std::vector<uint8_t> buffer(sizeof(data));
-
-	size_t bytes_read = serial_driver.port()->receive(buffer);
-
-	if(bytes_read == 0) {
-		return -1;
-	}
-
-	uint8_t head = buffer.front();
-	uint8_t tail = buffer.back();
-
-	if(head != data.header || tail != data.tail) {
-		return -2;
-	}
-
-	if(bytes_read == sizeof(data)) {
-		std::memcpy(&data, buffer.data(), sizeof(data));
+	std::vector<uint8_t> buffer(1);
+	if(_buffer.empty()) {
+		if(serial_driver.port()->receive(buffer) and buffer[0] == data.header) {
+			_buffer.emplace_back(buffer[0]);
+			buffer.resize(sizeof(data) - 1);
+			size_t sz = serial_driver.port()->receive(buffer);
+			for(int i = 0; i < (int)sz; i++)
+				_buffer.emplace_back(buffer[i]);
+		} else {
+			return -1;
+		}
 	} else {
-		return -3;
+		buffer.resize(sizeof(data) - _buffer.size());
+		size_t sz = serial_driver.port()->receive(buffer);
+		for(int i = 0; i < (int)sz; i++)
+			_buffer.emplace_back(buffer[i]);
 	}
 
-	return bytes_read;
+	bool okay = false;
+
+	if(_buffer.size() == sizeof(data)) {
+		if(_buffer.back() == data.tail)
+			std::memcpy(&data, _buffer.data(), sizeof(data)), okay = true;
+		else {
+			std::cout << "fuck" << ' ' << std::endl;
+			for(auto i: _buffer)
+				std::cout << (int)i << ' ';
+			std::cout << std::endl;
+		}
+		_buffer.clear();
+	}
+
+	return okay;
 }

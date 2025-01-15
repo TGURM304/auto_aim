@@ -15,5 +15,7 @@ struct __attribute__((packed)) SendData {
 struct __attribute__((packed)) ReceiveData {
 	uint8_t header = 0x5A;
 	uint8_t detect_color = 'r';
+	float pitch = 114;
+	float yaw = 514;
 	uint8_t tail = 0xA5;
 };
