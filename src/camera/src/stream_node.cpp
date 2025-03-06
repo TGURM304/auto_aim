@@ -21,6 +21,7 @@
 class StreamNode: public rclcpp::Node {
 public:
 	StreamNode(): Node("stream_node") {
+		// FIXME: 配置导入
 		config = toml::parse_file("./assets/config.toml");
 		camera_version = config["camera"]["version"].value_or("MV");
 		while(true) {
@@ -38,20 +39,23 @@ public:
 					}
 					break;
 				} else {
+					// FIXME: 日志打印
 					std::printf(
 					    "配置文件错误，无法识别的相机类型: %s，尝试重新获取配置\n",
 					    camera_version.c_str());
+					// FIXME: 配置导入
 					config = toml::parse_file("./assets/config.toml");
 					camera_version = config["camera"]["version"].value_or("MV");
 				}
 			} catch(const std::exception& e) {
+				// FIXME: 日志打印
 				std::printf("读取配置文件失败: %s\n", e.what());
 			}
 		}
 
 		// 创建发布器和定时器
-		publisher_ = this->create_publisher<sensor_msgs::msg::Image>(
-		    "camera/stream", 1);
+		publisher_ =
+		    this->create_publisher<sensor_msgs::msg::Image>("camera/stream", 1);
 		timer_ = this->create_wall_timer(std::chrono::milliseconds(0),
 		                                 std::bind(&StreamNode::publish, this));
 	}
@@ -80,6 +84,7 @@ private:
 			        .toImageMsg();
 			publisher_->publish(*msg);
 		} else {
+			// FIXME: 日志打印
 			std::cout << "+++" << std::endl;
 		}
 

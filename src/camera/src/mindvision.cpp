@@ -4,6 +4,7 @@
 #include <opencv2/highgui.hpp>
 
 MindVision::MindVision() {
+	// FIXME: 日志打印
 	printf("MindVision Start\n");
 }
 
@@ -20,6 +21,7 @@ int MindVision::init(int channel = 2) {
 
 	// 枚举设备, 并建立设备列表
 	status_ = CameraEnumerateDevice(&camera_enum_list_, &camera_cnt_);
+	// FIXME: 日志打印
 	printf("state = %d\ncount = %d\n", status_, camera_cnt_);
 	// 没有连接设备
 	if(camera_cnt_ == 0) {
@@ -31,6 +33,7 @@ int MindVision::init(int channel = 2) {
 	status_ = CameraInit(&camera_enum_list_, -1, -1, &camera_);
 
 	// 初始化失败
+	// FIXME: 日志打印
 	printf("state = %d\n", status_);
 	if(status_ != CAMERA_STATUS_SUCCESS) {
 		return camera_ = -2;
@@ -46,6 +49,7 @@ int MindVision::init(int channel = 2) {
 	CameraGetCapability(camera_, &capability_);
 
 	// 获取配置
+	// FIXME: 配置导入
 	auto mv_config = config["mindvision"];
 	uint8_t aestate = mv_config["auto_exposure"].value_or(false) ? 1 : 0;
 	uint16_t exposuretime = mv_config["exposure_time"].value_or(30);
@@ -136,6 +140,7 @@ cv::Mat MindVision::getFrame() {
 int MindVision::record(std::string fileSavePath, int time) {
 	cv::Mat firstFrame = getFrame();
 	if(firstFrame.empty()) {
+		// FIXME: 配置导入
 		std::cerr << "Failed to get frame!" << std::endl;
 		return -1;
 	}
@@ -148,6 +153,7 @@ int MindVision::record(std::string fileSavePath, int time) {
 	                    cv::Size(frame_width, frame_height));
 
 	if(!out.isOpened()) {
+		// FIXME: 配置导入
 		std::cerr << "Failed to open video writer!" << std::endl;
 		return -2;
 	}
@@ -159,6 +165,7 @@ int MindVision::record(std::string fileSavePath, int time) {
 		cv::Mat frame = getFrame();
 
 		if(frame.empty()) {
+			// FIXME: 配置导入
 			std::cerr << "Failed to get a frame!" << std::endl;
 			break;
 		}

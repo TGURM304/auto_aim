@@ -19,10 +19,12 @@ static std::string decimalTohex(int num) {
 
 
 HikVision::HikVision() {
+	// FIXME: 配置导入
 	auto hk_config = config["hikvision"];
 	exposuretime = hk_config["exposure_time"].value_or(500);
 	autoexposure = hk_config["auto_exposure"].value_or(false);
 	autobalance = hk_config["auto_whitebalance"].value_or(true);
+	// FIXME: 日志打印
 	printf("HikVision Start\n");
 }
 
@@ -39,11 +41,12 @@ HikVision::~HikVision() {
 
 int HikVision::init() {
 	pDataForRGB = (unsigned char*) malloc(1440 * 1080 * 4 + 2048);
-	
+
 	// 初始化SDK
 	nRet = MV_CC_Initialize();
 	memset(&device_list, 0, sizeof(MV_CC_DEVICE_INFO_LIST));
 	if(nRet != MV_OK) {
+		// FIXME: 日志打印
 		printf("Initialize SDK fail! nRet [0x%x]\n", nRet);
 		return nRet;
 	}
@@ -54,8 +57,10 @@ int HikVision::init() {
 	int i = 1;
 	do {
 		nRet = MV_CC_EnumDevices(MV_USB_DEVICE, &device_list);
+		// FIXME: 日志打印
 		printf("第%d次尝试获取Hik相机列表\n", i);
 		if(nRet != MV_OK) {
+			// FIXME: 日志打印
 			printf("MV_CC_EnumDevices fail! nRet [0x%x]\n", nRet);
 		}
 		i++;
@@ -64,6 +69,7 @@ int HikVision::init() {
 	// 创建句柄
 	nRet = MV_CC_CreateHandle(&camera_handle, device_list.pDeviceInfo[0]);
 	if(nRet != MV_OK) {
+		// FIXME: 日志打印
 		printf("MV_CC_CreateHandle fail! nRet [0x%x]\n", nRet);
 		return nRet;
 	}
@@ -71,6 +77,7 @@ int HikVision::init() {
 	// 打开相机
 	nRet = MV_CC_OpenDevice(camera_handle);
 	if(nRet != MV_OK) {
+		// FIXME: 日志打印
 		printf("MV_CC_OpenDevice fail! nRet [0x%x]\n", nRet);
 		return nRet;
 	}
@@ -78,6 +85,7 @@ int HikVision::init() {
 	// 设置相机传输速率
 	nRet = MV_USB_SetTransferSize(camera_handle, 0x2000000);
 	if(nRet != MV_OK) {
+		// FIXME: 日志打印
 		printf("MV_CC_SetTransferSize fail! nRet [0x%x]\n", nRet);
 		return nRet;
 	}
@@ -85,6 +93,7 @@ int HikVision::init() {
 	// 设置触发模式为off
 	nRet = MV_CC_SetEnumValue(camera_handle, "TriggerMode", 0);
 	if(nRet != MV_OK) {
+		// FIXME: 日志打印
 		printf("MV_CC_SetTriggerMode fail! nRet [0x%x]\n", nRet);
 		return nRet;
 	}
@@ -92,6 +101,7 @@ int HikVision::init() {
 	// 设置采集模式为连续采集
 	nRet = MV_CC_SetEnumValue(camera_handle, "AcquisitionMode", 2);
 	if(nRet != MV_OK) {
+		// FIXME: 日志打印
 		printf("MV_CC_SetAcquisitionMode fail! nRet [0x%x]\n", nRet);
 		return nRet;
 	}
@@ -99,6 +109,7 @@ int HikVision::init() {
 	// 设置为8bit位深
 	nRet = MV_CC_SetEnumValue(camera_handle, "ADCBitDepth", 0);
 	if(nRet != MV_OK) {
+		// FIXME: 日志打印
 		printf("MV_CC_SetADCBitDepth fail! nRet [0x%x]\n", nRet);
 		return nRet;
 	}
@@ -106,6 +117,7 @@ int HikVision::init() {
 	nRet = MV_CC_SetEnumValue(camera_handle, "PixelFormat",
 	                          PixelType_Gvsp_BayerRG8);
 	if(nRet != MV_OK) {
+		// FIXME: 日志打印
 		printf("MV_CC_SetPixelFormat fail! nRet [0x%x]\n", nRet);
 		return nRet;
 	}
@@ -114,6 +126,7 @@ int HikVision::init() {
 	nRet = MV_CC_SetEnumValue(camera_handle, "BalanceWhiteAuto",
 	                          autobalance ? 1 : 0);
 	if(nRet != MV_OK) {
+		// FIXME: 日志打印
 		printf("MV_CC_BalanceWhiteAuto fail! nRet [0x%x]\n", nRet);
 		return nRet;
 	}
@@ -123,6 +136,7 @@ int HikVision::init() {
 	nRet =
 	    MV_CC_SetEnumValue(camera_handle, "ExposureAuto", autoexposure ? 1 : 0);
 	if(nRet != MV_OK) {
+		// FIXME: 日志打印
 		printf("MV_CC_SetExposureAuto fail! nRe`	 `t [0x%x]\n", nRet);
 		return nRet;
 	}
@@ -131,6 +145,7 @@ int HikVision::init() {
 		nRet = MV_CC_SetFloatValue(camera_handle, "ExposureTime",
 		                           exposuretime);
 		if(nRet != MV_OK) {
+			// FIXME: 日志打印
 			printf("MV_CC_SetExposureTime fail! nRet [0x%x]\n", nRet);
 			return nRet;
 		}
@@ -139,6 +154,7 @@ int HikVision::init() {
 	// 增益设置
 	nRet = MV_CC_SetFloatValue(camera_handle, "Gain", 0);
 	if(nRet != MV_OK) {
+		// FIXME: 日志打印
 		printf("MV_CC_SetGain fail! nRet [0x%x]\n", nRet);
 		return nRet;
 	}
@@ -146,6 +162,7 @@ int HikVision::init() {
 	// 插值算法设置
 	nRet = MV_CC_SetBayerCvtQuality(camera_handle, 1);
 	if(nRet != MV_OK) {
+		// FIXME: 日志打印
 		printf("MV_CC_SetBayerCvtQuality fail! nRet [0x%x]\n", nRet);
 		return nRet;
 	}
@@ -155,12 +172,14 @@ int HikVision::init() {
 	memset(&stParam, 0, sizeof(MVCC_INTVALUE));
 	nRet = MV_CC_GetIntValue(camera_handle, "PayloadSize", &stParam);
 	if(MV_OK != nRet) {
+		// FIXME: 日志打印
 		printf("Get PayloadSize fail! nRet [0x%x]\n", nRet);
 	}
 
 	// 开始取流
 	nRet = MV_CC_StartGrabbing(camera_handle);
 	if(nRet != MV_OK) {
+		// FIXME: 日志打印
 		printf("MV_CC_StartGrabbing fail! nRet [0x%x]\n", nRet);
 		return nRet;
 	}
@@ -177,7 +196,7 @@ std::pair<cv::Mat, int> HikVision::getFrame() {
 
 	// pDataForRGB = (unsigned char*)malloc(
 	//     frameOut.stFrameInfo.nWidth * frameOut.stFrameInfo.nHeight * 4 + 2048);
-	
+
 	if(NULL == pDataForRGB) {
 		cv::Mat frame = cv::Mat::ones(480, 640, CV_8UC3) * 255;
 		nRet = 0x80000108;
@@ -202,6 +221,7 @@ std::pair<cv::Mat, int> HikVision::getFrame() {
 	nRet = MV_CC_ConvertPixelTypeEx(camera_handle, &pstCvtParam);
 
 	if(MV_OK != nRet) {
+		// FIXME: 日志打印
 		printf("MV_CC_ConvertPixelTypeEx fail! nRet [%x]\n", nRet);
 	}
 	if(nRet != MV_OK) {

@@ -26,6 +26,7 @@ void save_image_with_time(const cv::Mat& img, const ArmorClasses category) {
 
 	// 保存图像
 	if(cv::imwrite("tmp/" + fname.str(), img)) {
+		// FIXME: 日志打印
 		std::cout << "图像已保存为 " << fname.str() << std::endl;
 	} else {
 		std::cout << "保存图像失败" << std::endl;
@@ -38,17 +39,21 @@ bool compareLights(const Light& l1, const Light& l2) {
 
 
 ArmorDetector::ArmorDetector() {
+	// FIXME: 日志打印
 	printf("ArmorDetector Start\n");
 };
 
 ArmorDetector::~ArmorDetector() {
+	// FIXME: 日志打印
 	printf("ArmorDetector Shutdown\n");
 };
 
 int ArmorDetector::init() {
 	try {
+		// FIXME: 配置导入
 		toml::table config = toml::parse_file("assets/config.toml");
 
+		// FIXME: 配置导入
 #define SET_ARG(var, name)                                                 \
 	do {                                                                   \
 		var##_cri[0].name =                                                \
@@ -62,6 +67,7 @@ int ArmorDetector::init() {
 
 		// 灯条检测所需参数
 		// 从配置文件中导入
+		// FIXME: 配置导入
 		SET_ARG(light, aspect_ratio);
 		SET_ARG(light, area);
 		SET_ARG(armor, aspect_ratio);
@@ -69,6 +75,7 @@ int ArmorDetector::init() {
 		SET_ARG(armor, original_angle);
 
 		// 相机内参 camera
+		// FIXME: 配置导入
 		auto focal_toml = config["camera"]["focal"].as_array();
 		auto center_toml = config["camera"]["center"].as_array();
 		// 方便地读取焦距与光心信息
@@ -91,6 +98,7 @@ int ArmorDetector::init() {
 		// clang-format on
 
 		// 畸变系数 dist
+		// FIXME: 配置导入
 		auto dist_toml = config["camera"]["dist"].as_array();
 		size_t dist_idx = 0;
 		for(const auto& value: *dist_toml) {
@@ -99,6 +107,7 @@ int ArmorDetector::init() {
 		}
 
 		// 初始化模型
+		// FIXME: 配置导入
 		std::string model_path = config["aim_armor"]["model_path"].value_or(
 		    "assets/model/best-8.onnx");
 		auto model = core.read_model(model_path);
@@ -108,6 +117,7 @@ int ArmorDetector::init() {
 
 		return 0;
 	} catch(const toml::parse_error& ex) {
+		// FIXME: 日志打印
 		std::cerr << "Error parsing TOML file: " << ex.what() << std::endl;
 		return -1;
 	} catch(const std::exception& ex) {

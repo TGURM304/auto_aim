@@ -24,8 +24,8 @@ std::list<std::string> expand_ports(const std::string& port_pattern) {
 	return expanded_ports;
 }
 
-
 int Serial::init() {
+	// FIXME: 配置导入
 	toml::table config_file = toml::parse_file("./assets/config.toml");
 	auto ports = config_file["serial"]["port"].as_array();
 	int baud_rate = config_file["serial"]["baud_rate"].value_or(B115200);
@@ -43,9 +43,11 @@ int Serial::init() {
 			try {
 				serial_driver.init_port(serial_port, serial_config);
 				serial_driver.port()->open();
+				// FIXME: 日志打印
 				std::cout << serial_port << "已打开" << std::endl;
 				return 0;
 			} catch(const std::exception& e) {
+				// FIXME: 日志打印
 				std::cerr << "初始化" << serial_port << "失败: " << e.what()
 				          << std::endl;
 			}
@@ -87,6 +89,8 @@ int Serial::receiver(ReceiveData& data) {
 		if(_buffer.back() == data.tail)
 			std::memcpy(&data, _buffer.data(), sizeof(data)), okay = true;
 		else {
+			// FIXME: 日志打印
+			// 太不雅了
 			std::cout << "fuck" << ' ' << std::endl;
 			for(auto i: _buffer)
 				std::cout << (int)i << ' ';
