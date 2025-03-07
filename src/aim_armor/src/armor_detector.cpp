@@ -26,10 +26,9 @@ void save_image_with_time(const cv::Mat& img, const ArmorClasses category) {
 
 	// 保存图像
 	if(cv::imwrite("tmp/" + fname.str(), img)) {
-		// FIXME: 日志打印
-		std::cout << "图像已保存为 " << fname.str() << std::endl;
+		RCLCPP_INFO(this->get_logger(), "节点已启动：%s.\n",fname.str() );
 	} else {
-		std::cout << "保存图像失败" << std::endl;
+		RCLCPP_ERROR(this->get_logger(), "保存图像失败");
 	}
 }
 
@@ -39,93 +38,64 @@ bool compareLights(const Light& l1, const Light& l2) {
 
 
 ArmorDetector::ArmorDetector() {
-	// FIXME: 日志打印
-	printf("ArmorDetector Start\n");
+	RCLCPP_INFO(this->get_logger(), "ArmorDetector Start\n");
 };
 
 ArmorDetector::~ArmorDetector() {
-	// FIXME: 日志打印
-	printf("ArmorDetector Shutdown\n");
+	RCLCPP_INFO(this->get_logger(), "ArmorDetector Shutdown\n");
 };
 
 int ArmorDetector::init() {
-	try {
-		// FIXME: 配置导入
-		toml::table config = toml::parse_file("assets/config.toml");
+    try {
+        // 灯条检测参数
+        std::vector<std::string> light_params = {"aspect_ratio", "area"};
+        for (const auto& param : light_params) {
+            light_cri[0].*param = this->declare_parameter("aim_armor.light." + param + ".0", -std::numeric_limits<double>::infinity());
+            light_cri[1].*param = this->declare_parameter("aim_armor.light." + param + ".1", std::numeric_limits<double>::infinity());
+            assert(light_cri[0].*param <= light_cri[1].*param);
+        }
 
-		// FIXME: 配置导入
-#define SET_ARG(var, name)                                                 \
-	do {                                                                   \
-		var##_cri[0].name =                                                \
-		    config["aim_armor"][#var][#name].as_array()->get(0)->value_or( \
-		        NAN);                                                      \
-		var##_cri[1].name =                                                \
-		    config["aim_armor"][#var][#name].as_array()->get(1)->value_or( \
-		        NAN);                                                      \
-		assert(var##_cri[0].name <= var##_cri[1].name);                    \
-	} while(0)
+        // 装甲板检测参数
+        std::vector<std::string> armor_params = {"aspect_ratio", "edge_angle", "original_angle"};
+        for (const auto& param : armor_params) {
+            armor_cri[0].*param = this->declare_parameter("aim_armor.armor." + param + ".0", -std::numeric_limits<double>::infinity());
+            armor_cri[1].*param = this->declare_parameter("aim_armor.armor." + param + ".1", std::numeric_limits<double>::infinity());
+            assert(armor_cri[0].*param <= armor_cri[1].*param);
+        }
 
-		// 灯条检测所需参数
-		// 从配置文件中导入
-		// FIXME: 配置导入
-		SET_ARG(light, aspect_ratio);
-		SET_ARG(light, area);
-		SET_ARG(armor, aspect_ratio);
-		SET_ARG(armor, edge_angle);
-		SET_ARG(armor, original_angle);
+        // 相机内参
+        camera_focal[0] = this->declare_parameter("camera.focal.0", 1857.0);
+        camera_focal[1] = this->declare_parameter("camera.focal.1", 1857.0);
+        camera_center[0] = this->declare_parameter("camera.center.0", 709.98);
+        camera_center[1] = this->declare_parameter("camera.center.1", 539.0);
 
-		// 相机内参 camera
-		// FIXME: 配置导入
-		auto focal_toml = config["camera"]["focal"].as_array();
-		auto center_toml = config["camera"]["center"].as_array();
-		// 方便地读取焦距与光心信息
-		// 焦距
-		auto f = [&focal_toml](size_t i) {
-			auto val = focal_toml->get(i)->value_or(NAN);
-			assert(!std::isnan(val));
-			return val;
-		};
-		// 光心
-		auto c = [&center_toml](size_t i) {
-			auto val = center_toml->get(i)->value_or(NAN);
-			assert(!std::isnan(val));
-			return val;
-		};
-		// clang-format off
-		camera = {f(0),  0. , c(0),
-		           0. , f(1), c(1),
-		           0.,   0. ,  1. };
-		// clang-format on
+        // 构建相机内参矩阵
+        camera = {
+            camera_focal[0], 0.0, camera_center[0],
+            0.0, camera_focal[1], camera_center[1],
+            0.0, 0.0, 1.0
+        };
 
-		// 畸变系数 dist
-		// FIXME: 配置导入
-		auto dist_toml = config["camera"]["dist"].as_array();
-		size_t dist_idx = 0;
-		for(const auto& value: *dist_toml) {
-			dist(0, dist_idx) = value.value_or(0.);
-			dist_idx++;
-		}
+    	// 畸变系数
+        std::vector<std::string> dist_params = {"dist.0", "dist.1", "dist.2", "dist.3", "dist.4"};
+        for (size_t i = 0; i < dist_params.size(); ++i) {
+            dist[i] = this->declare_parameter("camera." + dist_params[i], 0.0);  
+        }
 
-		// 初始化模型
-		// FIXME: 配置导入
-		std::string model_path = config["aim_armor"]["model_path"].value_or(
-		    "assets/model/best-8.onnx");
-		auto model = core.read_model(model_path);
-		auto compiled_model = core.compile_model(model, "CPU");
-		infer_request = compiled_model.create_infer_request();
+        // 初始化模型
+        std::string model_path = this->declare_parameter("aim_armor.model_path", "assets/model/best-8.onnx");
+        auto model = core.read_model(model_path);
+        auto compiled_model = core.compile_model(model, "CPU");
+        infer_request = compiled_model.create_infer_request();
 
-
-		return 0;
-	} catch(const toml::parse_error& ex) {
-		// FIXME: 日志打印
-		std::cerr << "Error parsing TOML file: " << ex.what() << std::endl;
-		return -1;
-	} catch(const std::exception& ex) {
-		std::cerr << "Error initializing ArmorDetector: " << ex.what()
-		          << std::endl;
-		return -2;
-	}
+        return 0;
+    } catch (const std::exception& ex) {
+        RCLCPP_ERROR(this->get_logger(), "Error initializing ArmorDetector: %s.\n", ex.what());
+        return -1;
+    }
 }
+
+
 // TODO: 没有配置文件时的错误
 
 ArmorClasses ArmorDetector::classify(cv::Mat& image) {

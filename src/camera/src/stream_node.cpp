@@ -21,9 +21,8 @@
 class StreamNode: public rclcpp::Node {
 public:
 	StreamNode(): Node("stream_node") {
-		// FIXME: 配置导入
-		config = toml::parse_file("./assets/config.toml");
-		camera_version = config["camera"]["version"].value_or("MV");
+		camera_version = this->declare_parameter("camera.version", "MV");
+
 		while(true) {
 			try {
 				if(camera_version == "MV") {
@@ -39,17 +38,16 @@ public:
 					}
 					break;
 				} else {
-					// FIXME: 日志打印
-					std::printf(
+					RCLCPP_ERROR(
+					    this->get_logger(),
 					    "配置文件错误，无法识别的相机类型: %s，尝试重新获取配置\n",
 					    camera_version.c_str());
-					// FIXME: 配置导入
-					config = toml::parse_file("./assets/config.toml");
-					camera_version = config["camera"]["version"].value_or("MV");
+					camera_version =
+					    this->declare_parameter("camera.version", "MV");
 				}
 			} catch(const std::exception& e) {
-				// FIXME: 日志打印
-				std::printf("读取配置文件失败: %s\n", e.what());
+				RCLCPP_ERROR(this->get_logger(), "读取配置文件失败: %s\n",
+				             e.what());
 			}
 		}
 
@@ -84,11 +82,10 @@ private:
 			        .toImageMsg();
 			publisher_->publish(*msg);
 		} else {
-			// FIXME: 日志打印
-			std::cout << "+++" << std::endl;
+			RCLCPP_INFO(this->get_logger(), "+++\n");
 		}
 
-		// std::cout << frame.size() << std::endl;
+		//RCLCPP_INFO(this->get_logger(),  frame.size() );
 
 		// auto ed = std::chrono::system_clock::now();
 		// std::cout << std::chrono::duration_cast <std::chrono::milliseconds> (ed - st).count() << "ms" << std::endl;
