@@ -38,12 +38,12 @@ serial:
   port: ["/dev/ttyUSB*", "/dev/ttyCH341USB*"]
   baud_rate: 115200
 
-test:
-  test_video: "./1.avi"
-
 physics:
   G: 9.8  
   V0: 10.0  
   MU: 0.5  
   THETA_MAX: 45.0  
   THETA_MIN: 10.0  
+
+test:
+  test_video: "./1.avi"
