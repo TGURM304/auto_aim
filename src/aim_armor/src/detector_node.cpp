@@ -1,7 +1,64 @@
 #include <algorithm>
+#include <cmath>
+#include <optional>
 
 #include "detector_node.hpp"
 
+// 使用 declare_parameter 动态获取参数
+double G = this->declare_parameter("G", 9.8);  
+double V0 = this->declare_parameter("V0", NAN); 
+double MU = this->declare_parameter("MU", NAN); 
+double THETA_MAX = this->declare_parameter("THETA_MAX", NAN); 
+double THETA_MIN = this->declare_parameter("THETA_MIN", NAN);  
+
+std::optional<float> calc_track(float dist, float theta) {
+	using namespace std;
+
+	float epsilon = 1e-3;
+	float rx = dist * cos(theta);
+	float ry = dist * sin(theta);
+
+	if(rx <= 0.)
+		return nullopt;
+	if(atan2(ry, rx) > THETA_MAX)
+		return nullopt;
+	if(ry > -G / (2 * V0 * V0) * rx * rx + V0 * V0 / (2 * G))
+		return nullopt;
+	if(V0 > G / MU && rx > V0 / sqrt(MU * MU - (G / V0) * (G / V0)))
+		return nullopt;
+
+	auto f = [rx, ry](float phi) {
+		return ry
+		    - G
+		    * (MU * rx / cos(phi) - V0 * log(V0 / (V0 - MU * rx / cos(phi))))
+		    / (V0 * MU * MU)
+		    - rx * tan(phi);
+	};
+	auto f_p = [rx](float phi) {
+		return rx / (cos(phi) * cos(phi))
+		    * (G * rx * sin(phi) / (V0 * V0 * cos(phi) - MU * V0 * rx) - 1.);
+	};
+
+	float theta_st_min = atan2(V0 * V0, G * rx)
+	    - atan2(rx * MU,
+	            sqrt(V0 * V0 + rx * rx * ((G / V0) * (G / V0) - MU * MU)));
+	theta = theta_st_min < THETA_MIN ? THETA_MAX : THETA_MIN;
+	float f_theta = f(theta);
+	float f_theta_m = f(theta_st_min);
+
+	theta =
+	    (theta * f_theta_m - theta_st_min * f_theta) / (f_theta_m - f_theta);
+	for(int _ = 0; _ < 5; _++) {
+		theta -= f(theta) / f_p(theta);
+	}
+
+	if(!(THETA_MIN <= theta || theta <= THETA_MAX))
+		return nullopt;
+	if(abs(f(theta)) > epsilon)
+		return nullopt;
+
+	return theta;
+}
 
 void DetectorNode::process(const cv::Mat &img) {
 	using namespace std;
@@ -9,6 +66,8 @@ void DetectorNode::process(const cv::Mat &img) {
 	using namespace cv_bridge;
 	using namespace std_msgs::msg;
 	using namespace sensor_msgs::image_encodings;
+
+	TargetMsg t{};
 
 	// 获取全部装甲板, 在图上标记每个板
 	vector<Armor> armors;
@@ -27,10 +86,18 @@ void DetectorNode::process(const cv::Mat &img) {
 		return d(x.pos) > d(y.pos);
 	});
 	if(armor == armors.end()) {
+		target_pub_->publish(t);
 		return;
 	}
 	float pitch, yaw, dist;
 	tie(pitch, yaw, dist) = calc_pitch_yaw_dist(armor->pos);
+
+	// auto val = calc_track(dist, pitch);
+	// if(!val.has_value()) {
+	// 	target_pub_->publish(t);
+	// 	return;
+	// }
+	// pitch = val.value();
 
 	// 在图上标上信息, 在中心标上瞄准点
 	auto info = "mode:" + to_string(aim_mode_.mode) + "|dist:" + to_string(dist)
@@ -38,7 +105,6 @@ void DetectorNode::process(const cv::Mat &img) {
 	draw_info_and_point(out_img, info);
 
 	// 发布击打目标
-	TargetMsg t;
 	t.aim_mode = aim_mode_.mode;
 	t.pitch_angle = RAD2DEG(pitch);
 	t.yaw_angle = RAD2DEG(yaw);
