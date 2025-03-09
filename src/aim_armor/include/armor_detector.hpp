@@ -5,14 +5,14 @@
 #include <opencv2/opencv.hpp>
 #include <openvino/openvino.hpp>
 #include <string>
+#ifdef _DEBUG_
+#include <rclcpp/rclcpp.hpp>
+#endif
 
 #include "toml.hpp"
 #include "lights.hpp"
 #include "armors.hpp"
 
-#ifdef _DEBUG_
-#define debug(var) std::cout << "[debug] " #var ": " << var << std::endl;
-#endif
 
 #define RAD2DEG(rad) ((rad) / std::numbers::pi * 180.)
 
@@ -144,6 +144,11 @@ private:
 
 	cv::Matx33f camera;
 	cv::Matx<float, 1, 5> dist;
+
+#ifdef _DEBUG_
+private:
+	const rclcpp::Logger logger = rclcpp::get_logger("global_logger");
+#endif
 };
 
 

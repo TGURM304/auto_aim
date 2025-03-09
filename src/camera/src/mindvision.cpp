@@ -1,10 +1,15 @@
-#include "mindvision.hpp"
-#include <sys/types.h>
 #include <chrono>
 #include <opencv2/highgui.hpp>
+#include <rclcpp/rclcpp.hpp>
+
+#include "mindvision.hpp"
+
+
+static const rclcpp::Logger LOGGER = rclcpp::get_logger("mindvision");
+
 
 MindVision::MindVision() {
-	RCLCPP_INFO(this->get_logger(), "MindVision Start\n" );
+	RCLCPP_INFO(LOGGER, "MindVision Start\n");
 }
 
 MindVision::~MindVision() {
@@ -20,7 +25,7 @@ int MindVision::init(int channel = 2) {
 
 	// 枚举设备, 并建立设备列表
 	status_ = CameraEnumerateDevice(&camera_enum_list_, &camera_cnt_);
-	RCLCPP_INFO(this->get_logger(), "state = %d\ncount = %d\n", status_, camera_cnt_);
+	RCLCPP_INFO(LOGGER, "state = %d\ncount = %d\n", status_, camera_cnt_);
 	// 没有连接设备
 	if(camera_cnt_ == 0) {
 		return camera_ = -1;
@@ -31,8 +36,7 @@ int MindVision::init(int channel = 2) {
 	status_ = CameraInit(&camera_enum_list_, -1, -1, &camera_);
 
 	// 初始化失败
-	// FIXME: 日志打印
-	RCLCPP_INFO(this->get_logger(), "state = %d\n", status_);
+	RCLCPP_INFO(LOGGER, "state = %d\n", status_);
 	if(status_ != CAMERA_STATUS_SUCCESS) {
 		return camera_ = -2;
 	}
@@ -114,31 +118,17 @@ cv::Mat MindVision::getFrame() {
 		return frame;
 	}
 
-
 	tSdkFrameHead frame_info;
-	// BYTE* buffer;
-
-	// CameraGetImageBuffer(camera_, &frame_info, &buffer, 1000);
-	// CameraImageProcess(camera_, buffer, rgb_buffer_, &frame_info);
-
-
 	rgb_buffer_ = CameraGetImageBufferEx(camera_, &frame_info.iWidth,
 	                                     &frame_info.iHeight, 1000);
-
 	cv::Mat frame(frame_info.iHeight, frame_info.iWidth, CV_8UC3, rgb_buffer_);
-
-
-	// 在成功调用 CameraGetImageBuffer 后,
-	// 必须调用 CameraReleaseImageBuffer 来释放获得的 buffer
-	// CameraReleaseImageBuffer(camera_, buffer);
-	// CameraClearBuffer(camera_);
 	return frame;
 }
 
 int MindVision::record(std::string fileSavePath, int time) {
 	cv::Mat firstFrame = getFrame();
 	if(firstFrame.empty()) {
-		RCLCPP_ERROR(this->get_logger(), "Failed to get frame!\n");
+		RCLCPP_ERROR(LOGGER, "Failed to get frame!\n");
 		return -1;
 	}
 
@@ -150,7 +140,7 @@ int MindVision::record(std::string fileSavePath, int time) {
 	                    cv::Size(frame_width, frame_height));
 
 	if(!out.isOpened()) {
-		RCLCPP_ERROR(this->get_logger(), "Failed to open video writer!\n");
+		RCLCPP_ERROR(LOGGER, "Failed to open video writer!\n");
 		return -2;
 	}
 
@@ -161,7 +151,7 @@ int MindVision::record(std::string fileSavePath, int time) {
 		cv::Mat frame = getFrame();
 
 		if(frame.empty()) {
-			RCLCPP_ERROR(this->get_logger(), "Failed to get a frame!\n");
+			RCLCPP_ERROR(LOGGER, "Failed to get a frame!\n");
 			break;
 		}
 

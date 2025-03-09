@@ -5,6 +5,7 @@
 #include <rclcpp/utilities.hpp>
 #include <sensor_msgs/msg/image.hpp>
 #include <opencv2/opencv.hpp>
+#include <variant>
 
 #ifdef ROS_HUMBLE
 #include <cv_bridge/cv_bridge.h>
@@ -18,89 +19,77 @@
 #include "hikvision.hpp"
 #include "toml.hpp"
 
+using namespace std;
+
+
 class StreamNode: public rclcpp::Node {
 public:
 	StreamNode(): Node("stream_node") {
-		camera_version = this->declare_parameter("camera.version", "MV");
+		auto type = this->declare_parameter("camera.version", "MV");
+		if(type == "MV")
+			type_ = MV;
+		else if(type == "HK")
+			type_ = HK;
 
-		while(true) {
-			try {
-				if(camera_version == "MV") {
-					camera_mv.init(2);
-					break;
-				} else if(camera_version == "HK") {
-					nRet = camera_hk.init();
-					if(nRet != MV_OK) {
-						while(rclcpp::ok()) {
-							RCLCPP_ERROR(this->get_logger(), "Error code: 0x%x",
-							             nRet);
-						}
-					}
-					break;
-				} else {
-					RCLCPP_ERROR(
-					    this->get_logger(),
-					    "配置文件错误，无法识别的相机类型: %s，尝试重新获取配置\n",
-					    camera_version.c_str());
-					camera_version =
-					    this->declare_parameter("camera.version", "MV");
-				}
-			} catch(const std::exception& e) {
-				RCLCPP_ERROR(this->get_logger(), "读取配置文件失败: %s\n",
-				             e.what());
-			}
+		if(type_ == MV) {
+			camera_ = MindVision{};
+			get<MindVision>(camera_).init(2);
+		} else if(type_ == HK) {
+			camera_ = HikVision{};
+			int err;
+			while((err = get<HikVision>(camera_).init()) != MV_OK)
+				RCLCPP_ERROR(this->get_logger(), "Error code: 0x%x", err);
+		} else {
+			RCLCPP_ERROR(
+			    this->get_logger(),
+			    "配置文件错误, 无法识别的相机类型: %s, 尝试重新获取配置\n",
+			    type.c_str());
 		}
 
-		// 创建发布器和定时器
 		publisher_ =
 		    this->create_publisher<sensor_msgs::msg::Image>("camera/stream", 1);
-		timer_ = this->create_wall_timer(std::chrono::milliseconds(0),
-		                                 std::bind(&StreamNode::publish, this));
+		timer_ = this->create_wall_timer(chrono::milliseconds(1),
+		                                 bind(&StreamNode::publish, this));
 	}
 
 private:
 	void publish() {
-		// auto st = std::chrono::system_clock::now();
-
-		if(camera_version == "MV") {
-			frame = camera_mv.getFrame();
-		} else if(camera_version == "HK") {
-			result = camera_hk.getFrame();
+		if(type_ == MV) {
+			frame_ = get<MindVision>(camera_).getFrame();
+		} else if(type_ == HK) {
+			auto result = get<HikVision>(camera_).getFrame();
 			if(result.second == MV_OK) {
-				frame = result.first;
+				frame_ = result.first;
 			} else {
-				frame = result.first;
+				frame_ = result.first;
 				RCLCPP_ERROR(this->get_logger(), "Error code: 0x%x",
 				             result.second);
 			}
 		} else {
-			frame = camera_mv.getFrame();
+			frame_ = get<MindVision>(camera_).getFrame();
 		}
-		if(!frame.empty()) {
+
+		if(!frame_.empty()) {
 			auto msg =
-			    cv_bridge::CvImage(std_msgs::msg::Header(), "bgr8", frame)
+			    cv_bridge::CvImage(std_msgs::msg::Header(), "bgr8", frame_)
 			        .toImageMsg();
 			publisher_->publish(*msg);
 		} else {
-			RCLCPP_INFO(this->get_logger(), "+++\n");
+			RCLCPP_INFO(this->get_logger(), "Empty frame\n");
 		}
-
-		//RCLCPP_INFO(this->get_logger(),  frame.size() );
-
-		// auto ed = std::chrono::system_clock::now();
-		// std::cout << std::chrono::duration_cast <std::chrono::milliseconds> (ed - st).count() << "ms" << std::endl;
 	}
 
-	toml::table config;
-	std::string camera_version;
+private:
 	rclcpp::Publisher<sensor_msgs::msg::Image>::SharedPtr publisher_;
 	rclcpp::TimerBase::SharedPtr timer_;
-	MindVision camera_mv;
-	HikVision camera_hk;
-	cv::Mat frame;
-	std::pair<cv::Mat, int> result;
-	int nRet;
+
+private:
+	toml::table config;
+	enum { MV, HK } type_;
+	std::variant<MindVision, HikVision> camera_;
+	cv::Mat frame_;
 };
+
 
 int main(int argc, char** argv) {
 	rclcpp::init(argc, argv);

@@ -26,9 +26,10 @@ void save_image_with_time(const cv::Mat& img, const ArmorClasses category) {
 
 	// 保存图像
 	if(cv::imwrite("tmp/" + fname.str(), img)) {
-		RCLCPP_INFO(this->get_logger(), "节点已启动：%s.\n",fname.str() );
+		RCLCPP_INFO(rclcpp::get_logger("global_logger"), "图像已保存为: %s\n",
+		            fname.str().c_str());
 	} else {
-		RCLCPP_ERROR(this->get_logger(), "保存图像失败");
+		RCLCPP_ERROR(rclcpp::get_logger("global_logger"), "图像保存失败");
 	}
 }
 
@@ -38,11 +39,15 @@ bool compareLights(const Light& l1, const Light& l2) {
 
 
 ArmorDetector::ArmorDetector() {
-	RCLCPP_INFO(this->get_logger(), "ArmorDetector Start\n");
+#ifdef _DEBUG_
+	RCLCPP_INFO(logger, "ArmorDetector start\n");
+#endif
 };
 
 ArmorDetector::~ArmorDetector() {
-	RCLCPP_INFO(this->get_logger(), "ArmorDetector Shutdown\n");
+#ifdef _DEBUG_
+	RCLCPP_INFO(logger, "ArmorDetector stop\n");
+#endif
 };
 
 int ArmorDetector::init() {
@@ -88,14 +93,15 @@ int ArmorDetector::init() {
         auto compiled_model = core.compile_model(model, "CPU");
         infer_request = compiled_model.create_infer_request();
 
-        return 0;
-    } catch (const std::exception& ex) {
-        RCLCPP_ERROR(this->get_logger(), "Error initializing ArmorDetector: %s.\n", ex.what());
-        return -1;
-    }
+		return 0;
+	} catch(const std::exception& ex) {
+#ifdef _DEBUG_
+		RCLCPP_ERROR(logger, "Error initializing ArmorDetector: %s.\n",
+		             ex.what());
+#endif
+		return -1;
+	}
 }
-
-
 // TODO: 没有配置文件时的错误
 
 ArmorClasses ArmorDetector::classify(cv::Mat& image) {
