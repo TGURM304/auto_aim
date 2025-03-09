@@ -73,12 +73,16 @@ void DetectorNode::process(const cv::Mat &img) {
 
 	// 获取全部装甲板, 在图上标记每个板
 	vector<Armor> armors;
+#ifdef _DEBUG_
 	Mat out_img;
 	ad_.match_armors(armors, img, aim_mode_.color, &out_img);
 
 	// 发布结果图像
 	auto image_msg = CvImage(Header(), BGR8, out_img).toImageMsg();
 	image_pub_->publish(*image_msg);
+#else
+	ad_.match_armors(armors, img, aim_mode_.color, nullptr);
+#endif
 
 	// 找出距画面中心点最近的装甲板
 	auto d = [](Vec3d v) {
@@ -101,10 +105,12 @@ void DetectorNode::process(const cv::Mat &img) {
 	// }
 	// pitch = val.value();
 
+#ifdef _DEBUG_
 	// 在图上标上信息, 在中心标上瞄准点
 	auto info = "mode:" + to_string(aim_mode_.mode) + "|dist:" + to_string(dist)
 	    + "|pitch:" + to_string(pitch) + "|yaw:" + to_string(yaw);
 	draw_info_and_point(out_img, info);
+#endif
 
 	// 发布击打目标
 	t.aim_mode = aim_mode_.mode;

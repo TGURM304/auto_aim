@@ -6,18 +6,13 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_BUILD_TYPE "Debug")
 set(CMAKE_CXX_STANDARD 20)
 
-
 if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
   add_compile_options(-Wall -Wextra -Wpedantic)
 endif()
 
-
-# find dependencies
-find_package(ament_cmake_auto REQUIRED)
-find_package(OpenVINO REQUIRED)
-find_package(interfaces REQUIRED)
-ament_auto_find_build_dependencies()
-
+if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+    add_definitions(-D_DEBUG_)
+endif()
 
 # 获取 ROS 发行版环境变量
 if(DEFINED ENV{ROS_DISTRO})
@@ -35,6 +30,12 @@ else()
   message(WARNING "Unknown ROS distribution: ${ROS_DISTRO}")
 endif()
 
+
+# find dependencies
+find_package(ament_cmake_auto REQUIRED)
+find_package(OpenVINO REQUIRED)
+find_package(interfaces REQUIRED)
+ament_auto_find_build_dependencies()
 
 add_executable(detector_node "src/detector_node.cpp" "src/armor_detector.cpp" "src/lights.cpp")
 

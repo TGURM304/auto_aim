@@ -10,7 +10,9 @@
 #include "lights.hpp"
 #include "armors.hpp"
 
+#ifdef _DEBUG_
 #define debug(var) std::cout << "[debug] " #var ": " << var << std::endl;
+#endif
 
 #define RAD2DEG(rad) ((rad) / std::numbers::pi * 180.)
 
@@ -36,6 +38,9 @@ public:
 	 * @param armors 匹配的装甲板将会附加到此列表后面
 	 * @param img    从此图片中匹配
 	 * @param color  敌方颜色. 将只会匹配这个颜色的装甲板
+	 * @param drawed 将结果绘制到此图像中.
+	 *               只在 `DEBUG` 模式有效, 否则传入任何值都将被忽略.
+	 *               若不想绘制内容, 传入 `nullptr`.
 	 * @return 返回匹配到的装甲板数量
 	 */
 	size_t match_armors(std::vector<Armor>& armors, const cv::Mat& img,
