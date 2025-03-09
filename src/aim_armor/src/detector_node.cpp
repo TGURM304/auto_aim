@@ -4,14 +4,12 @@
 
 #include "detector_node.hpp"
 
-
-// FIXME: 配置导入
-#define G         9.8
-#define V0        NAN
-#define MU        NAN
-#define THETA_MAX NAN
-#define THETA_MIN NAN
-
+// 使用 declare_parameter 动态获取参数
+double G = this->declare_parameter("G", 9.8);  
+double V0 = this->declare_parameter("V0", NAN); 
+double MU = this->declare_parameter("MU", NAN); 
+double THETA_MAX = this->declare_parameter("THETA_MAX", NAN); 
+double THETA_MIN = this->declare_parameter("THETA_MIN", NAN);  
 
 std::optional<float> calc_track(float dist, float theta) {
 	using namespace std;

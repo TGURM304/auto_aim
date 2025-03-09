@@ -25,12 +25,12 @@ std::list<std::string> expand_ports(const std::string& port_pattern) {
 }
 
 int Serial::init() {
-	// FIXME: 配置导入
-	toml::table config_file = toml::parse_file("./assets/config.toml");
-	auto ports = config_file["serial"]["port"].as_array();
-	int baud_rate = config_file["serial"]["baud_rate"].value_or(B115200);
+    std::vector<std::string> ports;
+    this->declare_parameter("serial.port", ports);  
+    int baud_rate = this->declare_parameter("serial.baud_rate", B115200);  
 	SerialPortConfig serial_config(baud_rate, FlowControl::NONE, Parity::NONE,
-	                               StopBits::ONE);
+		StopBits::ONE);
+
 
 	std::list<std::string> portlist;
 	for(const auto& port: *ports) {
@@ -43,13 +43,10 @@ int Serial::init() {
 			try {
 				serial_driver.init_port(serial_port, serial_config);
 				serial_driver.port()->open();
-				// FIXME: 日志打印
-				std::cout << serial_port << "已打开" << std::endl;
+				RCLCPP_INFO(this->get_logger(), "%s已打开\n", serial_port.c_str());
 				return 0;
 			} catch(const std::exception& e) {
-				// FIXME: 日志打印
-				std::cerr << "初始化" << serial_port << "失败: " << e.what()
-				          << std::endl;
+				RCLCPP_ERROR(this->get_logger(), "初始化%s失败：%s\n", serial_port.c_str()，e.what());
 			}
 		}
 	}
@@ -89,12 +86,11 @@ int Serial::receiver(ReceiveData& data) {
 		if(_buffer.back() == data.tail)
 			std::memcpy(&data, _buffer.data(), sizeof(data)), okay = true;
 		else {
-			// FIXME: 日志打印
 			// 太不雅了
-			std::cout << "fuck" << ' ' << std::endl;
+			RCLCPP_INFO(this->get_logger(), "fuck\n");
 			for(auto i: _buffer)
-				std::cout << (int)i << ' ';
-			std::cout << std::endl;
+				RCLCPP_INFO(this->get_logger(), "%d ",(int)i);
+			RCLCPP_INFO(this->get_logger(), "\n");
 		}
 		_buffer.clear();
 	}

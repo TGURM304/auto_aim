@@ -4,8 +4,7 @@
 #include <opencv2/highgui.hpp>
 
 MindVision::MindVision() {
-	// FIXME: 日志打印
-	printf("MindVision Start\n");
+	RCLCPP_INFO(this->get_logger(), "MindVision Start\n" );
 }
 
 MindVision::~MindVision() {
@@ -21,8 +20,7 @@ int MindVision::init(int channel = 2) {
 
 	// 枚举设备, 并建立设备列表
 	status_ = CameraEnumerateDevice(&camera_enum_list_, &camera_cnt_);
-	// FIXME: 日志打印
-	printf("state = %d\ncount = %d\n", status_, camera_cnt_);
+	RCLCPP_INFO(this->get_logger(), "state = %d\ncount = %d\n", status_, camera_cnt_);
 	// 没有连接设备
 	if(camera_cnt_ == 0) {
 		return camera_ = -1;
@@ -34,7 +32,7 @@ int MindVision::init(int channel = 2) {
 
 	// 初始化失败
 	// FIXME: 日志打印
-	printf("state = %d\n", status_);
+	RCLCPP_INFO(this->get_logger(), "state = %d\n", status_);
 	if(status_ != CAMERA_STATUS_SUCCESS) {
 		return camera_ = -2;
 	}
@@ -49,13 +47,13 @@ int MindVision::init(int channel = 2) {
 	CameraGetCapability(camera_, &capability_);
 
 	// 获取配置
-	// FIXME: 配置导入
-	auto mv_config = config["mindvision"];
-	uint8_t aestate = mv_config["auto_exposure"].value_or(false) ? 1 : 0;
-	uint16_t exposuretime = mv_config["exposure_time"].value_or(30);
-	uint16_t gamma = mv_config["gamma"].value_or(100);
-	uint16_t contrast = mv_config["contrast"].value_or(100);
-	uint16_t saturation = mv_config["saturation"].value_or(100);
+	uint8_t aestate =
+	    this->declare_parameter("mindvision.auto_exposure", false) ? 1 : 0;
+	uint16_t exposuretime =
+	    this->declare_parameter("mindvision.exposure_time", 30);
+	uint16_t gamma = this->declare_parameter("mindvision.gamma", 100);
+	uint16_t contrast = this->declare_parameter("mindvision.contrast", 100);
+	uint16_t saturation = this->declare_parameter("mindvision.saturation", 100);
 
 	if(!aestate) {
 		// 关闭自动曝光
@@ -140,8 +138,7 @@ cv::Mat MindVision::getFrame() {
 int MindVision::record(std::string fileSavePath, int time) {
 	cv::Mat firstFrame = getFrame();
 	if(firstFrame.empty()) {
-		// FIXME: 配置导入
-		std::cerr << "Failed to get frame!" << std::endl;
+		RCLCPP_ERROR(this->get_logger(), "Failed to get frame!\n");
 		return -1;
 	}
 
@@ -153,8 +150,7 @@ int MindVision::record(std::string fileSavePath, int time) {
 	                    cv::Size(frame_width, frame_height));
 
 	if(!out.isOpened()) {
-		// FIXME: 配置导入
-		std::cerr << "Failed to open video writer!" << std::endl;
+		RCLCPP_ERROR(this->get_logger(), "Failed to open video writer!\n");
 		return -2;
 	}
 
@@ -165,8 +161,7 @@ int MindVision::record(std::string fileSavePath, int time) {
 		cv::Mat frame = getFrame();
 
 		if(frame.empty()) {
-			// FIXME: 配置导入
-			std::cerr << "Failed to get a frame!" << std::endl;
+			RCLCPP_ERROR(this->get_logger(), "Failed to get a frame!\n");
 			break;
 		}
 

@@ -1,0 +1,49 @@
+title: "auto_aim"
+version: 1.0
+
+camera:
+  version: "HK"  # MV: MindVision; HK: Hikvision
+  focal: [1857, 1857]
+  center: [709.98, 539]
+  dist:
+    - -0.062620
+    - 0.098177
+    - -0.009045
+    - 0.000700
+    - 0.000000
+
+mindvision:
+  gamma: 110          # 伽马值
+  contrast: 100       # 对比度
+  saturation: 100     # 饱和度
+  auto_exposure: true # 是否开启自动曝光
+  exposure_time: 12   # 曝光时间 (ms)
+
+hikvision:
+  auto_whitebalance: true # 是否开启自动白平衡
+  auto_exposure: true    # 是否开启自动曝光
+  exposure_time: 5000       # 曝光时间
+
+aim_armor:
+  model_path: "assets/model/best-8.onnx"
+  light:
+    aspect_ratio: [-inf, inf]
+    area: [40, inf]
+  armor:
+    aspect_ratio: [-inf, inf]
+    edge_angle: [40, 150]
+    original_angle: [-inf, inf]
+
+serial:
+  port: ["/dev/ttyUSB*", "/dev/ttyCH341USB*"]
+  baud_rate: 115200
+
+physics:
+  G: 9.8  
+  V0: 10.0  
+  MU: 0.5  
+  THETA_MAX: 45.0  
+  THETA_MIN: 10.0  
+
+test:
+  test_video: "./1.avi"
