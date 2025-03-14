@@ -26,7 +26,7 @@ auto_exposure = true    # 是否开启自动曝光
 exposure_time = 5000       # 曝光时间
 
 [aim_armor]
-model_path = "assets/model/best-8.onnx"
+model_path = "assets/model/best.onnx"
 
 # [aim_armor.light]
 # aspect_ratio = [1, 15]
