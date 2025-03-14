@@ -5,6 +5,7 @@ log/
 Camera/
 testsets/
 camera_params/
+__pycache__
 
 .cache/
 .vscode/
@@ -15,4 +16,3 @@ camera_params/
 *.png
 
 start_floxglove.sh
-
