@@ -28,6 +28,9 @@ using TargetMsg = interfaces::msg::Target;
 struct AimMode {
 	uint8_t mode;
 	ArmorColor color;
+
+	float pitch;
+	float yaw;
 };
 
 
@@ -45,6 +48,8 @@ public:
 			    aim_mode_->mode = msg->mode;
 			    aim_mode_->color =
 			        msg->color == 'b' ? ArmorColor::BLUE : ArmorColor::RED;
+			    aim_mode_->pitch = msg->pitch;
+			    aim_mode_->yaw = msg->yaw;
 		    });
 	}
 

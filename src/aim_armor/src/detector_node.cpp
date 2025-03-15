@@ -71,6 +71,9 @@ void DetectorNode::process(const cv::Mat &img) {
 
 	TargetMsg t{};
 
+	float yaw_current = aim_mode_.yaw;
+	float pitch_current = aim_mode_.pitch;
+
 	// 获取全部装甲板, 在图上标记每个板
 	vector<Armor> armors;
 	Mat out_img;
@@ -108,8 +111,8 @@ void DetectorNode::process(const cv::Mat &img) {
 
 	// 发布击打目标
 	t.aim_mode = aim_mode_.mode;
-	t.pitch_angle = RAD2DEG(pitch);
-	t.yaw_angle = RAD2DEG(yaw);
+	t.pitch_angle = RAD2DEG(pitch) + pitch_current;
+	t.yaw_angle = RAD2DEG(yaw) + yaw_current;
 	t.distance = dist;
 	target_pub_->publish(t);
 }
