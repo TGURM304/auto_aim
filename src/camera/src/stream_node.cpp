@@ -55,7 +55,7 @@ public:
 
 		// 创建发布器和定时器
 		publisher_ =
-		    this->create_publisher<sensor_msgs::msg::Image>("camera/stream", 1);
+		    this->create_publisher<sensor_msgs::msg::Image>("/image_raw", 1);
 		timer_ = this->create_wall_timer(std::chrono::milliseconds(0),
 		                                 std::bind(&StreamNode::publish, this));
 	}

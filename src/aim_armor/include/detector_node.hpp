@@ -64,7 +64,7 @@ public:
 		ad_.init();
 
 		image_sub_ = this->create_subscription<ImageMsg>(
-		    "/camera/stream", 10, [this](const ImageMsg::SharedPtr msg) {
+		    "/image_raw", 10, [this](const ImageMsg::SharedPtr msg) {
 			    try {
 				    auto cv_ptr = cv_bridge::toCvCopy(
 				        msg, sensor_msgs::image_encodings::BGR8);
@@ -97,7 +97,7 @@ private:
 
 	/**
 	* @brief 计算方向角和距离
-	* 
+	*
 	* @param pos 在相机坐标系下目标的位置向量
 	* @return 返回一个元组, 为 (pitch 俯仰, yaw 偏航, 距离)
 	*/
