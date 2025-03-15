@@ -15,7 +15,7 @@ find_package(interfaces REQUIRED)
 ament_auto_find_build_dependencies()
 
 
-add_executable(serial_node "src/serial_node.cpp" "src/serial.cpp")
+add_executable(serial_node "src/crc.cpp" "src/serial_node.cpp")
 
 
 ament_target_dependencies(

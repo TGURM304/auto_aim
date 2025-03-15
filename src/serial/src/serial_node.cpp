@@ -1,102 +1,168 @@
-#include <cstdint>
-#include <iostream>
-#include <rclcpp/rclcpp.hpp>
-#include <std_msgs/msg/string.hpp>
-#include <interfaces/msg/target.hpp>
-#include <interfaces/msg/aim_mode.hpp>
 #include <chrono>
+#include <functional>
+#include <rclcpp/executors.hpp>
+#include <rclcpp/logging.hpp>
+#include <thread>
 
-#include "serial.hpp"
+#include "toml.hpp"
+#include "crc.hpp"
+#include "package.hpp"
+#include "serial_node.hpp"
 
-
-using TargetMsg = interfaces::msg::Target;
-using AimModeMsg = interfaces::msg::AimMode;
 using namespace std::chrono_literals;
+using namespace std::placeholders;
+using namespace drivers::serial_driver;
+using namespace drivers::common;
 
 
-class SerialReceiver: public rclcpp::Node {
-public:
-	SerialReceiver(Serial &serial):
-	Node("serial_receiver_node"), serial_(serial) {
-		aim_mode_msg_.mode = 'a';
+std::list<std::string> expand_ports(const std::string& port_pattern) {
+	std::list<std::string> expanded_ports;
 
-		publisher_ = this->create_publisher<AimModeMsg>("/serial/mode", 10);
-		timer_ = this->create_wall_timer(
-		    1ms, std::bind(&SerialReceiver::reveriver, this));
-	}
-
-private:
-	void reveriver() {
-		ReceiveData data;
-		// while(serial_.receiver(data) < 0)
-		// 	/* nothing */ std::cout << serial_.receiver(data) << std::endl;
-		if(serial_.receiver(data) <= 0) {
-			// std::cout << serial_.receiver(data) << std::endl;
-			return;
+	if(port_pattern.find('*') != std::string::npos) {
+		std::string prefix = port_pattern.substr(0, port_pattern.find('*'));
+		std::string suffix = port_pattern.substr(port_pattern.find('*') + 1);
+		for(int i = 0; i <= 5; ++i) {
+			std::stringstream ss;
+			ss << prefix << i << suffix;
+			expanded_ports.push_back(ss.str());
 		}
-		aim_mode_msg_.color = data.detect_color;
-		std::cout << data.detect_color << ' ' << data.pitch << ' ' << data.yaw
-		          << std::endl;
-		publisher_->publish(aim_mode_msg_);
+	} else {
+		expanded_ports.push_back(port_pattern);
 	}
 
-private:
-	Serial &serial_;
-	AimModeMsg aim_mode_msg_;
-
-	rclcpp::Publisher<AimModeMsg>::SharedPtr publisher_;
-	rclcpp::TimerBase::SharedPtr timer_;
-};
+	return expanded_ports;
+}
 
 
-class SerialSender: public rclcpp::Node {
-public:
-	SerialSender(Serial &serial): Node("serial_sender_node"), serial_(serial) {
-		timer_ = this->create_wall_timer(
-		    2ms, std::bind(&SerialSender::send_data, this));
+SerialNode::SerialNode():
+Node("serial_node"), io_context_(2), serial_driver_(io_context_) {
+	sub_ = this->create_subscription<TargetMsg>(
+	    "/target/armor", 10, std::bind(&SerialNode::send_callback, this, _1));
+	pub_ = this->create_publisher<AimModeMsg>("/serial/mode", 10);
 
-		subscription_ = this->create_subscription<TargetMsg>(
-		    "/target/armor", 10,
-		    std::bind(&SerialSender::targetCallback, this,
-		              std::placeholders::_1));
+	receive_thread_ =
+	    new std::thread(std::bind(&SerialNode::receive_process, this));
+}
+
+SerialNode::~SerialNode() {
+	if(receive_thread_->joinable()) {
+		receive_thread_->join();
 	}
 
-private:
-	void send_data() {
-		serial_.send_target(data_);
+	delete receive_thread_;
+
+	if(serial_driver_.port()->is_open()) {
+		serial_driver_.port()->close();
 	}
-	void targetCallback(const TargetMsg::SharedPtr msg) {
-		data_.mode = msg->aim_mode;
-		data_.pitch_angle = msg->pitch_angle;
-		data_.yaw_angle = msg->yaw_angle;
-		data_.distance = msg->distance;
+}
+
+int SerialNode::init() {
+	// FIXME: 配置导入
+	toml::table config_file = toml::parse_file("assets/config.toml");
+	auto ports = config_file["serial"]["port"].as_array();
+	int baud_rate = config_file["serial"]["baud_rate"].value_or(B115200);
+	SerialPortConfig serial_config(baud_rate, FlowControl::NONE, Parity::NONE,
+	                               StopBits::ONE);
+
+	std::list<std::string> portlist;
+	for(const auto& port: *ports) {
+		auto expanded_ports = expand_ports(port.as_string()->get());
+		portlist.splice(portlist.end(), expanded_ports);
 	}
 
-	Serial &serial_;
-	SendData data_;
-	rclcpp::Subscription<TargetMsg>::SharedPtr subscription_;
-	rclcpp::TimerBase::SharedPtr timer_;
-};
+	while(1) {
+		for(auto& serial_port: portlist) {
+			try {
+				serial_driver_.init_port(serial_port, serial_config);
+				serial_driver_.port()->open();
+				RCLCPP_INFO(this->get_logger(), "%s is opened",
+				            serial_port.c_str());
+				return 0;
+			} catch(const std::exception& e) {
+				RCLCPP_ERROR(this->get_logger(), "%s fail to open; %s",
+				             serial_port.c_str(), e.what());
+			}
+		}
+	}
+	return 0;
+}
+
+void SerialNode::receive_process() {
+	std::vector<uint8_t> header(1);
+	std::vector<uint8_t> buffer;
+	buffer.reserve(sizeof(ReceiveData));
+	ReceiveData data;
+
+	while(true) {
+		try {
+			serial_driver_.port()->receive(header);
+
+			if(header[0] == 0x5A) {
+				buffer.resize(sizeof(ReceiveData) - 1);
+				serial_driver_.port()->receive(buffer);
+
+				buffer.insert(buffer.begin(), header[0]);
+				std::copy(buffer.begin(), buffer.end(),
+				          reinterpret_cast<uint8_t*>(&data));
+
+				bool crc_ok = CRC16::verify(data);
+				if(crc_ok) {
+					AimModeMsg mode;
+					mode.mode = 'a';
+					mode.color = data.detect_color;
+					mode.pitch = data.pitch;
+					mode.yaw = data.yaw;
+					pub_->publish(mode);
+				} else {
+					RCLCPP_ERROR(this->get_logger(), "CRC error!");
+				}
+			} else {
+				RCLCPP_WARN(this->get_logger(), "Invalid header: %02X",
+				            header[0]);
+			}
+		} catch(const std::exception& ex) {
+			RCLCPP_ERROR(this->get_logger(), "Error while receiving buffer: %s",
+			             ex.what());
+			RCLCPP_WARN(this->get_logger(), "Attempting to reopen port");
+			while(true) {
+				try {
+					if(serial_driver_.port()->is_open()) {
+						serial_driver_.port()->close();
+					}
+					serial_driver_.port()->open();
+					RCLCPP_INFO(this->get_logger(),
+					            "Successfully reopened port");
+					break;
+				} catch(const std::exception& ex) {
+					RCLCPP_ERROR(this->get_logger(),
+					             "Error while reopening port: %s", ex.what());
+				}
+			}
+		}
+	}
+}
+
+void SerialNode::send_callback(const TargetMsg::SharedPtr msg) {
+	SendData data;
+	size_t buffer_size = sizeof(data);
+
+	data.mode = msg->aim_mode;
+	data.pitch_angle = msg->pitch_angle;
+	data.yaw_angle = msg->yaw_angle;
+	data.distance = msg->distance;
+	CRC16::append(data);
+
+	std::vector<uint8_t> buffer(buffer_size);
+	std::memcpy(buffer.data(), &data, buffer_size);
+	serial_driver_.port()->send(buffer);
+}
 
 
-int main(int argc, char **argv) {
-	// 初始化串口
-	Serial serial;
-	serial.init();
-
+int main(int argc, char** argv) {
 	rclcpp::init(argc, argv);
-
-	// 创建节点，并传入 Serial 实例
-	auto serial_receive_node = std::make_shared<SerialReceiver>(serial);
-	auto serial_send_node = std::make_shared<SerialSender>(serial);
-
-	// 使用多线程执行器来管理节点
-	rclcpp::executors::MultiThreadedExecutor executor;
-	// 添加节点到执行器
-	executor.add_node(serial_receive_node);
-	executor.add_node(serial_send_node);
-	// 启动执行器
-	executor.spin();
+	auto serial_node = std::make_shared<SerialNode>();
+	serial_node->init();
+	rclcpp::spin(serial_node);
 
 	rclcpp::shutdown();
 	return 0;

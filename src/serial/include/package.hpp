@@ -3,19 +3,19 @@
 
 /// @brief 发送数据结构体
 struct __attribute__((packed)) SendData {
-	uint8_t head = 0xFE;
+	uint8_t head = 0xA5;
 	uint8_t mode = 'a';
 	float pitch_angle = 0.0;
 	float yaw_angle = 0.0;
 	float distance = 0.0;
-	uint8_t tail = 0xFF;
+	uint16_t checksum = 0;
 };
 
 /// @brief 接收数据结构体
 struct __attribute__((packed)) ReceiveData {
 	uint8_t header = 0x5A;
-	uint8_t detect_color = 'r';
-	float pitch = 114;
-	float yaw = 514;
-	uint8_t tail = 0xA5;
+	uint8_t detect_color : 1; // 0-red 1-blue
+	float pitch;
+	float yaw;
+	uint16_t checksum = 0;
 };
