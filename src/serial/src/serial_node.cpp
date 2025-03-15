@@ -39,9 +39,6 @@ Node("serial_node"), io_context_(2), serial_driver_(io_context_) {
 	sub_ = this->create_subscription<TargetMsg>(
 	    "/target/armor", 10, std::bind(&SerialNode::send_callback, this, _1));
 	pub_ = this->create_publisher<AimModeMsg>("/serial/mode", 10);
-
-	receive_thread_ =
-	    new std::thread(std::bind(&SerialNode::receive_process, this));
 }
 
 SerialNode::~SerialNode() {
@@ -75,6 +72,8 @@ int SerialNode::init() {
 			try {
 				serial_driver_.init_port(serial_port, serial_config);
 				serial_driver_.port()->open();
+				receive_thread_ = new std::thread(
+				    std::bind(&SerialNode::receive_process, this));
 				RCLCPP_INFO(this->get_logger(), "%s is opened",
 				            serial_port.c_str());
 				return 0;
