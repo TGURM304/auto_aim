@@ -2,16 +2,10 @@ title = "auto_aim"
 version = 1.0
 
 [camera]
-version = "HK" # MV: MindVision; HK: Hikvision
-focal = [1857, 1857]
-center = [709.98, 539]
-dist = [
-  -0.062620,
-  0.098177,
-  -0.009045,
-  0.000700,
-  0.000000
-]
+version = "MV" # MV: MindVision; HK: Hikvision
+focal = [1037.06391, 1036.44396]
+center = [306.61321, 228.42354]
+dist = [-0.108574, 0.260086, 0.000301, 0.001182, 0.000000]
 
 [mindvision]
 gamma = 110          # 伽马值
@@ -42,7 +36,7 @@ edge_angle = [40, 150]
 original_angle = [-inf, inf]
 
 [serial]
-port = ["/dev/ttyUSB*", "/dev/ttyCH341USB*"]
+port = ["/dev/ttyUSB*", "/dev/ttyCH341USB*", "/dev/ttyACM*"]
 baud_rate = 115200
 
 [test]
