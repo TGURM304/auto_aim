@@ -47,7 +47,7 @@ public:
 		    "/serial/mode", 10, [this](const AimModeMsg::SharedPtr msg) {
 			    aim_mode_->mode = msg->mode;
 			    aim_mode_->color =
-			        msg->color == 'b' ? ArmorColor::BLUE : ArmorColor::RED;
+			        msg->color == 1 ? ArmorColor::BLUE : ArmorColor::RED;
 			    aim_mode_->pitch = msg->pitch;
 			    aim_mode_->yaw = msg->yaw;
 		    });

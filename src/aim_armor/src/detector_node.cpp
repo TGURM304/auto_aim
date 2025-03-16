@@ -5,62 +5,62 @@
 #include "detector_node.hpp"
 
 
-// FIXME: 配置导入
-#define G         9.8
-#define V0        NAN
-#define MU        NAN
-#define THETA_MAX NAN
-#define THETA_MIN NAN
+// // FIXME: 配置导入
+// #define G         9.8
+// #define V0        NAN
+// #define MU        NAN
+// #define THETA_MAX NAN
+// #define THETA_MIN NAN
 
 
-std::optional<float> calc_track(float dist, float theta) {
-	using namespace std;
+// std::optional<float> calc_track(float dist, float theta) {
+// 	using namespace std;
 
-	float epsilon = 1e-3;
-	float rx = dist * cos(theta);
-	float ry = dist * sin(theta);
+// 	float epsilon = 1e-3;
+// 	float rx = dist * cos(theta);
+// 	float ry = dist * sin(theta);
 
-	if(rx <= 0.)
-		return nullopt;
-	if(atan2(ry, rx) > THETA_MAX)
-		return nullopt;
-	if(ry > -G / (2 * V0 * V0) * rx * rx + V0 * V0 / (2 * G))
-		return nullopt;
-	if(V0 > G / MU && rx > V0 / sqrt(MU * MU - (G / V0) * (G / V0)))
-		return nullopt;
+// 	if(rx <= 0.)
+// 		return nullopt;
+// 	if(atan2(ry, rx) > THETA_MAX)
+// 		return nullopt;
+// 	if(ry > -G / (2 * V0 * V0) * rx * rx + V0 * V0 / (2 * G))
+// 		return nullopt;
+// 	if(V0 > G / MU && rx > V0 / sqrt(MU * MU - (G / V0) * (G / V0)))
+// 		return nullopt;
 
-	auto f = [rx, ry](float phi) {
-		return ry
-		    - G
-		    * (MU * rx / cos(phi) - V0 * log(V0 / (V0 - MU * rx / cos(phi))))
-		    / (V0 * MU * MU)
-		    - rx * tan(phi);
-	};
-	auto f_p = [rx](float phi) {
-		return rx / (cos(phi) * cos(phi))
-		    * (G * rx * sin(phi) / (V0 * V0 * cos(phi) - MU * V0 * rx) - 1.);
-	};
+// 	auto f = [rx, ry](float phi) {
+// 		return ry
+// 		    - G
+// 		    * (MU * rx / cos(phi) - V0 * log(V0 / (V0 - MU * rx / cos(phi))))
+// 		    / (V0 * MU * MU)
+// 		    - rx * tan(phi);
+// 	};
+// 	auto f_p = [rx](float phi) {
+// 		return rx / (cos(phi) * cos(phi))
+// 		    * (G * rx * sin(phi) / (V0 * V0 * cos(phi) - MU * V0 * rx) - 1.);
+// 	};
 
-	float theta_st_min = atan2(V0 * V0, G * rx)
-	    - atan2(rx * MU,
-	            sqrt(V0 * V0 + rx * rx * ((G / V0) * (G / V0) - MU * MU)));
-	theta = theta_st_min < THETA_MIN ? THETA_MAX : THETA_MIN;
-	float f_theta = f(theta);
-	float f_theta_m = f(theta_st_min);
+// 	float theta_st_min = atan2(V0 * V0, G * rx)
+// 	    - atan2(rx * MU,
+// 	            sqrt(V0 * V0 + rx * rx * ((G / V0) * (G / V0) - MU * MU)));
+// 	theta = theta_st_min < THETA_MIN ? THETA_MAX : THETA_MIN;
+// 	float f_theta = f(theta);
+// 	float f_theta_m = f(theta_st_min);
 
-	theta =
-	    (theta * f_theta_m - theta_st_min * f_theta) / (f_theta_m - f_theta);
-	for(int _ = 0; _ < 5; _++) {
-		theta -= f(theta) / f_p(theta);
-	}
+// 	theta =
+// 	    (theta * f_theta_m - theta_st_min * f_theta) / (f_theta_m - f_theta);
+// 	for(int _ = 0; _ < 5; _++) {
+// 		theta -= f(theta) / f_p(theta);
+// 	}
 
-	if(!(THETA_MIN <= theta || theta <= THETA_MAX))
-		return nullopt;
-	if(abs(f(theta)) > epsilon)
-		return nullopt;
+// 	if(!(THETA_MIN <= theta || theta <= THETA_MAX))
+// 		return nullopt;
+// 	if(abs(f(theta)) > epsilon)
+// 		return nullopt;
 
-	return theta;
-}
+// 	return make_optional(theta);
+// }
 
 void DetectorNode::process(const cv::Mat &img) {
 	using namespace std;

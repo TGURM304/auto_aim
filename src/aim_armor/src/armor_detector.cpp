@@ -109,7 +109,7 @@ int ArmorDetector::init() {
 		// 初始化模型
 		// FIXME: 配置导入
 		std::string model_path = config["aim_armor"]["model_path"].value_or(
-		    "assets/model/best-8.onnx");
+		    "assets/model/best.onnx");
 		auto model = core.read_model(model_path);
 		auto compiled_model = core.compile_model(model, "CPU");
 		infer_request = compiled_model.create_infer_request();
